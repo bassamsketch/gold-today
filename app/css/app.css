@@ -283,7 +283,7 @@
 .src-list b { font-size: 17px; }
 .src-list .src-main { margin-top: 2px; }
 .src-list .src-main .num { font-weight: 600; font-size: 20px; }
-.src-list a { display: inline-flex; align-items: center; min-height: 44px; color: var(--car-d); }
+.src-list a { display: inline-flex; align-items: center; min-height: 48px; color: var(--car-d); }
 
 /* ---------- install tip ---------- */
 .install {
