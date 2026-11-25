@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="أسعار الذهب في عُمان مباشرة | Live gold prices in Oman">
+<title>ذهب اليوم</title>
+<link rel="preload" href="fonts/SourceSerif4-normal-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Almarai-normal-400-arabic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+<script type="module" src="js/main.js"></script>
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <div class="word" data-t="appName"></div>
+    <div class="bar-actions">
+      <button class="icon-btn" id="share" type="button" data-aria="share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v6.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V12"/></svg></button>
+      <button class="lang-link" type="button" data-lang-toggle data-t="otherLang"></button>
+    </div>
+  </header>
+
+  <main class="views">
+    <!-- ================= Today ================= -->
+    <section class="view on" data-view="today">
+      <figure class="hero">
+        <img src="img/hero-600.webp" srcset="img/hero-600.webp 600w, img/hero-1200.webp 1200w" sizes="(max-width: 440px) 100vw, 440px" width="600" height="450" alt="" data-alt="heroAlt" fetchpriority="high">
+        <i class="sheen" aria-hidden="true"></i>
+      </figure>
+      <div class="price-block">
+        <p class="cap" data-t="perGramNow"></p>
+        <div class="price"><span class="odo" id="price" role="img"></span><span class="unit" id="price-unit" data-t="rial"></span><span class="price-missing" id="price-missing" hidden></span></div>
+        <p class="karat-label" data-t="karat"></p>
+        <div class="karats" id="karats" role="radiogroup"><i class="kline"></i><button type="button" role="radio" data-k="24">24</button><button type="button" role="radio" data-k="22">22</button><button type="button" role="radio" data-k="21">21</button><button type="button" role="radio" data-k="18">18</button></div>
+        <p class="status" id="status"><i class="live-dot"></i><span id="status-text"></span></p>
+        <p class="change" id="change" hidden></p>
+      </div>
+      <section class="why" id="why" hidden>
+        <h2 class="why-title" data-t="whyTitle"></h2>
+        <p class="why-text" id="why-text"></p>
+        <p class="why-src"><a id="why-src" target="_blank" rel="noopener"></a></p>
+      </section>
+      <section class="year" id="year" hidden>
+        <p class="year-sent" id="mood"></p>
+        <div class="track"><i class="dot" id="year-dot"></i></div>
+        <div class="ends"><span data-t="cheapest"></span><span data-t="dearest"></span></div>
+        <p class="hint" id="hint"></p>
+      </section>
+      <section class="board">
+        <h2 class="sec-title" data-t="boardTitle"></h2>
+        <table class="board-table">
+          <thead><tr><th scope="col" data-t="karat"></th><th scope="col" data-t="col1g"></th><th scope="col" data-t="col10g"></th><th scope="col" data-t="colTola"></th></tr></thead>
+          <tbody id="board-rows"></tbody>
+        </table>
+        <p class="note" data-t="boardNote"></p>
+        <button class="btn-outline" type="button" id="share-today"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v6.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V12"/></svg><span data-t="shareToday"></span></button>
+      </section>
+      <p class="world" id="world"></p>
+      <p class="fine" data-t="note"></p>
+    </section>
+
+    <!-- ================= My gold ================= -->
+    <section class="view" data-view="gold">
+      <figure class="band"><img src="img/gold-600.webp" srcset="img/gold-600.webp 600w, img/gold-1200.webp 1200w" sizes="(max-width: 440px) 100vw, 440px" width="600" height="338" alt="" data-alt="goldAlt" loading="lazy"></figure>
+      <div class="pad">
+        <h1 class="h" data-t="myGold"></h1>
+        <div id="gold-total" hidden>
+          <p class="cap" data-t="ifSold" style="margin-top:12px"></p>
+          <p class="big"><span class="num" id="gold-mid"></span> <span class="unit" data-t="rial"></span> <span class="tag" data-t="estimateTag"></span></p>
+          <p class="sub" id="gold-range"></p>
+          <p class="gain" id="gold-gain" hidden></p>
+        </div>
+        <div class="empty" id="gold-empty" hidden>
+          <p class="empty-title" data-t="emptyTitle"></p>
+          <p class="sub" data-t="emptyBody"></p>
+        </div>
+        <ul class="pieces" id="pieces" hidden></ul>
+        <button class="btn" type="button" id="add-piece"><span aria-hidden="true">+</span><span data-t="addPiece"></span></button>
+        <p class="note" data-t="payLessNote"></p>
+      </div>
+    </section>
+
+    <!-- ================= Future ================= -->
+    <section class="view" data-view="future">
+      <div class="pad">
+        <h1 class="h" data-t="outlook"></h1>
+        <p class="cap" id="outlook-sub"></p>
+        <div class="chart-wrap" dir="ltr">
+          <svg class="fchart" id="fchart" viewBox="0 0 340 200" aria-hidden="true">
+            <defs><clipPath id="fchart-clip"><rect class="f-clip" x="0" y="0" width="340" height="200"/></clipPath></defs>
+            <g clip-path="url(#fchart-clip)"><path class="f-band"/><path class="f-past"/><path class="f-mid"/><circle class="f-m" r="3.5"/><circle class="f-m" r="3.5"/><circle class="f-m" r="3.5"/></g>
+            <line class="f-today"/><circle class="f-now" r="5"/>
+            <text class="f-l0"></text><text class="f-l1" text-anchor="middle"></text><text class="f-l2" text-anchor="end"></text>
+          </svg>
+        </div>
+        <div class="rows">
+          <div class="row"><span data-t="in1"></span><b><span class="num" id="f1"></span> <small data-t="rialPerGram"></small></b></div>
+          <p class="row-note"><span id="f1-note"></span> <button class="link-btn" type="button" id="open-sources" data-t="sources"></button></p>
+          <div class="row"><span data-t="in5"></span><b><span class="num" id="f5"></span> <small data-t="rialPerGram"></small></b></div>
+          <p class="row-note" id="f5-note"></p>
+          <div class="row"><span data-t="in10"></span><b><span class="num" id="f10"></span> <small data-t="rialPerGram"></small></b></div>
+          <p class="row-note" id="f10-note"></p>
+        </div>
+        <section class="report">
+          <h2 class="sec-title" data-t="reportTitle"></h2>
+          <p id="win0"></p>
+          <p id="win1"></p>
+          <p id="survey"></p>
+          <p class="sub" data-t="reportClose"></p>
+        </section>
+        <p class="fine" id="f-updated"></p>
+        <p class="fine" id="f-sources"></p>
+      </div>
+    </section>
+
+    <!-- ================= Buy & sell ================= -->
+    <section class="view" data-view="buysell">
+      <figure class="band"><img src="img/shop-600.webp" srcset="img/shop-600.webp 600w, img/shop-1200.webp 1000w" sizes="(max-width: 440px) 100vw, 440px" width="600" height="338" alt="" data-alt="shopAlt" loading="lazy"></figure>
+      <div class="pad">
+        <h1 class="h" data-t="buySellTitle"></h1>
+
+        <section class="calc" id="cost">
+          <h2 class="sec-title" data-t="costTitle"></h2>
+          <label class="field"><span data-t="weightG"></span><input class="input" id="cost-grams" inputmode="decimal" autocomplete="off" enterkeyhint="next"></label>
+          <div class="field"><span data-t="karat"></span><div class="karats small" id="cost-karats"><i class="kline"></i><button type="button" data-ck="24">24</button><button type="button" data-ck="22">22</button><button type="button" data-ck="21">21</button><button type="button" data-ck="18">18</button></div></div>
+          <div class="field"><span data-t="making"></span>
+            <div class="seg" id="cost-mode"><button type="button" data-mode="perGram" class="on" data-t="perGramMode"></button><button type="button" data-mode="percent" data-t="percentMode"></button></div>
+            <input class="input" id="cost-making" inputmode="decimal" autocomplete="off" enterkeyhint="next">
+          </div>
+          <label class="field"><span data-t="shopRate"></span><input class="input" id="cost-rate" inputmode="decimal" autocomplete="off" enterkeyhint="done"><small data-t="shopRateHint"></small></label>
+          <dl class="result" id="cost-result" hidden>
+            <div><dt data-t="goldValue"></dt><dd class="num" id="cost-gold"></dd></div>
+            <div><dt data-t="makingLine"></dt><dd class="num" id="cost-mk"></dd></div>
+            <div><dt data-t="vatLine"></dt><dd class="num" id="cost-vat"></dd></div>
+            <div class="total"><dt data-t="totalLine"></dt><dd class="num" id="cost-total"></dd></div>
+          </dl>
+          <p class="prompt" id="cost-prompt" data-t="enterPrompt"></p>
+          <p class="note" data-t="costNote"></p>
+        </section>
+
+        <section class="calc" id="offer">
+          <h2 class="sec-title" data-t="offerTitle"></h2>
+          <label class="field"><span data-t="weightG"></span><input class="input" id="offer-grams" inputmode="decimal" autocomplete="off" enterkeyhint="next"></label>
+          <div class="field"><span data-t="karat"></span><div class="karats small" id="offer-karats"><i class="kline"></i><button type="button" data-ok="24">24</button><button type="button" data-ok="22">22</button><button type="button" data-ok="21">21</button><button type="button" data-ok="18">18</button></div></div>
+          <label class="field"><span data-t="offerAmount"></span><input class="input" id="offer-amount" inputmode="decimal" autocomplete="off" enterkeyhint="done"></label>
+          <div id="offer-result" hidden>
+            <p class="verdict" id="offer-verdict"></p>
+            <p class="verdict-sub" id="offer-gap"></p>
+            <p class="verdict-sub" id="offer-value"></p>
+          </div>
+          <p class="prompt" id="offer-prompt" data-t="enterPrompt"></p>
+        </section>
+
+        <section class="calc">
+          <h2 class="sec-title" data-t="placesTitle"></h2>
+          <ul class="places" id="places"></ul>
+        </section>
+
+        <section class="calc">
+          <h2 class="sec-title" data-t="guideTitle"></h2>
+          <table class="guide-table"><tbody>
+            <tr><td data-k-label="24"></td><td class="ltr">999.9</td><td data-t="g24"></td></tr>
+            <tr><td data-k-label="22"></td><td class="ltr">916</td><td data-t="g22"></td></tr>
+            <tr><td data-k-label="21"></td><td class="ltr">875</td><td data-t="g21"></td></tr>
+            <tr><td data-k-label="18"></td><td class="ltr">750</td><td data-t="g18"></td></tr>
+          </tbody></table>
+          <p class="note" data-t="stampWhere"></p>
+        </section>
+
+        <section class="calc">
+          <h2 class="sec-title" data-t="tipsTitle"></h2>
+          <ul class="tips"><li data-t="tip1"></li><li data-t="tip2"></li><li data-t="tip3"></li><li data-t="tip4"></li></ul>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar" aria-label="Tabs">
+    <button type="button" data-tab="today" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span data-t="tabToday"></span></button>
+    <button type="button" data-tab="gold"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="14" rx="7.5" ry="5.5"/><path d="M9.5 8.6 12 5l2.5 3.6"/></svg><span data-t="tabGold"></span></button>
+    <button type="button" data-tab="future"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17.5l5.5-5.5 4 3.2L20 8"/><path d="M15.5 8H20v4.5"/></svg><span data-t="tabFuture"></span></button>
+    <button type="button" data-tab="buysell"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h14l-1.2 10.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 9V7a3 3 0 0 1 6 0v2"/></svg><span data-t="tabBuySell"></span></button>
+  </nav>
+
+  <dialog class="sheet" id="piece-sheet">
+    <form method="dialog" id="piece-form" novalidate>
+      <div class="sheet-head"><h2 class="sec-title" id="piece-title"></h2></div>
+      <label class="field"><span data-t="pieceName"></span><input class="input text" name="name" maxlength="40" autocomplete="off" data-ph="namePlaceholder"></label>
+      <label class="field"><span data-t="weightG"></span><input class="input" name="grams" inputmode="decimal" autocomplete="off" required></label>
+      <div class="field"><span data-t="karat"></span><div class="karats small" id="piece-karats"><i class="kline"></i><button type="button" data-pk="24">24</button><button type="button" data-pk="22">22</button><button type="button" data-pk="21">21</button><button type="button" data-pk="18">18</button></div></div>
+      <label class="field"><span data-t="boughtPrice"></span><input class="input" name="boughtPrice" inputmode="decimal" autocomplete="off"></label>
+      <label class="field"><span data-t="boughtWhen"></span><input class="input text" name="boughtYm" type="month" min="1960-01"></label>
+      <p class="prompt" id="piece-error" hidden></p>
+      <div class="sheet-actions">
+        <button class="btn" type="submit" value="save" data-t="save"></button>
+        <button class="btn-quiet" type="button" value="cancel" id="piece-cancel" data-t="cancel"></button>
+        <button class="btn-danger" type="button" id="piece-remove" data-t="remove" hidden></button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="sheet" id="sources-sheet">
+    <div class="sheet-head"><h2 class="sec-title" data-t="sources"></h2><button class="btn-quiet" type="button" id="sources-close" data-t="close"></button></div>
+    <ul class="src-list" id="src-list"></ul>
+  </dialog>
+</div>
+</body>
+</html>

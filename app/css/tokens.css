@@ -1,0 +1,90 @@
+:root {
+  --bg: oklch(1 0 0);
+  --ink: oklch(0.2 0.02 30);
+  --muted: oklch(0.45 0.02 30);
+  --car: oklch(0.47 0.15 30);
+  --car-d: oklch(0.4 0.13 29);
+  --car-soft: oklch(0.47 0.15 30 / 0.12);
+  --hair: oklch(0.9 0.012 30);
+  --surface: oklch(0.975 0.006 30);
+  --backdrop: oklch(0.95 0.004 30);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --display-ar: 'Amiri', 'Times New Roman', serif;
+  --text: 'Almarai', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
+  --gutter: 22px;
+  --app-max: 440px;
+  --tabbar-h: 66px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 3px solid oklch(0.55 0.17 255);
+  outline-offset: 2px;
+}
+
+.ltr {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
