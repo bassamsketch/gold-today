@@ -72,7 +72,7 @@ An independent QA agent reviewed the live app and reported 1 blocker, 11 major a
 ### Still open
 - Real-phone checks the QA agent and I could not run: the iOS share sheet, install, the keyboard over sheets, Safari's 7-day storage deletion, Samsung forced dark, Android back.
 - QA32 needs the mother's and aunt's phone models to confirm the oldest phone in use.
-- Task 16: the scheduled jobs (daily news line, monthly forecast refresh) need GitHub connected to Claude. Until then the news box hides one trading day after 25 November.
+- Task 16: the two cloud routines now exist: "Gold Today: daily news line" (weekdays 21:30 UTC, app/data/why.json) and "Gold Today: monthly bank forecasts" (1st of each month 06:00 UTC, app/data/forecasts.json), managed at https://claude.ai/code/routines. Their first runs show whether they can push to the repository; if not, the Claude GitHub App needs write access to bassamsketch/gold-today.
 - The fan between today and the 5-year range is drawn straight on the log scale, so its width at 1 year is not computed (minor).
 
 ## Built and verified
