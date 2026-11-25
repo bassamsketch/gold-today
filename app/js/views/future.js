@@ -1,4 +1,4 @@
-import { buildForecast } from '../forecast.js';
+import { buildForecast, surveyComparison } from '../forecast.js';
 import { gramPrice, formatNum } from '../price.js';
 import { dayMonthYear, monthYear } from '../i18n.js';
 import { drawFuture } from '../ui/chart.js';
@@ -56,9 +56,9 @@ export function mount(app) {
       p.hidden = !w;
       if (w) p.textContent = app.t('winnerLine', w.year, w.name, w.org, formatNum(w.forecast, 0), formatNum(w.actual, 0), formatNum((Math.abs(w.actual - w.forecast) / w.actual) * 100, 0));
     });
-    const year = c.h.daily.filter((d) => d.d >= '2026-01-01');
-    el.survey.hidden = !(lb.survey2026Avg && year.length);
-    if (!el.survey.hidden) el.survey.textContent = app.t('surveyLine', formatNum(lb.survey2026Avg, 0), formatNum(year.reduce((s, d) => s + d.c, 0) / year.length, 0));
+    const sv = surveyComparison(lb, c.h.daily); // bounded to the survey's own year
+    el.survey.hidden = !sv;
+    if (sv) el.survey.textContent = app.t('surveyLine', sv.year, formatNum(sv.avg, 0), formatNum(sv.actual, 0));
 
     el.updated.textContent = app.t('updatedOn', dayMonthYear(lang, c.fc.asOf));
     el.sources.textContent = `${app.t('dataSources')}: gold-api.com, OANDA (TradingView), World Bank (freegoldapi.com), LBMA. ${app.t('photos')}: ${CREDITS}.`;

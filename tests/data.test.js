@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { validateForecastFile } from '../app/js/forecast.js';
 
 const read = (f) => JSON.parse(readFileSync(new URL(`../app/data/${f}`, import.meta.url), 'utf8'));
 
@@ -22,12 +23,8 @@ test('history monthly closes run from 1971-01 without gaps', () => {
   }
 });
 
-test('forecasts name every source', () => {
-  const fc = read('forecasts.json');
-  assert.equal(fc.targets.length, 5);
-  for (const x of fc.targets) for (const k of ['institution', 'institutionAr', 'usd', 'horizon', 'published', 'url']) assert.ok(x[k] != null, `${x.institution} ${k}`);
-  assert.equal(fc.lbma.winners.length, 2);
-  assert.ok(Number.isFinite(fc.lbma.survey2026Avg));
+test('forecasts file is complete and names every source', () => {
+  assert.deepEqual(validateForecastFile(read('forecasts.json')), []);
 });
 
 test('places and why line are complete', () => {

@@ -1,5 +1,5 @@
 // Offline support (design section 9). Bump VERSION when the precache list changes.
-const VERSION = 'gold-today-v1';
+const VERSION = 'gold-today-v2';
 const PRECACHE = [
   './',
   'index.html',
@@ -66,15 +66,20 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url);
   // Only same-origin GETs; the live price feed is never cached here (the app keeps the last price itself).
   if (req.method !== 'GET' || url.origin !== self.location.origin) return;
-  if (req.mode === 'navigate' || url.pathname.includes('/data/')) {
-    // Network first so prices, forecasts and pages stay fresh; fall back to the cached copy offline.
+  const isPage = req.mode === 'navigate' && /\/(index\.html)?$/.test(url.pathname);
+  if (isPage || url.pathname.includes('/data/')) {
+    // Network first so prices, forecasts and the page stay fresh; fall back to the cached copy offline.
+    const key = isPage ? './' : req;
     e.respondWith(
       fetch(req)
         .then((res) => {
-          if (res.ok) caches.open(VERSION).then((c) => c.put(req.mode === 'navigate' ? './' : req, res.clone()));
+          if (res.ok) {
+            const copy = res.clone(); // copy now: once the page reads res, it can no longer be cloned
+            e.waitUntil(caches.open(VERSION).then((c) => c.put(key, copy)));
+          }
           return res;
         })
-        .catch(() => caches.match(req.mode === 'navigate' ? './' : req)),
+        .catch(() => caches.match(key)),
     );
     return;
   }

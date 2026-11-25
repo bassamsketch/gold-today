@@ -22,7 +22,7 @@ const ar = {
 
   perGramNow: 'سعر جرام الذهب الآن',
   live: 'مباشر',
-  delayed: 'الأسعار متأخرة قليلاً',
+  delayed: 'الأسعار متأخرة',
   closed: 'السوق مغلق لعطلة نهاية الأسبوع، وهذا آخر سعر يوم الجمعة',
   none: 'السعر غير متاح بعد، نحاول مرة أخرى',
   less: (v) => `أقل من أمس بـ ${v} ريال`,
@@ -92,7 +92,7 @@ const ar = {
   asReported: 'كما نُشر',
   reportTitle: 'ما مدى دقة التوقعات؟',
   winnerLine: (year, name, org, f, a, miss) => `الأدق لعام ${year}: ${name} (${org}) توقّع ${f} دولار، وكان المتوسط الفعلي ${a} دولار (فرق ${miss}%).`,
-  surveyLine: (avg, ytd) => `توقّع المحللون لعام 2026 متوسط ${avg} دولار، ومتوسط هذه السنة حتى الآن ${ytd} دولار.`,
+  surveyLine: (year, avg, actual) => `توقّع المحللون لعام ${year} متوسط ${avg} دولار، والمتوسط الفعلي لعام ${year} حتى الآن ${actual} دولار.`,
   reportClose: 'حتى أفضل المتوقعين يخطئون غالباً بنسبة 10 إلى 15%، فالتوقعات دليل تقريبي فقط.',
   updatedOn: (d) => `تم تحديث التوقعات في ${d}`,
   dataSources: 'مصادر البيانات',
@@ -237,7 +237,7 @@ const en = {
   asReported: 'as reported',
   reportTitle: 'How good are forecasts?',
   winnerLine: (year, name, org, f, a, miss) => `Most accurate for ${year}: ${name} (${org}) forecast $${f}; the actual average was $${a} (${miss}% off).`,
-  surveyLine: (avg, ytd) => `For 2026 analysts expected an average of $${avg}; so far this year it has averaged $${ytd}.`,
+  surveyLine: (year, avg, actual) => `For ${year} analysts expected an average of $${avg}; the actual ${year} average so far is $${actual}.`,
   reportClose: 'Even the best forecasters often miss by 10 to 15%, so treat forecasts as a rough guide.',
   updatedOn: (d) => `Forecasts updated on ${d}`,
   dataSources: 'Data sources',
@@ -300,10 +300,29 @@ export function t(lang, key, ...args) {
   return typeof v === 'function' ? v(...args) : v;
 }
 
-/** "updated N seconds ago" with Arabic plural forms. */
+/** "updated N seconds/minutes ago" with Arabic number forms; minutes from 60 seconds on (review M2). */
 export function agoText(lang, s) {
-  if (lang === 'ar') return s < 5 ? 'تم التحديث الآن' : `آخر تحديث قبل ${s} ${s <= 10 ? 'ثوانٍ' : 'ثانية'}`;
-  return s < 5 ? 'updated just now' : `updated ${s} seconds ago`;
+  const m = Math.floor(s / 60);
+  if (lang === 'ar') {
+    if (s < 5) return 'تم التحديث الآن';
+    if (m < 1) return `آخر تحديث قبل ${s} ${s <= 10 ? 'ثوانٍ' : 'ثانية'}`;
+    if (m === 1) return 'آخر تحديث قبل دقيقة';
+    if (m === 2) return 'آخر تحديث قبل دقيقتين';
+    return `آخر تحديث قبل ${m} ${m <= 10 ? 'دقائق' : 'دقيقة'}`;
+  }
+  if (s < 5) return 'updated just now';
+  if (m < 1) return `updated ${s} seconds ago`;
+  return m === 1 ? 'updated 1 minute ago' : `updated ${m} minutes ago`;
+}
+
+/** When a delayed price is from, in Muscat time: "Last price: Tuesday 3:10 PM"; adds the date after 6 days (review I5). */
+export function lastPriceText(lang, updatedAt, now = Date.now()) {
+  if (!Number.isFinite(updatedAt)) return '';
+  const old = now - updatedAt > 6 * 864e5;
+  const f = new Intl.DateTimeFormat(lang === 'ar' ? 'ar-OM-u-nu-latn' : 'en-US', {
+    timeZone: 'Asia/Muscat', weekday: 'long', hour: 'numeric', minute: '2-digit', ...(old ? { day: 'numeric', month: 'long' } : {}),
+  });
+  return `${lang === 'ar' ? 'آخر سعر: ' : 'Last price: '}${f.format(updatedAt)}`;
 }
 
 const MONTHS = {

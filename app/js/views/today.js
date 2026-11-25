@@ -3,7 +3,7 @@ import { KARATS, TOLA_G } from '../config.js';
 import { liveStatus } from '../time.js';
 import { lastClose, yearShareBelow, tierOf, hintOf } from '../history.js';
 import { startLive } from '../live.js';
-import { agoText, dayMonthYear } from '../i18n.js';
+import { agoText, dayMonthYear, lastPriceText } from '../i18n.js';
 import { odometer } from '../ui/odometer.js';
 import { syncKarats } from '../ui/karats.js';
 
@@ -42,7 +42,9 @@ export function mount(app) {
     el.status.hidden = s === 'none'; // the price area already says the price is not available
     el.statusText.textContent = s === 'live' ? app.t('live') : app.t(s);
     const since = app.price.fetchedAt ?? app.price.updatedAt;
-    el.statusAgo.textContent = s === 'live' && since ? agoText(app.state.lang, Math.max(0, Math.round((Date.now() - since) / 1000))) : '';
+    if (s === 'live' && since) el.statusAgo.textContent = agoText(app.state.lang, Math.max(0, Math.round((Date.now() - since) / 1000)));
+    else if (s === 'delayed') el.statusAgo.textContent = lastPriceText(app.state.lang, app.price.updatedAt); // say how old the price is
+    else el.statusAgo.textContent = '';
   }
 
   function renderChange() {
