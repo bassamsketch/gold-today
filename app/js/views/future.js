@@ -1,29 +1,48 @@
 import { buildForecast, surveyComparison } from '../forecast.js';
 import { gramPrice, formatNum } from '../price.js';
-import { dayMonthYear, monthYear } from '../i18n.js';
+import { dayMonthYear } from '../i18n.js';
 import { drawFuture } from '../ui/chart.js';
 import { countUp } from '../ui/countup.js';
 import { openSheet, closeOnBackdrop } from '../ui/sheet.js';
 import { syncKarats } from '../ui/karats.js';
 
 const $ = (id) => document.getElementById(id);
-const CREDITS = '@shahmansi130, @sfhashemi, @sarimkx (Unsplash)';
+const DATA = 'gold-api.com, OANDA (TradingView), World Bank (freegoldapi.com), LBMA';
+const PHOTOS = '@sfhashemi, @jesus_eca, @sarimkx (Unsplash)';
 
-/** Future tab: expected prices for 1, 5 and 10 years, sources, and how good forecasts have been. */
+// Latin names inside Arabic text are isolated, so brackets and full stops stay in place (QA6).
+function latin(text) {
+  const b = document.createElement('bdi');
+  b.lang = 'en';
+  b.dir = 'ltr';
+  b.textContent = text;
+  return b;
+}
+
+// The horizon most targets share, e.g. '2027-12'.
+function horizonOf(fc) {
+  const count = {};
+  for (const x of fc.targets || []) count[x.horizon] = (count[x.horizon] || 0) + 1;
+  return Object.entries(count).sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+}
+
+/** Future tab: today, the banks' forecast, gold's own history as a range, sources, and how good forecasts have been. */
 export function mount(app) {
   const el = {
-    sub: $('outlook-sub'), svg: $('fchart'), f1: $('f1'), f5: $('f5'), f10: $('f10'),
-    n1: $('f1-note'), n5: $('f5-note'), n10: $('f10-note'), win0: $('win0'), win1: $('win1'), survey: $('survey'),
-    updated: $('f-updated'), sources: $('f-sources'), open: $('open-sources'), sheet: $('sources-sheet'),
-    list: $('src-list'), close: $('sources-close'), karats: $('future-karats'),
+    sub: $('outlook-sub'), svg: $('fchart'), today: $('f-today'), f1: $('f1'), f1for: $('f1-for'), n1: $('f1-note'),
+    hist: $('hist'), f5: $('f5'), f10: $('f10'), win0: $('win0'), win1: $('win1'), survey: $('survey'),
+    updated: $('f-updated'), data: $('f-data'), photos: $('f-photos'), open: $('open-sources'),
+    sheet: $('sources-sheet'), list: $('src-list'), close: $('sources-close'), karats: $('future-karats'),
   };
 
   function compute() {
     const h = app.data.history, fc = app.data.forecasts;
     if (!h || !fc) return null;
-    const usd = Number.isFinite(app.price.usd) ? app.price.usd : h.daily.at(-1)?.c;
-    if (!Number.isFinite(usd)) return null;
-    return { h, fc, usd, f: buildForecast(fc, h.monthly, usd) };
+    // the history ranges start from the last daily close, so they change once a day, not every 10 s (QA1)
+    const close = h.daily.at(-1)?.c;
+    if (!Number.isFinite(close)) return null;
+    const live = Number.isFinite(app.price.usd) ? app.price.usd : close;
+    return { h, fc, live, f: buildForecast(fc, h.monthly, close) };
   }
 
   function render(animate) {
@@ -31,62 +50,77 @@ export function mount(app) {
     if (!c) return;
     const k = app.state.karat, lang = app.state.lang;
     const g = (u) => gramPrice(u, k);
-    const toGram = (b) => b && { lo: g(b.lo), mid: g(b.mid), hi: g(b.hi) };
-    const y1 = toGram(c.f.y1), y5 = toGram(c.f.y5), y10 = toGram(c.f.y10);
+    const y1 = c.f.y1 && { lo: g(c.f.y1.lo), mid: g(c.f.y1.mid), hi: g(c.f.y1.hi) };
+    const band = (b) => b && { lo: g(b.lo), hi: g(b.hi) };
+    const y5 = band(c.f.y5), y10 = band(c.f.y10);
+    const today = g(c.live);
     el.sub.textContent = app.t('outlookSub', k);
+    el.today.textContent = formatNum(today, 1);
 
     if (y1) {
-      countUp(el.f1, y1.mid, 2);
+      countUp(el.f1, y1.mid, 1);
+      el.f1for.textContent = app.t('bankFor', horizonOf(c.fc));
       el.n1.textContent = app.t('y1Note', c.f.y1.n);
     } else {
       el.f1.textContent = '–';
+      el.f1for.textContent = '';
       el.n1.textContent = '';
     }
     el.open.hidden = !y1;
-    countUp(el.f5, y5.mid, 2);
-    el.n5.textContent = app.t('bandNote', formatNum(y5.lo, 2), formatNum(y5.hi, 2));
-    countUp(el.f10, y10.mid, 2);
-    el.n10.textContent = app.t('bandNote', formatNum(y10.lo, 2), formatNum(y10.hi, 2));
+    el.hist.hidden = !y5 && !y10;
+    el.f5.textContent = y5 ? app.t('histRange', y5.lo, y5.hi) : '–';
+    el.f10.textContent = y10 ? app.t('histRange', y10.lo, y10.hi) : '–';
 
-    const past = c.h.monthly.slice(-61, -1).map((m) => g(m.c)).concat(g(c.usd));
-    drawFuture(el.svg, { past, today: g(c.usd), y1, y5, y10, labels: [app.t('ago5'), app.t('today'), app.t('in10')], bankLabel: app.t('banksLabel') }, animate);
+    const past = c.h.monthly.slice(-61, -1).map((m) => g(m.c)).concat(today);
+    drawFuture(el.svg, {
+      past, today, y1, y5, y10,
+      words: { today: app.t('today'), bank: app.t('banksLabel'), start: app.t('ago5'), end: app.t('in10') },
+      values: { today: formatNum(today, 1), bank: y1 ? formatNum(y1.mid, 1) : '' },
+    }, animate);
     syncKarats(el.karats, k, 'fk');
 
     const lb = c.fc.lbma || {};
     [el.win0, el.win1].forEach((p, i) => {
       const w = lb.winners?.[i];
       p.hidden = !w;
-      if (w) p.textContent = app.t('winnerLine', w.year, w.name, w.org, formatNum(w.forecast, 0), formatNum(w.actual, 0), formatNum((Math.abs(w.actual - w.forecast) / w.actual) * 100, 0));
+      if (w) p.textContent = app.t('winnerLine', w.year, w.forecast, w.actual, formatNum((Math.abs(w.actual - w.forecast) / w.actual) * 100, 0));
     });
     const sv = surveyComparison(lb, c.h.daily); // bounded to the survey's own year
     el.survey.hidden = !sv;
-    if (sv) el.survey.textContent = app.t('surveyLine', sv.year, formatNum(sv.avg, 0), formatNum(sv.actual, 0));
+    if (sv) el.survey.textContent = app.t('surveyLine', sv.year, sv.avg, sv.actual);
 
     el.updated.textContent = app.t('updatedOn', dayMonthYear(lang, c.fc.asOf));
-    el.sources.textContent = `${app.t('dataSources')}: gold-api.com, OANDA (TradingView), World Bank (freegoldapi.com), LBMA. ${app.t('photos')}: ${CREDITS}.`;
+    el.data.replaceChildren(`${app.t('dataSources')}: `, latin(DATA));
+    el.photos.replaceChildren(`${app.t('photos')}: `, latin(PHOTOS));
     renderSources(c.fc);
   }
 
   function renderSources(fc) {
-    const lang = app.state.lang;
+    const lang = app.state.lang, k = app.state.karat;
     el.list.replaceChildren(...(fc.targets || []).map((x) => {
       const li = document.createElement('li');
       const name = document.createElement('b');
       name.textContent = lang === 'ar' ? x.institutionAr || x.institution : x.institution;
-      const target = document.createElement('p');
+      // the target for the chosen karat in rials per gram, then the dollar figure it comes from (QA25)
+      const main = document.createElement('p');
+      main.className = 'src-main';
       const num = document.createElement('span');
       num.className = 'num';
-      num.textContent = `$${formatNum(x.usd, 0)}`;
-      target.append(num, ` ${app.t('targetBy', monthYear(lang, x.horizon))}`);
+      num.textContent = formatNum(gramPrice(x.usd, k), 1);
+      main.append(num, ` ${app.t('srcGram', k)} · ${app.t('targetBy', x.horizon)}`);
+      const oz = document.createElement('p');
+      oz.className = 'sub';
+      oz.textContent = app.t('srcOz', x.usd);
       const meta = document.createElement('p');
       meta.className = 'sub';
-      meta.textContent = app.t('publishedVia', dayMonthYear(lang, x.published), x.reportedBy || x.institution);
-      li.append(name, target, meta);
+      meta.append(`${app.t('publishedVia', dayMonthYear(lang, x.published))} `, latin(x.reportedBy || x.institution));
+      li.append(name, main, oz, meta);
       if (typeof x.url === 'string' && x.url.startsWith('https://')) {
         const a = document.createElement('a');
         a.href = x.url;
         a.target = '_blank';
         a.rel = 'noopener';
+        a.lang = 'en';
         a.textContent = new URL(x.url).hostname.replace(/^www\./, '');
         li.append(a);
       }

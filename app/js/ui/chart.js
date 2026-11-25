@@ -1,4 +1,4 @@
-const W = 340, H = 200, TOP = 16, BOT = 30, X0 = 6, XS = W * 0.36, X1 = W - 6;
+const W = 340, H = 210, TOP = 16, BOT = 30, X0 = 6, XS = W * 0.36, X1 = W - 6;
 const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const ease = (t) => 1 - Math.pow(1 - t, 4);
 const f1 = (n) => n.toFixed(1);
@@ -12,14 +12,16 @@ function smooth(pts) {
   return d;
 }
 const line = (pts) => pts.map((p, i) => `${i ? 'L' : 'M'}${f1(p[0])},${f1(p[1])}`).join(' ');
+const put = (el, attrs) => Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, typeof v === 'number' ? f1(v) : v));
 
 /**
- * Past 5 years (solid, log scale) joined at today to the history-based path (dotted) through the
- * 5 and 10-year points, inside its low-high band. The banks' 1-year view is drawn apart, as its own
- * marker with its range, so the two methods never read as one path. Values are in rials per gram.
+ * Past 5 years (solid, log scale), then the range gold's own history gives for 5 and 10 years as a
+ * faint fan with no middle line, so it never reads as a prediction (QA1). The banks' view is a
+ * separate marker with its range. Today's point and the banks' marker carry their values (QA25).
+ * Word labels and values sit on separate lines, so Arabic and digits never mix in one SVG line.
  */
-export function drawFuture(svg, { past, today, y1, y5, y10, labels, bankLabel }, animate) {
-  const knots = [{ m: 0, lo: today, mid: today, hi: today }];
+export function drawFuture(svg, { past, today, y1, y5, y10, words, values }, animate) {
+  const knots = [{ m: 0, lo: today, hi: today }];
   if (y5) knots.push({ m: 60, ...y5 });
   if (y10) knots.push({ m: 120, ...y10 });
   const all = past.concat(knots.flatMap((k) => [k.lo, k.hi]), y1 ? [y1.lo, y1.hi] : []);
@@ -30,34 +32,35 @@ export function drawFuture(svg, { past, today, y1, y5, y10, labels, bankLabel },
   const q = (sel) => svg.querySelector(sel);
 
   q('.f-past').setAttribute('d', smooth(past.map((v, i) => [xp(i), Y(v)])));
-  q('.f-mid').setAttribute('d', line(knots.map((k) => [xf(k.m), Y(k.mid)])));
   const hi = knots.map((k) => [xf(k.m), Y(k.hi)]), lo = knots.map((k) => [xf(k.m), Y(k.lo)]).reverse();
-  q('.f-band').setAttribute('d', `${line(hi)} ${line(lo).replace(/^M/, 'L')} Z`);
-  const marks = svg.querySelectorAll('.f-m');
-  marks.forEach((c, i) => {
-    const k = knots[i + 1];
-    c.style.display = k ? '' : 'none';
-    if (k) { c.setAttribute('cx', f1(xf(k.m))); c.setAttribute('cy', f1(Y(k.mid))); }
-  });
-  const range = q('.f-bank-range'), bank = q('.f-bank'), bankText = q('.f-bank-l');
-  [range, bank, bankText].forEach((n) => { n.style.display = y1 ? '' : 'none'; });
+  q('.f-band').setAttribute('d', knots.length > 1 ? `${line(hi)} ${line(lo).replace(/^M/, 'L')} Z` : '');
+
+  const bank = [q('.f-bank-range'), q('.f-bank'), q('.f-bank-w'), q('.f-bank-v')];
+  bank.forEach((n) => { n.style.display = y1 ? '' : 'none'; });
   if (y1) {
-    const x = xf(12);
-    range.setAttribute('x1', f1(x)); range.setAttribute('x2', f1(x));
-    range.setAttribute('y1', f1(Y(y1.hi))); range.setAttribute('y2', f1(Y(y1.lo)));
-    bank.setAttribute('cx', f1(x)); bank.setAttribute('cy', f1(Y(y1.mid)));
-    bankText.setAttribute('x', f1(x + 8)); bankText.setAttribute('y', f1(Y(y1.hi) + 4));
-    bankText.textContent = bankLabel || '';
+    const x = xf(12), y = Y(y1.mid);
+    put(bank[0], { x1: x, x2: x, y1: Y(y1.hi), y2: Y(y1.lo) });
+    put(bank[1], { cx: x, cy: y });
+    put(bank[2], { x: x + 10, y: y - 4 });
+    put(bank[3], { x: x + 10, y: y + 11 });
+    bank[2].textContent = words.bank;
+    bank[3].textContent = values.bank;
   }
-  const td = q('.f-today');
-  td.setAttribute('x1', f1(XS)); td.setAttribute('x2', f1(XS)); td.setAttribute('y1', TOP - 8); td.setAttribute('y2', H - BOT + 6);
-  const now = q('.f-now');
-  now.setAttribute('cx', f1(XS)); now.setAttribute('cy', f1(Y(today)));
-  [['.f-l0', X0], ['.f-l1', XS], ['.f-l2', X1]].forEach(([sel, x], i) => {
+
+  put(q('.f-today'), { x1: XS, x2: XS, y1: TOP - 8, y2: H - BOT + 6 });
+  const ty = Y(today);
+  put(q('.f-now'), { cx: XS, cy: ty });
+  // below and right of today's point: under the fan's lower edge, clear of the past line; above it when too low
+  const below = ty + 36 <= H - BOT + 8;
+  put(q('.f-now-w'), { x: XS + 9, y: below ? ty + 19 : ty - 24 });
+  put(q('.f-now-v'), { x: XS + 9, y: below ? ty + 34 : ty - 9 });
+  q('.f-now-w').textContent = words.today;
+  q('.f-now-v').textContent = values.today;
+
+  [['.f-l0', X0, words.start], ['.f-l2', X1, words.end]].forEach(([sel, x, text]) => {
     const t = q(sel);
-    t.setAttribute('x', f1(x));
-    t.setAttribute('y', H - 8);
-    t.textContent = labels[i];
+    put(t, { x, y: H - 8 });
+    t.textContent = text;
   });
 
   const clip = q('.f-clip');

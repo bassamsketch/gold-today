@@ -1,5 +1,5 @@
 // Offline support (design section 9). Bump VERSION when the precache list changes.
-const VERSION = 'gold-today-v3';
+const VERSION = 'gold-today-v4';
 const PRECACHE = [
   './',
   'index.html',
@@ -15,19 +15,15 @@ const PRECACHE = [
   'fonts/Almarai-normal-400-latin.woff2',
   'fonts/Almarai-normal-700-arabic.woff2',
   'fonts/Almarai-normal-700-latin.woff2',
-  'fonts/NotoNaskhArabic-normal-700-arabic.woff2',
-  'fonts/SourceSerif4-normal-500-latin.woff2',
-  'fonts/SourceSerif4-normal-600-latin.woff2',
+  'fonts/NotoNaskhArabic-normal-600_700-arabic.woff2',
+  'fonts/SourceSerif4-normal-500_600-latin.woff2',
   'icons/apple-touch-icon.png',
   'icons/icon-192.png',
   'icons/icon-512.png',
   'icons/icon-maskable-512.png',
   'img/gold-1200.webp',
-  'img/gold-600.webp',
   'img/hero-1200.webp',
-  'img/hero-600.webp',
   'img/shop-1200.webp',
-  'img/shop-600.webp',
   'js/calc.js',
   'js/config.js',
   'js/forecast.js',
@@ -60,34 +56,44 @@ self.addEventListener('activate', (e) => {
   e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== VERSION).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
 });
 
+const NET_TIMEOUT = 4000;
+
+// The page, its code and its data come from the network first, so one release never mixes with
+// another (QA34). The cached copy answers offline, or when the network takes longer than 4 s.
+function networkFirst(e, req, key) {
+  const net = fetch(req).then((res) => {
+    if (res.ok) {
+      const copy = res.clone(); // copy now: once the page reads res, it can no longer be cloned
+      const put = caches.open(VERSION).then((c) => c.put(key, copy));
+      try {
+        e.waitUntil(put);
+      } catch {
+        /* the page was already answered from the cache; the copy is still stored */
+      }
+    }
+    return res;
+  });
+  const slow = new Promise((_, reject) => setTimeout(() => reject(new Error('slow network')), NET_TIMEOUT));
+  return Promise.race([net, slow]).catch(async () => (await caches.match(key, { ignoreSearch: true })) || net);
+}
+
+// Fonts, photos and icons never change under the same name: the cache answers first.
+function cacheFirst(e, req) {
+  return caches.match(req, { ignoreSearch: true }).then((hit) => hit || fetch(req).then((res) => {
+    if (res.ok) {
+      const copy = res.clone();
+      e.waitUntil(caches.open(VERSION).then((c) => c.put(req, copy)));
+    }
+    return res;
+  }));
+}
+
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   const url = new URL(req.url);
   // Only same-origin GETs; the live price feed is never cached here (the app keeps the last price itself).
   if (req.method !== 'GET' || url.origin !== self.location.origin) return;
+  if (/\/(fonts|img|icons)\//.test(url.pathname)) return e.respondWith(cacheFirst(e, req));
   const isPage = req.mode === 'navigate' && /\/(index\.html)?$/.test(url.pathname);
-  if (isPage || url.pathname.includes('/data/')) {
-    // Network first so prices, forecasts and the page stay fresh; fall back to the cached copy offline.
-    const key = isPage ? './' : req;
-    e.respondWith(
-      fetch(req)
-        .then((res) => {
-          if (res.ok) {
-            const copy = res.clone(); // copy now: once the page reads res, it can no longer be cloned
-            e.waitUntil(caches.open(VERSION).then((c) => c.put(key, copy)));
-          }
-          return res;
-        })
-        .catch(() => caches.match(key)),
-    );
-    return;
-  }
-  // Code, fonts and images: serve from cache at once, refresh the cache in the background.
-  e.respondWith(
-    caches.open(VERSION).then(async (c) => {
-      const hit = await c.match(req, { ignoreSearch: true });
-      const net = fetch(req).then((res) => { if (res.ok) c.put(req, res.clone()); return res; }).catch(() => hit);
-      return hit || net;
-    }),
-  );
+  e.respondWith(networkFirst(e, req, isPage ? './' : req));
 });

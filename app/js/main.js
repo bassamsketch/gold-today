@@ -1,6 +1,7 @@
 import { load, save } from './store.js';
 import { t } from './i18n.js';
 import { syncKarats } from './ui/karats.js';
+import { closeOpenSheet } from './ui/sheet.js';
 
 const storage = (() => {
   try {
@@ -13,11 +14,12 @@ const storage = (() => {
 const state = load(storage);
 const listeners = new Map();
 
-/** Shared app object handed to every view's mount(app). Events: lang, karat, price, data, view, pieces. */
+/** Shared app object handed to every view's mount(app). Events: lang, karat, price, data, view, pieces, layout. */
 export const app = {
   state,
   data: { history: null, forecasts: null, why: null, places: null },
-  price: { usd: state.last?.usd ?? null, updatedAt: state.last?.updatedAt ?? null },
+  price: { usd: state.last?.usd ?? null, updatedAt: state.last?.updatedAt ?? null, fetchedAt: null },
+  startedAt: Date.now(),
   view: 'today',
   on(evt, fn) {
     if (!listeners.has(evt)) listeners.set(evt, []);
@@ -50,14 +52,14 @@ function applyLang() {
   root.dir = state.lang === 'ar' ? 'rtl' : 'ltr';
   document.title = app.t('appName');
   document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = app.t(el.dataset.t); });
-  document.querySelectorAll('[data-alt]').forEach((el) => { el.alt = app.t(el.dataset.alt); });
   document.querySelectorAll('[data-aria]').forEach((el) => el.setAttribute('aria-label', app.t(el.dataset.aria)));
   document.querySelectorAll('[data-ph]').forEach((el) => { el.placeholder = app.t(el.dataset.ph); });
   document.querySelectorAll('[data-k-label]').forEach((el) => { el.textContent = app.t('karatN', el.dataset.kLabel); });
+  document.querySelector('[data-lang-toggle]')?.setAttribute('lang', state.lang === 'ar' ? 'en' : 'ar');
   requestAnimationFrame(() => syncKarats(document.getElementById('karats'), state.karat, 'k'));
 }
 
-function setView(name) {
+function show(name) {
   app.view = name;
   document.querySelectorAll('.view').forEach((v) => v.classList.toggle('on', v.dataset.view === name));
   document.querySelectorAll('.tabbar [data-tab]').forEach((b) => {
@@ -69,6 +71,26 @@ function setView(name) {
   window.scrollTo({ top: 0 });
   app.emit('view', name);
 }
+
+// Each tab away from Today adds one history entry, so Android's back button returns to Today
+// before it leaves the app (QA31). Moving between the other tabs replaces that entry.
+function setView(name) {
+  if (name === app.view) return;
+  if (name === 'today') {
+    if (history.state?.view && history.state.view !== 'today') return history.back(); // popstate shows Today
+    show('today');
+    return;
+  }
+  if (app.view === 'today') history.pushState({ view: name }, '');
+  else history.replaceState({ view: name }, '');
+  show(name);
+}
+
+window.addEventListener('popstate', (e) => {
+  if (closeOpenSheet()) return; // back closes an open sheet first
+  const view = e.state?.view || 'today';
+  if (view !== app.view) show(view);
+});
 
 document.addEventListener('click', (e) => {
   const tab = e.target.closest('[data-tab]');
@@ -82,22 +104,28 @@ async function loadData() {
     names.map((n) => fetch(`data/${n}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null)),
   );
   names.forEach((n, i) => { app.data[n] = files[i]; });
-  app.emit('data');
 }
 
 const VIEWS = ['./views/today.js', './views/mygold.js', './views/future.js', './views/buysell.js', './ui/share.js', './install.js'];
 
+// The data and every module load at once (QA35); one broken tab must not stop the others.
 async function start() {
+  history.replaceState({ view: 'today' }, '');
   applyLang();
-  for (const path of VIEWS) {
+  const data = loadData();
+  const mods = await Promise.all(VIEWS.map((path) => import(path).catch((err) => {
+    console.error(path, err);
+    return null;
+  })));
+  mods.forEach((mod, i) => {
     try {
-      const mod = await import(path);
-      mod.mount?.(app);
+      mod?.mount?.(app);
     } catch (err) {
-      console.error(path, err); // one broken tab must not stop the others
+      console.error(VIEWS[i], err);
     }
-  }
-  await loadData();
+  });
+  await data;
+  app.emit('data');
   if (document.fonts) document.fonts.ready.then(() => app.emit('layout'));
 }
 

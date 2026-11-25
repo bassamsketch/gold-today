@@ -33,3 +33,17 @@ test('validatePiece fills optional fields and rejects bad weights or karats', ()
   assert.equal(validatePiece({ grams: 10, karat: 20 }), null);
   assert.equal(validatePiece({ grams: 10, karat: 21, boughtYm: '2019-13' }).boughtYm, null);
 });
+
+test('estimates and gains are null without a live price', () => {
+  const p = [piece({ boughtPrice: 300, boughtYm: '2019-03' })];
+  assert.equal(sellEstimate(p, null), null);
+  assert.equal(sellEstimate(p, NaN), null);
+  assert.equal(pieceGain(p[0], undefined), null);
+  assert.equal(totalGain(p, null), null);
+});
+
+test('a purchase date may be a year alone', () => {
+  assert.equal(validatePiece({ grams: 10, karat: 21, boughtYm: '2019' }).boughtYm, '2019');
+  assert.equal(validatePiece({ grams: 10, karat: 21, boughtYm: '2019-03' }).boughtYm, '2019-03');
+  assert.equal(validatePiece({ grams: 10, karat: 21, boughtYm: '2019-13' }).boughtYm, null);
+});

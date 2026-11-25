@@ -1,72 +1,92 @@
 import { gramPrice, formatNum } from '../price.js';
 import { KARATS, TOLA_G } from '../config.js';
 import { liveStatus } from '../time.js';
-import { lastClose, yearShareBelow, tierOf, hintOf } from '../history.js';
+import { yearShareBelow, tierOf, hintOf, newsVisible, compareClose } from '../history.js';
 import { startLive } from '../live.js';
-import { agoText, dayMonthYear, lastPriceText } from '../i18n.js';
+import { agoText, dayMonth, lastPriceText, closeDay } from '../i18n.js';
 import { odometer } from '../ui/odometer.js';
 import { syncKarats } from '../ui/karats.js';
 
 const $ = (id) => document.getElementById(id);
+const secsSince = (t) => (Number.isFinite(t) ? Math.max(0, Math.round((Date.now() - t) / 1000)) : 0);
 
-/** Today tab: live price, karat choice, live status, change, why gold moved, year comparison, price board. */
+/** Today tab: live price, karat choice, live status, change, latest news, year comparison, price board. */
 export function mount(app) {
   const el = {
-    price: $('price'), unit: $('price-unit'), missing: $('price-missing'), karats: $('karats'),
-    status: $('status'), statusText: $('status-text'), statusAgo: $('status-ago'), change: $('change'),
-    why: $('why'), whyText: $('why-text'), whySrc: $('why-src'),
-    year: $('year'), mood: $('mood'), dot: $('year-dot'), hint: $('hint'),
-    rows: $('board-rows'), world: $('world'),
+    cap: $('price-cap'), price: $('price'), unit: $('price-unit'), skel: $('price-skel'), missing: $('price-missing'),
+    karats: $('karats'), status: $('status'), statusText: $('status-text'), statusSep: $('status-sep'),
+    statusGap: $('status-gap'), statusAgo: $('status-ago'), change: $('change'),
+    why: $('why'), whyTitle: $('why-title'), whyText: $('why-text'), whySrc: $('why-src'), whySrcName: $('why-src-name'),
+    year: $('year'), mood: $('mood'), dot: $('year-dot'), hint: $('hint'), rows: $('board-rows'), world: $('world'), hero: $('hero'),
   };
   const usd = () => app.price.usd;
   const has = () => Number.isFinite(app.price.usd);
+  const status = () => liveStatus({
+    price: usd(), updatedAt: app.price.updatedAt, fetchedAt: app.price.fetchedAt ?? null, now: Date.now(), startedAt: app.startedAt,
+  });
 
-  el.rows.innerHTML = KARATS.map((k) => `<tr data-row="${k}" tabindex="0"><td data-board-k></td><td data-c="1"></td><td data-c="10"></td><td data-c="t"></td></tr>`).join('');
+  el.rows.innerHTML = KARATS.map((k) => `<tr data-row="${k}" tabindex="0"><td>${k}</td><td data-c="1"></td><td data-c="10"></td><td data-c="t"></td></tr>`).join('');
 
-  function renderPrice() {
+  // The caption names the karat (QA4) and stops saying "now" when the price is not live (QA3).
+  function renderCaption(s) {
+    el.cap.textContent = app.t(['live', 'recent', 'none'].includes(s) ? 'perGramNow' : 'lastGram', app.state.karat);
+    el.skel.hidden = has() || s !== 'loading';
+    el.missing.hidden = has() || s === 'loading';
+    if (!has()) el.missing.textContent = app.t('none');
+  }
+
+  function renderPrice(s) {
     el.price.hidden = !has();
     el.unit.hidden = !has();
-    el.missing.hidden = has();
-    if (!has()) {
-      el.missing.textContent = app.t('none');
-      return;
-    }
+    renderCaption(s);
+    if (!has()) return;
     const text = formatNum(gramPrice(usd(), app.state.karat), 3);
     odometer(el.price, text);
     el.price.setAttribute('aria-label', app.t('priceAria', text, app.state.karat));
   }
 
-  function renderStatus() {
-    const s = liveStatus({ price: usd(), updatedAt: app.price.updatedAt, now: Date.now() });
+  function renderStatus(s) {
+    const lang = app.state.lang;
     el.status.className = `status ${s}`;
     el.status.hidden = s === 'none'; // the price area already says the price is not available
-    el.statusText.textContent = s === 'live' ? app.t('live') : app.t(s);
-    const since = app.price.fetchedAt ?? app.price.updatedAt;
-    if (s === 'live' && since) el.statusAgo.textContent = agoText(app.state.lang, Math.max(0, Math.round((Date.now() - since) / 1000)));
-    else if (s === 'delayed') el.statusAgo.textContent = lastPriceText(app.state.lang, app.price.updatedAt); // say how old the price is
-    else el.statusAgo.textContent = '';
+    let text = '', ago = '';
+    if (s === 'live') {
+      text = app.t('live');
+      ago = agoText(lang, secsSince(app.price.fetchedAt));
+    } else if (s === 'recent') {
+      ago = agoText(lang, secsSince(app.price.fetchedAt ?? app.price.updatedAt));
+    } else if (s === 'delayed') {
+      text = app.t('delayed');
+      ago = lastPriceText(lang, app.price.updatedAt);
+    } else if (s === 'closed' || s === 'loading') {
+      text = app.t(s);
+    }
+    el.statusText.textContent = text;
+    el.statusAgo.textContent = ago;
+    el.statusSep.hidden = el.statusGap.hidden = !(text && ago);
   }
 
   function renderChange() {
-    const lc = has() && app.data.history ? lastClose(app.data.history.daily, new Date()) : null;
-    el.change.hidden = !lc;
-    if (!lc) return;
+    const daily = app.data.history?.daily;
+    const ref = has() && daily ? compareClose(daily, app.price.updatedAt ?? Date.now(), Date.now()) : null;
+    el.change.hidden = !ref;
+    if (!ref) return;
     const k = app.state.karat;
-    const diff = gramPrice(usd(), k) - gramPrice(lc.c, k);
+    const diff = gramPrice(usd(), k) - gramPrice(ref.c, k);
     const a = Math.abs(diff);
-    el.change.textContent = a < 0.0005 ? app.t('same') : diff < 0 ? `↓ ${app.t('less', formatNum(a, 3))}` : `↑ ${app.t('more', formatNum(a, 3))}`;
+    const day = closeDay(app.state.lang, ref.d, ref.yesterday);
+    el.change.textContent = a < 0.0005 ? app.t('same', day) : diff < 0 ? `↓ ${app.t('less', formatNum(a, 3), day)}` : `↑ ${app.t('more', formatNum(a, 3), day)}`;
   }
 
   function renderWhy() {
     const w = app.data.why;
-    const ageDays = w ? (Date.now() - Date.parse(`${w.date}T00:00:00Z`)) / 864e5 : Infinity;
-    el.why.hidden = !(ageDays <= 3);
-    if (el.why.hidden) return;
+    const show = Boolean(w) && newsVisible(w.date, new Date()); // one trading day, then it goes (QA22)
+    el.why.hidden = !show;
+    if (!show) return;
     const lang = app.state.lang;
+    el.whyTitle.textContent = app.t('whyTitle', dayMonth(lang, w.date));
     el.whyText.textContent = lang === 'ar' ? w.ar : w.en;
-    const src = document.createElement('bdi'); // isolate the Latin source name inside Arabic text
-    src.textContent = w.source;
-    el.whySrc.replaceChildren(src, `${lang === 'ar' ? '، ' : ', '}${dayMonthYear(lang, w.date)}`);
+    el.whySrcName.textContent = w.source;
     if (typeof w.url === 'string' && w.url.startsWith('https://')) el.whySrc.href = w.url;
     else el.whySrc.removeAttribute('href');
   }
@@ -84,26 +104,36 @@ export function mount(app) {
   function renderBoard() {
     el.rows.querySelectorAll('tr').forEach((tr) => {
       const k = Number(tr.dataset.row);
-      tr.classList.toggle('on', k === app.state.karat);
-      tr.setAttribute('aria-selected', String(k === app.state.karat));
-      tr.querySelector('[data-board-k]').textContent = app.t('karatN', k);
+      const on = k === app.state.karat;
+      tr.classList.toggle('on', on);
+      if (on) tr.setAttribute('aria-current', 'true');
+      else tr.removeAttribute('aria-current');
       const g = has() ? gramPrice(usd(), k) : null;
+      // three decimals everywhere, as rials have 1,000 baisa (QA44)
       tr.querySelector('[data-c="1"]').textContent = g == null ? '–' : formatNum(g, 3);
-      tr.querySelector('[data-c="10"]').textContent = g == null ? '–' : formatNum(g * 10, 2);
-      tr.querySelector('[data-c="t"]').textContent = g == null ? '–' : formatNum(g * TOLA_G, 2);
+      tr.querySelector('[data-c="10"]').textContent = g == null ? '–' : formatNum(g * 10, 3);
+      tr.querySelector('[data-c="t"]').textContent = g == null ? '–' : formatNum(g * TOLA_G, 3);
     });
   }
 
   function renderAll() {
-    renderPrice();
-    renderStatus();
+    const s = status();
+    renderPrice(s);
+    renderStatus(s);
     renderChange();
     renderWhy();
     renderYear();
     renderBoard();
-    el.world.textContent = has() ? app.t('world', formatNum(usd(), 0)) : '';
+    el.world.textContent = has() ? app.t('world', usd()) : '';
     syncKarats(el.karats, app.state.karat, 'k');
   }
+
+  // The status line updates every 10 s, not every second (QA45).
+  const tick = () => {
+    const s = status();
+    renderCaption(s);
+    renderStatus(s);
+  };
 
   el.karats.addEventListener('click', (e) => {
     const b = e.target.closest('[data-k]');
@@ -123,6 +153,11 @@ export function mount(app) {
   app.on('layout', () => syncKarats(el.karats, app.state.karat, 'k'));
   app.on('view', (v) => { if (v === 'today') requestAnimationFrame(() => syncKarats(el.karats, app.state.karat, 'k')); });
 
+  // The hero's slow zoom and sheen pause while the photo is off screen (QA35).
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => el.hero.classList.toggle('off', !e.isIntersecting)).observe(el.hero);
+  }
+
   let live = null;
   const onPrice = (p) => {
     app.price = { ...p, fetchedAt: Date.now() };
@@ -134,8 +169,16 @@ export function mount(app) {
     live?.stop();
     live = startLive({ onPrice });
   };
-  document.addEventListener('visibilitychange', () => (document.hidden ? live?.stop() : startPolling()));
-  setInterval(renderStatus, 1000);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return live?.stop();
+    // back on screen: say we are fetching until the first answer, instead of flashing "delayed"
+    app.price = { ...app.price, fetchedAt: null };
+    app.startedAt = Date.now();
+    tick();
+    startPolling();
+  });
+  setInterval(tick, 10000);
+  setTimeout(tick, 8200); // the first-visit placeholder gives way to the message at 8 s
   renderAll();
   startPolling();
 }

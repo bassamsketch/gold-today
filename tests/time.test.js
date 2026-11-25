@@ -11,11 +11,13 @@ test('market closed window', () => {
 
 test('liveStatus states', () => {
   const wed = Date.parse('2026-11-25T12:00:00Z');
-  assert.equal(liveStatus({ price: null, updatedAt: null, now: wed }), 'none');
-  assert.equal(liveStatus({ price: 3470, updatedAt: wed - 30e3, now: wed }), 'live');
-  assert.equal(liveStatus({ price: 3470, updatedAt: wed - 20 * 60e3, now: wed }), 'delayed');
+  assert.equal(liveStatus({ price: null, updatedAt: null, fetchedAt: null, now: wed, startedAt: wed - 2e3 }), 'loading');
+  assert.equal(liveStatus({ price: null, updatedAt: null, fetchedAt: null, now: wed, startedAt: wed - 20e3 }), 'none');
+  assert.equal(liveStatus({ price: 3470, updatedAt: wed - 30e3, fetchedAt: wed - 5e3, now: wed }), 'live');
+  assert.equal(liveStatus({ price: 3470, updatedAt: wed - 4 * 60e3, fetchedAt: wed - 4 * 60e3, now: wed }), 'recent');
+  assert.equal(liveStatus({ price: 3470, updatedAt: wed - 20 * 60e3, fetchedAt: wed - 5e3, now: wed }), 'delayed');
   const sat = Date.parse('2026-11-28T12:00:00Z');
-  assert.equal(liveStatus({ price: 3470, updatedAt: sat - 54e6, now: sat }), 'closed');
+  assert.equal(liveStatus({ price: 3470, updatedAt: sat - 54e6, fetchedAt: sat - 5e3, now: sat }), 'closed');
 });
 
 test('sessionDate rolls over three hours before midnight UTC', () => {

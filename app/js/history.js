@@ -33,3 +33,30 @@ export function tierOf(share) {
 export function hintOf(tier) {
   return tier < 2 ? 0 : tier === 2 ? 1 : 2;
 }
+
+const HOUR = 3600e3;
+const YMD = /^\d{4}-\d{2}-\d{2}$/;
+const ymdOf = (t) => new Date(t).toISOString().slice(0, 10);
+/** The calendar date in Muscat (UTC+4) at instant t. */
+export const muscatDate = (t) => ymdOf(+t + 4 * HOUR);
+
+function prevTradingDay(ymd) {
+  let n = dayNum(ymd) - 1;
+  while ([0, 6].includes(new Date(n * DAY).getUTCDay())) n--;
+  return ymdOf(n * DAY);
+}
+
+/** A news line dated `ymd` stays up until the trading day after it has passed (QA22). */
+export function newsVisible(ymd, now) {
+  return typeof ymd === 'string' && YMD.test(ymd) && ymd >= prevTradingDay(muscatDate(now));
+}
+
+/**
+ * The close a price is compared with: the last close before the price's own session, so the weekend
+ * shows Friday's move. `yesterday` says whether that close was the day before today in Muscat.
+ */
+export function compareClose(daily, priceAt, now) {
+  const lc = lastClose(daily, new Date(priceAt));
+  if (!lc) return null;
+  return { d: lc.d, c: lc.c, yesterday: lc.d === muscatDate(+now - DAY) };
+}

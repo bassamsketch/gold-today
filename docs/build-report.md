@@ -1,6 +1,79 @@
 # Gold Today build report
 
-Date: 2026-11-25. Branch: main (local). Tests: 51 passing (npm test).
+Date: 2026-11-25. Branch: main. Tests: 68 passing (npm test). Code 41 KB compressed (limit 150 KB), fonts 225 KB (limit 350 KB).
+
+## QA pass after the independent critique (2026-11-25)
+An independent QA agent reviewed the live app and reported 1 blocker, 11 major and 38 minor or polish findings (QA1 to QA50). Each logic change was written as a failing test first (17 new tests). Checked afterwards in the browser at 360x740, 390x844 and 430x932 in Arabic and English: no sideways overflow, no text under 14 px, no tap target under 44 px, no console errors, price and change line above the tab bar at 360x740.
+
+### What changed, by finding
+- QA1 Future: the 5 and 10-year rows now show only a whole-rial range under "لو تكرّر ما حدث منذ 1971", with "هذا ليس توقعاً"; no middle figure, no dotted middle line, no 5/10-year dots. The banks keep one figure (1 decimal, "توقع البنوك لنهاية 2027"). Ranges start from the last daily close, so they change once a day. Chart points carry their values ("اليوم 39.7", "البنوك 56.7"), plus a "Today" row.
+- QA2 the year hints state facts ("الشراء أرخص من المعتاد، والبيع يعطي مبلغاً أقل.") instead of advice.
+- QA3 weekend: "تداول الذهب العالمي متوقف حتى فجر الاثنين. هذا آخر سعر من مساء الجمعة.", on two lines; the caption becomes "آخر سعر لجرام الذهب عيار 22" when the price is not live.
+- QA4 the caption names the karat; the chosen karat is carnelian, weight 600, with a 3 px underline.
+- QA5 karat guide: stamps isolated in `<bdi>` with side padding; 24 karat shows "999 / 999.9".
+- QA6 report card written in Arabic without names; Latin credits and sources isolated.
+- QA7 a tap on a sheet's own padding no longer closes it (tap position checked against the sheet's box).
+- QA8 removing a piece needs a second tap ("حذف هذه القطعة؟ لا يمكن التراجع.") and sits on its own row.
+- QA9 note under the list ("القطع محفوظة على هذا الهاتف فقط…") with "كيف؟" reopening the install steps, `navigator.storage.persist()` on save, and "مشاركة قائمتي" to send the list as text.
+- QA10 no value or gain without a live price; "السعر غير متاح الآن، تظهر القيمة عند عودة الاتصال." on My gold and Buy & sell.
+- QA11 field borders 1.5 px at 3.7:1; the year track uses the same colour.
+- QA12 sentences 16 px, labels 15 px, chart labels 13 px, the tag 14 px.
+- QA13 every control at least 48 px tall; the news source is a 48 px row "المصدر: CNBC".
+- QA14 decorative photos keep empty alt text (the missing keys are gone).
+- QA15 labels for every field and dialog, radio states on all selectors, Today has a heading, status parts separated for screen readers, Latin names marked as English, lists updated in place.
+- QA16 errors sit under their field in carnelian with aria-invalid; an unreadable price is flagged.
+- QA17 weight first with focus, karat defaults to the last piece's (else Today's, 22 instead of 24), optional fields grouped, name chips, month and year pickers named in Arabic (the year alone is accepted).
+- QA18 the add button dims at 20 pieces with "الحد الأقصى 20 قطعة".
+- QA19 calculators: a prompt per case, inline errors ("1e9" is an error), "ريال" on every line, the making charge clears on a mode switch, results and the prefilled rate no longer change by themselves.
+- QA20 "تُباع اليوم بنحو 449 ريالاً"; offer bands match My gold's 2-6% (close up to 2%, usual 2-6%, low above 6%).
+- QA21 "آخر 12 شهراً" everywhere.
+- QA22 "آخر أخبار الذهب (25 نوفمبر)", shown until the next trading day has passed.
+- QA23 shared text and card say "هذا سعر الذهب الخام…", carry the price's own time, and the share buttons hide without a price.
+- QA24 "مباشر" only while the last successful fetch is at most 30 s old; a grey dot and the age otherwise; a placeholder for the first 8 s; 8 s fetch timeout.
+- QA25 chart labels 13 px with values; each source converted to rials per gram for the chosen karat plus "للأونصة".
+- QA26 Malabar is one entry with three map links; Kalyan "داخل لولو سوق على شارع روي العام" (Oman Observer, 2021); practical lines.
+- QA27 J.P. Morgan dropped (the only source was a crypto exchange's news feed); the median stays 5,000 dollars; "نهاية 2027".
+- QA28 24 karat shows "السبائك والعملات الخالصة معفاة عادة من الضريبة."
+- QA29 sticky sheet headers, overscroll contained.
+- QA30 tap feedback on every control.
+- QA31 back returns to Today before leaving the app, and closes an open sheet first.
+- QA32 hex fallbacks for every colour and a fallback for phones without `<dialog>`.
+- QA33 docs/arabic-review.md is now generated from the code (`node scripts/review-strings.mjs`).
+- QA34 the page, code and data come from the network first (4 s limit, then the cache); fonts and photos from the cache first.
+- QA35 only the 1200 px photos are precached, each font file is stored once, modules and data load in parallel, the hero animation pauses off screen.
+- QA36 Arabic number agreement for rials, dollars, pieces and banks ("4 ريالات", "449 ريالاً", "قطعتين", "11 بنكاً"); "و2,276" without a space.
+- QA37 and QA38 the listed Arabic and English rewordings; one time format for app and card.
+- QA39 hero: bright bangles on white (@sfhashemi); My gold: rings in a jewellery box (@jesus_eca, Unsplash licence); shop band cropped to the left.
+- QA40 gold ring mark beside the wordmark; the year sentence in Noto Naskh 600.
+- QA41 buttons with 12 px corners; the making-charge toggle is an underline selector.
+- QA42 carnelian focus ring with a white gap.
+- QA43 install tip in the light surface style with a carnelian button.
+- QA44 the board uses one numeral face, "1 جرام", 3 decimals in every column, "بالريال العماني".
+- QA45 status updates every 10 s with a "·" separator.
+- QA46 the change line is ink, with the arrow and the words.
+- QA47 the estimate tag sits on the range line; the calculators carry "عند الشراء" and "عند البيع".
+- QA48 `color-scheme: only light`.
+- QA49 empty state with the ring mark; name chips in the add sheet.
+- QA50 hourglass for Future, bangle for My gold.
+
+### Rulings in this pass (with the cost if wrong)
+- R1 (QA1) history ranges shown as ranges only, from the last close — cost if wrong: the owner may want a middle figure back.
+- R2 (QA40) kept Noto Naskh Arabic, which replaced Amiri after the owner flagged the Future heading, instead of trying Amiri again — cost if wrong: the owner may prefer Amiri's look.
+- R3 (QA39) the rings in the My gold band are rose-gold fashion pieces, not 21/22 karat — cost if wrong: one image swap.
+- R4 (QA27) four banks instead of five — cost if wrong: none, the median is unchanged.
+- R5 (QA26) branch details come from reports dated 2016 to 2024 and were not phoned — cost if wrong: a moved branch until the next check.
+- R6 the change line compares with the close before the price's own session and names that day ("أقل من سعر يوم الخميس") — my own correction, not in the QA report: Mondays and weekends no longer say "yesterday" — cost if wrong: none.
+- R7 (QA17) a purchase year without a month is accepted and shown as "2019" — cost if wrong: none.
+- R8 (QA9) the list backup is text only, with no import — cost if wrong: re-typing after a lost phone.
+- R9 (QA8) a confirm step instead of an undo bar — cost if wrong: one extra tap.
+- R10 (QA28) the 24 karat note informs; VAT is still added in the cost calculator — cost if wrong: bar buyers subtract 5% themselves.
+- R11 (QA24) returning to the app shows "جارٍ جلب السعر" until the first answer instead of a stale status — cost if wrong: none.
+
+### Still open
+- Real-phone checks the QA agent and I could not run: the iOS share sheet, install, the keyboard over sheets, Safari's 7-day storage deletion, Samsung forced dark, Android back.
+- QA32 needs the mother's and aunt's phone models to confirm the oldest phone in use.
+- Task 16: the scheduled jobs (daily news line, monthly forecast refresh) need GitHub connected to Claude. Until then the news box hides one trading day after 25 November.
+- The fan between today and the 5-year range is drawn straight on the log scale, so its width at 1 year is not computed (minor).
 
 ## Built and verified
 - Today, My gold, Future and Buy & sell tabs in Arabic (default) and English, live price every 10 seconds, WhatsApp share card, install to home screen, offline cache.
@@ -33,7 +106,7 @@ Date: 2026-11-25. Branch: main (local). Tests: 51 passing (npm test).
 - **Task 6:** monthly series uses World Bank monthly averages 1971-01..2021-11 (freegoldapi.com) and OANDA month-end closes from 2021-12 — the only free long-run USD series found — cost if wrong: slight smoothing of long-run returns, negligible for 5/10-year bands.
 - **Task 6:** forecasts.json adds institutionAr for Arabic names; World Bank 2027 average left out (search summary only, research R1) — cost if wrong: none.
 - **Task 6:** 5 and 10-year bands start from the banks' 1-year median (5000 USD) instead of today's price (spec D5) — with real data the spec's path read 56.7 -> 53.4 -> 62.1 rials/g (up, down, up), which looks like an error to a reader — cost if wrong: long-range values inherit any bank optimism; the Future tab labels say "after the first year, based on gold's history".
-- **Task 7:** fonts trimmed to Source Serif 4 500/600 (opsz 24, no italic), Amiri 700, Almarai 400/700 (317 KB) — the full set was 564 KB against the 350 KB budget (D6); the English wordmark is upright and the Arabic year sentence uses Amiri 700 — cost if wrong: slightly heavier Arabic sentence.
+- **Task 7:** fonts trimmed to Source Serif 4 500/600 (opsz 24, no italic), Amiri 700, Almarai 400/700 (317 KB) — the full set was 564 KB against the 350 KB budget (D6); the English wordmark is upright and the Arabic year sentence uses Amiri 700 — cost if wrong: slightly heavier Arabic sentence. (Later replaced: Noto Naskh Arabic after the owner flagged the Future heading, now 600-700, see R2.)
 - **Task 7:** shop-1200.webp is 1000x564 at q52 (159 KB) to stay under 160 KB; srcset lists it as 1000w — cost if wrong: none on phones.
 - **Task 8:** all four views' static markup lives in index.html now (views add behaviour later), and main.js loads view modules with dynamic import so each later task plugs in without editing main.js — cost if wrong: none; Task 14 checks there are no 404s once every module exists.
 - **Task 9:** preview server switched from python http.server to scripts/serve.mjs (Node, Cache-Control no-store) — the browser kept serving stale modules, which hid code changes during verification — cost if wrong: none (development only).
@@ -57,6 +130,7 @@ Date: 2026-11-25. Branch: main (local). Tests: 51 passing (npm test).
 - **Final:** D-10 GitHub steps and scheduled routines — waiting on the owner's account — cost if wrong: none.
 
 ## Deferred minors (not fixed, for the owner to decide)
+Fixed in the QA pass: M6 (QA8), M7 (QA16), M8 (QA24), M9 (QA35), M10 (QA23), M11 (QA10), M14 (QA15, QA31). D-2 and D-4 below are superseded by R6 and QA31.
 - M1 a daily-close run delayed past 00:00 UTC files the close under the next day.
 - M3 forecast targets are not filtered by age or past horizon if the monthly refresh stops (the date is shown).
 - M4 "3,125" typed as a weight reads as 3,125 g; the Arabic comma returns nothing.

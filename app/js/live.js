@@ -7,17 +7,20 @@ export function parseFeed(json) {
   return { usd: json.price, updatedAt: Number.isFinite(at) ? at : Date.now() };
 }
 
-const defaultFetch = () =>
-  fetch(FEED_URL, { cache: 'no-store' }).then((r) => {
+/** One request to the feed. It gives up after 8 s, so a hung request never holds the status at "live" (QA24). */
+export function fetchFeed() {
+  const signal = typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined;
+  return fetch(FEED_URL, { cache: 'no-store', signal }).then((r) => {
     if (!r.ok) throw new Error(`feed ${r.status}`);
     return r.json();
   });
+}
 
 /**
  * Poll the live feed every POLL_MS; after MAX_FAILS failures in a row wait BACKOFF_MS between tries.
  * Returns { stop() }. The caller pauses it while the page is hidden.
  */
-export function startLive({ fetchFn = defaultFetch, onPrice, onError = () => {}, schedule = (fn, ms) => setTimeout(fn, ms), cancel = clearTimeout }) {
+export function startLive({ fetchFn = fetchFeed, onPrice, onError = () => {}, schedule = (fn, ms) => setTimeout(fn, ms), cancel = clearTimeout }) {
   let fails = 0;
   let timer = null;
   let stopped = false;

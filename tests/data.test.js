@@ -30,7 +30,11 @@ test('forecasts file is complete and names every source', () => {
 test('places and why line are complete', () => {
   const places = read('places.json');
   assert.ok(places.length >= 3);
-  for (const p of places) for (const k of ['ar', 'en', 'areaAr', 'areaEn', 'maps']) assert.ok(p[k], `${p.en} ${k}`);
+  for (const p of places) {
+    for (const k of ['ar', 'en', 'lineAr', 'lineEn']) assert.ok(p[k], `${p.en} ${k}`);
+    assert.ok(Array.isArray(p.links) && p.links.length >= 1, `${p.en} links`);
+    for (const l of p.links) assert.ok(l.ar && l.en && l.query, `${p.en} link`);
+  }
   const why = read('why.json');
   for (const k of ['date', 'ar', 'en', 'source', 'url']) assert.ok(why[k], `why ${k}`);
 });

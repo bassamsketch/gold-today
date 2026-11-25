@@ -1,4 +1,5 @@
 :root {
+  color-scheme: only light;
   --bg: oklch(1 0 0);
   --ink: oklch(0.2 0.02 30);
   --muted: oklch(0.45 0.02 30);
@@ -6,17 +7,37 @@
   --car-d: oklch(0.4 0.13 29);
   --car-soft: oklch(0.47 0.15 30 / 0.12);
   --hair: oklch(0.9 0.012 30);
+  --field: oklch(0.62 0.02 30); /* 3.7:1 on white: field borders and the year track (QA11) */
   --surface: oklch(0.975 0.006 30);
   --backdrop: oklch(0.95 0.004 30);
+  --shade: oklch(0.2 0.02 30 / 0.35);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
   --display-ar: 'Noto Naskh Arabic', 'Times New Roman', serif;
   --text: 'Almarai', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
   --gutter: 22px;
   --app-max: 440px;
-  --tabbar-h: 66px;
+  --tabbar-h: 70px;
+  --radius: 12px;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Phones older than iOS 15.4 or Chrome 111 cannot read oklch(): the same palette in hex (QA32). */
+@supports not (color: oklch(0 0 0)) {
+  :root {
+    --bg: #ffffff;
+    --ink: #1e1311;
+    --muted: #60514f;
+    --car: #9e2e21;
+    --car-d: #7f2119;
+    --car-soft: rgba(158, 46, 33, 0.12);
+    --hair: #e6dbd9;
+    --field: #92827f;
+    --surface: #fbf5f4;
+    --backdrop: #f1eded;
+    --shade: rgba(30, 19, 17, 0.35);
+  }
 }
 
 *,
@@ -55,6 +76,11 @@ button {
   cursor: pointer;
 }
 
+fieldset {
+  border: 0;
+  min-width: 0;
+}
+
 a {
   color: inherit;
 }
@@ -68,14 +94,28 @@ img {
   display: none !important;
 }
 
+/* Browsers without <dialog> show it inline; keep it hidden until opened (QA32). */
+dialog:not([open]) {
+  display: none;
+}
+
 :focus-visible {
-  outline: 3px solid oklch(0.55 0.17 255);
+  outline: 2px solid var(--car);
   outline-offset: 2px;
 }
 
-.ltr {
-  direction: ltr;
-  unicode-bidi: isolate;
+/* Read by screen readers, not shown. */
+.vh {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.defs {
+  position: absolute;
 }
 
 @media (prefers-reduced-motion: reduce) {

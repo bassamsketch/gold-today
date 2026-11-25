@@ -30,7 +30,7 @@ test('pieceCost uses the shop rate and percent making when given', () => {
 
 test('offerCheck verdicts', () => {
   const v = (o) => offerCheck({ grams: 10, karat: 22, offer: o }, 3470).verdict;
-  assert.deepEqual([400, 390, 380, 360].map(v), ['above', 'close', 'low', 'veryLow']);
+  assert.deepEqual([400, 390, 380, 360].map(v), ['above', 'close', 'usual', 'low']);
 });
 
 test('extreme inputs return null instead of NaN', () => {

@@ -1,5 +1,5 @@
 import { gramPrice } from './price.js';
-import { VAT, KARATS } from './config.js';
+import { VAT, KARATS, DEDUCTION } from './config.js';
 
 /** Reads numbers typed with Arabic-Indic or Persian digits, ٫/٬ separators, or a comma decimal. */
 export function parseNumber(input) {
@@ -33,11 +33,11 @@ export function pieceCost({ grams, karat, rate, making, mode }, usdPerOz) {
   return { gold, making: makingTotal, vat, total: gold + makingTotal + vat };
 }
 
-/** How a shop's offer compares with today's gold value (design 7.10). */
+/** How a shop's offer compares with today's gold value. Bands match the 2-6% deduction My gold uses (QA20). */
 export function offerCheck({ grams, karat, offer }, usdPerOz) {
   if (!okGrams(grams) || !KARATS.includes(karat) || !Number.isFinite(offer) || offer <= 0) return null;
   const value = grams * gramPrice(usdPerOz, karat);
   const gap = (value - offer) / value;
-  const verdict = gap < 0 ? 'above' : gap <= 0.03 ? 'close' : gap <= 0.07 ? 'low' : 'veryLow';
+  const verdict = gap < 0 ? 'above' : gap <= DEDUCTION.low ? 'close' : gap <= DEDUCTION.high ? 'usual' : 'low';
   return { value, gapPct: gap * 100, verdict };
 }

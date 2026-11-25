@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseFeed, startLive } from '../app/js/live.js';
+import { parseFeed, startLive, fetchFeed } from '../app/js/live.js';
 import { POLL_MS, BACKOFF_MS } from '../app/js/config.js';
 
 const flush = () => new Promise((r) => setTimeout(r, 0));
@@ -50,4 +50,16 @@ test('stop prevents further polling', async () => {
   live.stop();
   await flush();
   assert.equal(delays.length, 0);
+});
+
+test('the feed request carries a timeout signal', async () => {
+  const real = globalThis.fetch;
+  let opts = null;
+  globalThis.fetch = async (url, o) => { opts = o; return new Response('{"price":3500}', { status: 200 }); };
+  try {
+    assert.deepEqual(await fetchFeed(), { price: 3500 });
+    assert.ok(opts.signal instanceof AbortSignal);
+  } finally {
+    globalThis.fetch = real;
+  }
 });

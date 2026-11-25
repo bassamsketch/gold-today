@@ -3,16 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="only light">
 <meta name="theme-color" content="#ffffff">
 <meta name="description" content="أسعار الذهب في عُمان مباشرة | Live gold prices in Oman">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ذهب اليوم">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>ذهب اليوم</title>
-<link rel="preload" href="fonts/SourceSerif4-normal-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/SourceSerif4-normal-500_600-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/Almarai-normal-400-arabic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/tokens.css">
@@ -20,34 +22,45 @@
 <script type="module" src="js/main.js"></script>
 </head>
 <body>
+<svg width="0" height="0" class="defs" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="gold-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3d27a"/><stop offset="1" stop-color="#b07c26"/></linearGradient>
+    <symbol id="ring" viewBox="0 0 32 32"><circle cx="16" cy="19.5" r="9.2" fill="none" stroke="url(#gold-grad)" stroke-width="3.2"/><path d="M16 2.6 20.4 7 16 11.2 11.6 7z" fill="#e9bf5c"/></symbol>
+  </defs>
+</svg>
 <div class="app">
   <header class="bar">
-    <div class="word" data-t="appName"></div>
+    <div class="word"><svg class="mark" aria-hidden="true"><use href="#ring"/></svg><span data-t="appName"></span></div>
     <div class="bar-actions">
-      <button class="icon-btn" id="share" type="button" data-aria="share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v6.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V12"/></svg></button>
-      <button class="lang-link" type="button" data-lang-toggle data-t="otherLang"></button>
+      <button class="icon-btn" id="share" type="button" data-aria="share" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v6.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V12"/></svg></button>
+      <button class="lang-link" type="button" data-lang-toggle data-t="otherLang" lang="en"></button>
     </div>
   </header>
 
   <main class="views">
     <!-- ================= Today ================= -->
     <section class="view on" data-view="today">
-      <figure class="hero">
-        <img src="img/hero-600.webp" srcset="img/hero-600.webp 600w, img/hero-1200.webp 1200w" sizes="(max-width: 440px) 100vw, 440px" width="600" height="450" alt="" data-alt="heroAlt" fetchpriority="high">
+      <h1 class="vh" data-t="todayTitle"></h1>
+      <figure class="hero" id="hero">
+        <img src="img/hero-600.webp" srcset="img/hero-600.webp 600w, img/hero-1200.webp 1200w" sizes="(max-width: 440px) 100vw, 440px" width="600" height="450" alt="" fetchpriority="high">
         <i class="sheen" aria-hidden="true"></i>
       </figure>
       <div class="price-block">
-        <p class="cap" data-t="perGramNow"></p>
-        <div class="price"><span class="odo" id="price" role="img"></span><span class="unit" id="price-unit" data-t="rial"></span><span class="price-missing" id="price-missing" hidden></span></div>
-        <p class="karat-label" data-t="karat"></p>
-        <div class="karats" id="karats" role="radiogroup"><i class="kline"></i><button type="button" role="radio" data-k="24">24</button><button type="button" role="radio" data-k="22">22</button><button type="button" role="radio" data-k="21">21</button><button type="button" role="radio" data-k="18">18</button></div>
-        <p class="status" id="status"><i class="live-dot"></i><span id="status-text"></span><span id="status-ago"></span></p>
+        <p class="cap" id="price-cap"></p>
+        <div class="price">
+          <span class="odo" id="price" role="img"></span><span class="unit" id="price-unit" data-t="rial"></span>
+          <span class="price-skel" id="price-skel" aria-hidden="true" hidden></span>
+          <span class="price-missing" id="price-missing" hidden></span>
+        </div>
+        <p class="karat-label" id="karat-label" data-t="karat"></p>
+        <div class="karats" id="karats" role="radiogroup" aria-labelledby="karat-label"><i class="kline"></i><button type="button" role="radio" data-k="24">24</button><button type="button" role="radio" data-k="22">22</button><button type="button" role="radio" data-k="21">21</button><button type="button" role="radio" data-k="18">18</button></div>
+        <p class="status" id="status"><i class="live-dot" aria-hidden="true"></i><span id="status-text"></span><span class="sep" id="status-sep" aria-hidden="true">·</span><span class="vh" id="status-gap">، </span><span id="status-ago"></span></p>
         <p class="change" id="change" hidden></p>
       </div>
       <section class="why" id="why" hidden>
-        <h2 class="why-title" data-t="whyTitle"></h2>
+        <h2 class="why-title" id="why-title"></h2>
         <p class="why-text" id="why-text"></p>
-        <p class="why-src"><a id="why-src" target="_blank" rel="noopener"></a></p>
+        <a class="why-src" id="why-src" target="_blank" rel="noopener"><span data-t="whySource"></span>: <bdi lang="en" id="why-src-name"></bdi></a>
       </section>
       <section class="year" id="year" hidden>
         <p class="year-sent" id="mood"></p>
@@ -56,35 +69,43 @@
         <p class="hint" id="hint"></p>
       </section>
       <section class="board">
-        <h2 class="sec-title" data-t="boardTitle"></h2>
+        <div class="board-head"><h2 class="sec-title" data-t="boardTitle"></h2><p class="cap" data-t="boardUnit"></p></div>
         <table class="board-table">
           <thead><tr><th scope="col" data-t="karat"></th><th scope="col" data-t="col1g"></th><th scope="col" data-t="col10g"></th><th scope="col" data-t="colTola"></th></tr></thead>
           <tbody id="board-rows"></tbody>
         </table>
         <p class="note" data-t="boardNote"></p>
-        <button class="btn-outline" type="button" id="share-today"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v6.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V12"/></svg><span data-t="shareToday"></span></button>
+        <button class="btn-outline" type="button" id="share-today" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v6.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V12"/></svg><span data-t="shareToday"></span></button>
       </section>
       <p class="world" id="world"></p>
-      <p class="fine" data-t="note"></p>
+      <p class="fine disclaimer" data-t="note"></p>
     </section>
 
     <!-- ================= My gold ================= -->
     <section class="view" data-view="gold">
-      <figure class="band"><img src="img/gold-600.webp" srcset="img/gold-600.webp 600w, img/gold-1200.webp 1200w" sizes="(max-width: 440px) 100vw, 440px" width="600" height="338" alt="" data-alt="goldAlt" loading="lazy"></figure>
+      <figure class="band"><img src="img/gold-600.webp" srcset="img/gold-600.webp 600w, img/gold-1200.webp 1200w" sizes="(max-width: 440px) 100vw, 440px" width="600" height="338" alt="" loading="lazy"></figure>
       <div class="pad">
         <h1 class="h" data-t="myGold"></h1>
         <div id="gold-total" hidden>
-          <p class="cap" data-t="ifSold" style="margin-top:12px"></p>
-          <p class="big"><span class="num" id="gold-mid"></span> <span class="unit" data-t="rial"></span> <span class="tag" data-t="estimateTag"></span></p>
-          <p class="sub" id="gold-range"></p>
+          <p class="cap gold-cap" data-t="ifSold"></p>
+          <p class="big"><span class="num" id="gold-mid"></span> <span class="unit" data-t="rial"></span></p>
+          <p class="est"><span class="tag" data-t="estimateTag"></span><span id="gold-range"></span></p>
           <p class="gain" id="gold-gain" hidden></p>
+          <p class="sub" id="gold-covers" hidden></p>
         </div>
+        <p class="notice" id="gold-noprice" data-t="noPrice" hidden></p>
         <div class="empty" id="gold-empty" hidden>
+          <svg class="empty-mark" aria-hidden="true"><use href="#ring"/></svg>
           <p class="empty-title" data-t="emptyTitle"></p>
           <p class="sub" data-t="emptyBody"></p>
         </div>
         <ul class="pieces" id="pieces" hidden></ul>
-        <button class="btn" type="button" id="add-piece"><span aria-hidden="true">+</span><span data-t="addPiece"></span></button>
+        <button class="btn" type="button" id="add-piece" aria-describedby="gold-max"><span aria-hidden="true">+</span><span data-t="addPiece"></span></button>
+        <p class="sub max-note" id="gold-max" data-t="maxPieces" hidden></p>
+        <div class="keep" id="gold-keep" hidden>
+          <p class="note"><span id="storage-note" data-t="storageNote"></span> <button class="link-btn" type="button" id="storage-how" data-t="storageHow"></button></p>
+          <button class="btn-quiet wide" type="button" id="share-list"><span data-t="shareList"></span></button>
+        </div>
         <p class="note" data-t="payLessNote"></p>
       </div>
     </section>
@@ -94,22 +115,26 @@
       <div class="pad future-head">
         <h1 class="h" data-t="outlook"></h1>
         <p class="cap" id="outlook-sub"></p>
-        <div class="karats small future-karats" id="future-karats" role="radiogroup"><i class="kline"></i><button type="button" role="radio" data-fk="24">24</button><button type="button" role="radio" data-fk="22">22</button><button type="button" role="radio" data-fk="21">21</button><button type="button" role="radio" data-fk="18">18</button></div>
+        <div class="karats small future-karats" id="future-karats" role="radiogroup" data-aria="karat"><i class="kline"></i><button type="button" role="radio" data-fk="24">24</button><button type="button" role="radio" data-fk="22">22</button><button type="button" role="radio" data-fk="21">21</button><button type="button" role="radio" data-fk="18">18</button></div>
         <div class="chart-wrap" dir="ltr">
-          <svg class="fchart" id="fchart" viewBox="0 0 340 200" aria-hidden="true">
-            <defs><clipPath id="fchart-clip"><rect class="f-clip" x="0" y="0" width="340" height="200"/></clipPath></defs>
-            <g clip-path="url(#fchart-clip)"><path class="f-band"/><path class="f-past"/><path class="f-mid"/><circle class="f-m" r="3.5"/><circle class="f-m" r="3.5"/><line class="f-bank-range"/><circle class="f-bank" r="4.5"/><text class="f-bank-l"></text></g>
+          <svg class="fchart" id="fchart" viewBox="0 0 340 210" aria-hidden="true">
+            <defs><clipPath id="fchart-clip"><rect class="f-clip" x="0" y="0" width="340" height="210"/></clipPath></defs>
+            <g clip-path="url(#fchart-clip)"><path class="f-band"/><path class="f-past"/><line class="f-bank-range"/><circle class="f-bank" r="4.5"/><text class="f-tag f-bank-w"></text><text class="f-val f-bank-v"></text></g>
             <line class="f-today"/><circle class="f-now" r="5"/>
-            <text class="f-l0"></text><text class="f-l1" text-anchor="middle"></text><text class="f-l2" text-anchor="end"></text>
+            <text class="f-tag f-now-w"></text><text class="f-val f-now-v"></text>
+            <text class="f-axis f-l0"></text><text class="f-axis f-l2" text-anchor="end"></text>
           </svg>
         </div>
-        <div class="rows">
-          <div class="row"><span data-t="in1"></span><b><span class="num" id="f1"></span> <small data-t="rialPerGram"></small></b></div>
+        <div class="frows">
+          <div class="frow today-row"><span data-t="todayRow"></span><b><span class="num" id="f-today"></span> <small data-t="rialPerGram"></small></b></div>
+          <div class="frow bank-row"><span class="frow-label"><span data-t="bankRow"></span><small id="f1-for"></small></span><b><span class="num" id="f1"></span> <small data-t="rialPerGram"></small></b></div>
           <p class="row-note"><span id="f1-note"></span> <button class="link-btn" type="button" id="open-sources" data-t="sources"></button></p>
-          <div class="row"><span data-t="in5"></span><b><span class="num" id="f5"></span> <small data-t="rialPerGram"></small></b></div>
-          <p class="row-note" id="f5-note"></p>
-          <div class="row"><span data-t="in10"></span><b><span class="num" id="f10"></span> <small data-t="rialPerGram"></small></b></div>
-          <p class="row-note" id="f10-note"></p>
+          <section class="hist" id="hist">
+            <h2 class="hist-title" data-t="histTitle"></h2>
+            <div class="hrow"><span data-t="in5"></span><b id="f5"></b></div>
+            <div class="hrow"><span data-t="in10"></span><b id="f10"></b></div>
+            <p class="row-note" data-t="histNote"></p>
+          </section>
         </div>
         <section class="report">
           <h2 class="sec-title" data-t="reportTitle"></h2>
@@ -119,46 +144,77 @@
           <p class="sub" data-t="reportClose"></p>
         </section>
         <p class="fine" id="f-updated"></p>
-        <p class="fine" id="f-sources"></p>
+        <p class="fine credit" id="f-data"></p>
+        <p class="fine credit" id="f-photos"></p>
       </div>
     </section>
 
     <!-- ================= Buy & sell ================= -->
     <section class="view" data-view="buysell">
-      <figure class="band"><img src="img/shop-600.webp" srcset="img/shop-600.webp 600w, img/shop-1200.webp 1000w" sizes="(max-width: 440px) 100vw, 440px" width="600" height="338" alt="" data-alt="shopAlt" loading="lazy"></figure>
+      <figure class="band"><img src="img/shop-600.webp" srcset="img/shop-600.webp 600w, img/shop-1200.webp 1200w" sizes="(max-width: 440px) 100vw, 440px" width="600" height="338" alt="" loading="lazy"></figure>
       <div class="pad">
         <h1 class="h" data-t="buySellTitle"></h1>
 
-        <section class="calc" id="cost">
-          <h2 class="sec-title" data-t="costTitle"></h2>
-          <label class="field"><span data-t="weightG"></span><input class="input" id="cost-grams" inputmode="decimal" autocomplete="off" enterkeyhint="next"></label>
-          <div class="field"><span data-t="karat"></span><div class="karats small" id="cost-karats"><i class="kline"></i><button type="button" data-ck="24">24</button><button type="button" data-ck="22">22</button><button type="button" data-ck="21">21</button><button type="button" data-ck="18">18</button></div></div>
-          <div class="field"><span data-t="making"></span>
-            <div class="seg" id="cost-mode"><button type="button" data-mode="perGram" class="on" data-t="perGramMode"></button><button type="button" data-mode="percent" data-t="percentMode"></button></div>
-            <input class="input" id="cost-making" inputmode="decimal" autocomplete="off" enterkeyhint="next">
+        <section class="calc" id="cost" aria-labelledby="cost-title">
+          <p class="eyebrow" data-t="whenBuying"></p>
+          <h2 class="sec-title" id="cost-title" data-t="costTitle"></h2>
+          <div class="field">
+            <label for="cost-grams" data-t="weightG"></label>
+            <input class="input" id="cost-grams" inputmode="decimal" autocomplete="off" enterkeyhint="next" aria-describedby="cost-grams-err">
+            <p class="err" id="cost-grams-err" data-t="badWeight" hidden></p>
           </div>
-          <label class="field"><span data-t="shopRate"></span><input class="input" id="cost-rate" inputmode="decimal" autocomplete="off" enterkeyhint="done"><small data-t="shopRateHint"></small></label>
+          <div class="field">
+            <p class="label" id="cost-k-label" data-t="karat"></p>
+            <div class="karats small" id="cost-karats" role="radiogroup" aria-labelledby="cost-k-label"><i class="kline"></i><button type="button" role="radio" data-ck="24">24</button><button type="button" role="radio" data-ck="22">22</button><button type="button" role="radio" data-ck="21">21</button><button type="button" role="radio" data-ck="18">18</button></div>
+          </div>
+          <div class="field">
+            <label for="cost-making" id="cost-making-label" data-t="making"></label>
+            <div class="seg" id="cost-mode" role="radiogroup" aria-labelledby="cost-making-label"><button type="button" role="radio" data-mode="perGram" class="on" data-t="perGramMode"></button><button type="button" role="radio" data-mode="percent" data-t="percentMode"></button></div>
+            <input class="input" id="cost-making" inputmode="decimal" autocomplete="off" enterkeyhint="next" aria-describedby="cost-making-err">
+            <p class="err" id="cost-making-err" data-t="badMaking" hidden></p>
+          </div>
+          <div class="field">
+            <label for="cost-rate" data-t="shopRate"></label>
+            <input class="input" id="cost-rate" inputmode="decimal" autocomplete="off" enterkeyhint="done" aria-describedby="cost-rate-hint cost-rate-err">
+            <p class="hint-text" id="cost-rate-hint" data-t="shopRateHint"></p>
+            <p class="err" id="cost-rate-err" data-t="badRate" hidden></p>
+          </div>
           <dl class="result" id="cost-result" hidden>
-            <div><dt data-t="goldValue"></dt><dd class="num" id="cost-gold"></dd></div>
-            <div><dt data-t="makingLine"></dt><dd class="num" id="cost-mk"></dd></div>
-            <div><dt data-t="vatLine"></dt><dd class="num" id="cost-vat"></dd></div>
-            <div class="total"><dt data-t="totalLine"></dt><dd class="num" id="cost-total"></dd></div>
+            <div><dt data-t="goldValue"></dt><dd><span class="num" id="cost-gold"></span> <small data-t="rial"></small></dd></div>
+            <div><dt data-t="makingLine"></dt><dd><span class="num" id="cost-mk"></span> <small data-t="rial"></small></dd></div>
+            <div><dt data-t="vatLine"></dt><dd><span class="num" id="cost-vat"></span> <small data-t="rial"></small></dd></div>
+            <div class="total"><dt data-t="totalLine"></dt><dd><span class="num" id="cost-total"></span> <small data-t="rial"></small></dd></div>
           </dl>
-          <p class="prompt" id="cost-prompt" data-t="enterPrompt"></p>
+          <p class="hint-text" id="cost-vat24" data-t="vat24" hidden></p>
+          <p class="prompt" id="cost-prompt" data-t="costPrompt"></p>
+          <p class="notice" id="cost-noprice" data-t="noPrice" hidden></p>
           <p class="note" data-t="costNote"></p>
         </section>
 
-        <section class="calc" id="offer">
-          <h2 class="sec-title" data-t="offerTitle"></h2>
-          <label class="field"><span data-t="weightG"></span><input class="input" id="offer-grams" inputmode="decimal" autocomplete="off" enterkeyhint="next"></label>
-          <div class="field"><span data-t="karat"></span><div class="karats small" id="offer-karats"><i class="kline"></i><button type="button" data-ok="24">24</button><button type="button" data-ok="22">22</button><button type="button" data-ok="21">21</button><button type="button" data-ok="18">18</button></div></div>
-          <label class="field"><span data-t="offerAmount"></span><input class="input" id="offer-amount" inputmode="decimal" autocomplete="off" enterkeyhint="done"></label>
+        <section class="calc" id="offer" aria-labelledby="offer-title">
+          <p class="eyebrow" data-t="whenSelling"></p>
+          <h2 class="sec-title" id="offer-title" data-t="offerTitle"></h2>
+          <div class="field">
+            <label for="offer-grams" data-t="weightG"></label>
+            <input class="input" id="offer-grams" inputmode="decimal" autocomplete="off" enterkeyhint="next" aria-describedby="offer-grams-err">
+            <p class="err" id="offer-grams-err" data-t="badWeight" hidden></p>
+          </div>
+          <div class="field">
+            <p class="label" id="offer-k-label" data-t="karat"></p>
+            <div class="karats small" id="offer-karats" role="radiogroup" aria-labelledby="offer-k-label"><i class="kline"></i><button type="button" role="radio" data-ok="24">24</button><button type="button" role="radio" data-ok="22">22</button><button type="button" role="radio" data-ok="21">21</button><button type="button" role="radio" data-ok="18">18</button></div>
+          </div>
+          <div class="field">
+            <label for="offer-amount" data-t="offerAmount"></label>
+            <input class="input" id="offer-amount" inputmode="decimal" autocomplete="off" enterkeyhint="done" aria-describedby="offer-amount-err">
+            <p class="err" id="offer-amount-err" data-t="badOffer" hidden></p>
+          </div>
           <div id="offer-result" hidden>
             <p class="verdict" id="offer-verdict"></p>
             <p class="verdict-sub" id="offer-gap"></p>
             <p class="verdict-sub" id="offer-value"></p>
           </div>
-          <p class="prompt" id="offer-prompt" data-t="enterPrompt"></p>
+          <p class="prompt" id="offer-prompt" data-t="offerPrompt"></p>
+          <p class="notice" id="offer-noprice" data-t="noPrice" hidden></p>
         </section>
 
         <section class="calc">
@@ -169,10 +225,10 @@
         <section class="calc">
           <h2 class="sec-title" data-t="guideTitle"></h2>
           <table class="guide-table"><tbody>
-            <tr><td data-k-label="24"></td><td class="ltr">999.9</td><td data-t="g24"></td></tr>
-            <tr><td data-k-label="22"></td><td class="ltr">916</td><td data-t="g22"></td></tr>
-            <tr><td data-k-label="21"></td><td class="ltr">875</td><td data-t="g21"></td></tr>
-            <tr><td data-k-label="18"></td><td class="ltr">750</td><td data-t="g18"></td></tr>
+            <tr><th scope="row" data-k-label="24"></th><td class="stamp"><bdi dir="ltr">999 / 999.9</bdi></td><td data-t="g24"></td></tr>
+            <tr><th scope="row" data-k-label="22"></th><td class="stamp"><bdi dir="ltr">916</bdi></td><td data-t="g22"></td></tr>
+            <tr><th scope="row" data-k-label="21"></th><td class="stamp"><bdi dir="ltr">875</bdi></td><td data-t="g21"></td></tr>
+            <tr><th scope="row" data-k-label="18"></th><td class="stamp"><bdi dir="ltr">750</bdi></td><td data-t="g18"></td></tr>
           </tbody></table>
           <p class="note" data-t="stampWhere"></p>
         </section>
@@ -185,32 +241,64 @@
     </section>
   </main>
 
-  <nav class="tabbar" aria-label="Tabs">
-    <button type="button" data-tab="today" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span data-t="tabToday"></span></button>
-    <button type="button" data-tab="gold"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="14" rx="7.5" ry="5.5"/><path d="M9.5 8.6 12 5l2.5 3.6"/></svg><span data-t="tabGold"></span></button>
-    <button type="button" data-tab="future"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17.5l5.5-5.5 4 3.2L20 8"/><path d="M15.5 8H20v4.5"/></svg><span data-t="tabFuture"></span></button>
+  <nav class="tabbar" data-aria="tabsLabel">
+    <button type="button" data-tab="today" class="on" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span data-t="tabToday"></span></button>
+    <button type="button" data-tab="gold"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="13.2" rx="8.6" ry="5.6"/><ellipse cx="12" cy="12.2" rx="5.6" ry="2.9"/></svg><span data-t="tabGold"></span></button>
+    <button type="button" data-tab="future"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11M6.5 20.5h11"/><path d="M8 3.5c0 4.6 4 5.6 4 8.5s-4 3.9-4 8.5M16 3.5c0 4.6-4 5.6-4 8.5s4 3.9 4 8.5"/></svg><span data-t="tabFuture"></span></button>
     <button type="button" data-tab="buysell"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h14l-1.2 10.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 9V7a3 3 0 0 1 6 0v2"/></svg><span data-t="tabBuySell"></span></button>
   </nav>
 
-  <dialog class="sheet" id="piece-sheet">
+  <dialog class="sheet" id="piece-sheet" aria-labelledby="piece-title">
     <form method="dialog" id="piece-form" novalidate>
       <div class="sheet-head"><h2 class="sec-title" id="piece-title"></h2></div>
-      <label class="field"><span data-t="pieceName"></span><input class="input text" name="name" maxlength="40" autocomplete="off" data-ph="namePlaceholder"></label>
-      <label class="field"><span data-t="weightG"></span><input class="input" name="grams" inputmode="decimal" autocomplete="off" required></label>
-      <div class="field"><span data-t="karat"></span><div class="karats small" id="piece-karats"><i class="kline"></i><button type="button" data-pk="24">24</button><button type="button" data-pk="22">22</button><button type="button" data-pk="21">21</button><button type="button" data-pk="18">18</button></div></div>
-      <label class="field"><span data-t="boughtPrice"></span><input class="input" name="boughtPrice" inputmode="decimal" autocomplete="off"></label>
-      <label class="field"><span data-t="boughtWhen"></span><input class="input text" name="boughtYm" type="month" min="1960-01"></label>
-      <p class="prompt" id="piece-error" hidden></p>
+      <div class="field">
+        <label for="piece-grams" data-t="weightG"></label>
+        <input class="input" id="piece-grams" name="grams" inputmode="decimal" autocomplete="off" required autofocus aria-describedby="piece-grams-err">
+        <p class="err" id="piece-grams-err" data-t="badWeight" hidden></p>
+      </div>
+      <div class="field">
+        <p class="label" id="piece-k-label" data-t="karat"></p>
+        <div class="karats small" id="piece-karats" role="radiogroup" aria-labelledby="piece-k-label"><i class="kline"></i><button type="button" role="radio" data-pk="24">24</button><button type="button" role="radio" data-pk="22">22</button><button type="button" role="radio" data-pk="21">21</button><button type="button" role="radio" data-pk="18">18</button></div>
+      </div>
+      <fieldset class="more">
+        <legend data-t="moreDetails"></legend>
+        <div class="field">
+          <label for="piece-name" data-t="pieceName"></label>
+          <input class="input text" id="piece-name" name="name" maxlength="40" autocomplete="off" data-ph="namePlaceholder">
+          <div class="chips" id="name-chips"></div>
+        </div>
+        <div class="field">
+          <label for="piece-paid" data-t="boughtPrice"></label>
+          <input class="input" id="piece-paid" name="boughtPrice" inputmode="decimal" autocomplete="off" aria-describedby="piece-paid-err">
+          <p class="err" id="piece-paid-err" data-t="badPrice" hidden></p>
+        </div>
+        <div class="field">
+          <p class="label" id="piece-when-label" data-t="boughtWhen"></p>
+          <div class="when" role="group" aria-labelledby="piece-when-label">
+            <select class="input select" id="piece-month" name="month" data-aria="monthLabel"></select>
+            <select class="input select" id="piece-year" name="year" data-aria="yearLabel"></select>
+          </div>
+        </div>
+      </fieldset>
       <div class="sheet-actions">
         <button class="btn" type="submit" value="save" data-t="save"></button>
-        <button class="btn-quiet" type="button" value="cancel" id="piece-cancel" data-t="cancel"></button>
-        <button class="btn-danger" type="button" id="piece-remove" data-t="remove" hidden></button>
+        <button class="btn-quiet" type="button" id="piece-cancel" data-t="cancel"></button>
+      </div>
+      <div class="remove-row" id="piece-remove-row" hidden>
+        <button class="btn-danger" type="button" id="piece-remove" data-t="remove"></button>
+        <div class="confirm" id="piece-confirm" role="group" aria-labelledby="piece-confirm-q" hidden>
+          <p id="piece-confirm-q" data-t="removeAsk"></p>
+          <div class="confirm-actions">
+            <button class="btn danger" type="button" id="piece-remove-yes" data-t="removeYes"></button>
+            <button class="btn-quiet" type="button" id="piece-remove-no" data-t="removeNo"></button>
+          </div>
+        </div>
       </div>
     </form>
   </dialog>
 
-  <dialog class="sheet" id="sources-sheet">
-    <div class="sheet-head"><h2 class="sec-title" data-t="sources"></h2><button class="btn-quiet" type="button" id="sources-close" data-t="close"></button></div>
+  <dialog class="sheet" id="sources-sheet" aria-labelledby="sources-title">
+    <div class="sheet-head sticky"><h2 class="sec-title" id="sources-title" data-t="sources"></h2><button class="btn-quiet" type="button" id="sources-close" data-t="close"></button></div>
     <ul class="src-list" id="src-list"></ul>
   </dialog>
 </div>

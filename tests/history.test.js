@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { lastClose, yearShareBelow, tierOf, hintOf } from '../app/js/history.js';
+import { lastClose, yearShareBelow, tierOf, hintOf, newsVisible, compareClose } from '../app/js/history.js';
 
 test('lastClose uses the session date and hides stale data', () => {
   const daily = [{ d: '2026-11-23', c: 3600 }, { d: '2026-11-24', c: 3556.37 }, { d: '2026-11-25', c: 3520 }];
@@ -26,4 +26,27 @@ test('year share ignores closes older than 365 days', () => {
   const now = new Date('2026-11-25T10:00:00Z');
   const daily = [{ d: '2025-11-01', c: 1000 }, { d: '2026-11-01', c: 5000 }];
   assert.equal(yearShareBelow(daily, 4000, now), 0);
+});
+
+test('the news line shows until the next trading day has passed', () => {
+  const muscat = (s) => new Date(Date.parse(s) - 4 * 3600e3); // Muscat wall-clock time to a UTC instant
+  assert.equal(newsVisible('2026-11-25', muscat('2026-11-25T23:00:00Z')), true, 'same day');
+  assert.equal(newsVisible('2026-11-25', muscat('2026-11-26T10:00:00Z')), true, 'Wednesday news on Thursday');
+  assert.equal(newsVisible('2026-11-25', muscat('2026-11-27T10:00:00Z')), false, 'Wednesday news on Friday');
+  assert.equal(newsVisible('2026-11-27', muscat('2026-11-28T10:00:00Z')), true, 'Friday news on Saturday');
+  assert.equal(newsVisible('2026-11-27', muscat('2026-11-30T10:00:00Z')), true, 'Friday news on Monday');
+  assert.equal(newsVisible('2026-11-27', muscat('2026-12-01T10:00:00Z')), false, 'Friday news on Tuesday');
+  assert.equal(newsVisible(undefined, muscat('2026-11-25T10:00:00Z')), false);
+});
+
+test('the change line compares with the close before the price, and says when that was', () => {
+  const muscat = (s) => Date.parse(s) - 4 * 3600e3;
+  const daily = [{ d: '2026-11-26', c: 3500 }, { d: '2026-11-27', c: 3450 }, { d: '2026-11-30', c: 3470 }];
+  // Saturday: Friday's last price against Thursday's close, which was not yesterday
+  assert.deepEqual(compareClose(daily, Date.parse('2026-11-27T20:59:00Z'), muscat('2026-11-28T10:00:00Z')), { d: '2026-11-26', c: 3500, yesterday: false });
+  // Monday: the live price against Friday's close
+  assert.deepEqual(compareClose(daily.slice(0, 2), muscat('2026-11-30T10:00:00Z'), muscat('2026-11-30T10:00:00Z')), { d: '2026-11-27', c: 3450, yesterday: false });
+  // Tuesday: against Monday's close, yesterday
+  assert.deepEqual(compareClose(daily, muscat('2026-12-01T10:00:00Z'), muscat('2026-12-01T10:00:00Z')), { d: '2026-11-30', c: 3470, yesterday: true });
+  assert.equal(compareClose([], Date.now(), Date.now()), null);
 });

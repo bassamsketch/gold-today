@@ -15,10 +15,17 @@ export function sessionDate(now) {
   return new Date(now.getTime() + 3 * HOUR).toISOString().slice(0, 10);
 }
 
-/** 'none' without a price, 'closed' at the weekend, 'delayed' after 15 minutes without an update, else 'live'. */
-export function liveStatus({ price, updatedAt, now }) {
-  if (price == null || !Number.isFinite(price)) return 'none';
+/**
+ * What the status line may claim (QA24). 'loading' in the first 8 s before any fetch has answered,
+ * 'none' without a price, 'closed' at the weekend, 'delayed' when the price itself is over 15 minutes
+ * old, 'live' only while the last successful fetch is at most 30 s old, else 'recent'.
+ */
+export function liveStatus({ price, updatedAt, fetchedAt = null, now, startedAt = null }) {
+  const starting = fetchedAt == null && startedAt != null && now - startedAt < 8e3;
+  if (price == null || !Number.isFinite(price)) return starting ? 'loading' : 'none';
   if (isMarketClosed(new Date(now))) return 'closed';
+  if (starting) return 'loading';
   if (updatedAt == null || now - updatedAt > 15 * 60e3) return 'delayed';
-  return 'live';
+  if (fetchedAt != null && now - fetchedAt <= 30e3) return 'live';
+  return 'recent';
 }

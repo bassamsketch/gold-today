@@ -1,18 +1,12 @@
 import { gramPrice, formatNum } from '../price.js';
 import { KARATS } from '../config.js';
-import { t } from '../i18n.js';
+import { t, priceTime } from '../i18n.js';
 
 const W = 1080, H = 1350;
 const C = { bg: '#ffffff', ink: '#2b1d1a', muted: '#6b5c58', car: '#9e2e21', hair: '#ece2df', gold1: '#fade8c', gold2: '#b07c26' };
 const fontsReady = () => Promise.all([
   "700 72px 'Noto Naskh Arabic'", "600 72px 'Source Serif 4'", "400 30px 'Almarai'", "700 44px 'Almarai'",
 ].map((f) => document.fonts?.load(f).catch(() => null)));
-
-function when(lang, date) {
-  return new Intl.DateTimeFormat(lang === 'ar' ? 'ar-OM-u-nu-latn' : 'en-GB', {
-    timeZone: 'Asia/Muscat', day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: '2-digit',
-  }).format(date);
-}
 
 function ring(ctx, cx, cy, r) {
   const g = ctx.createLinearGradient(0, cy - r, 0, cy + r);
@@ -59,9 +53,9 @@ export function drawShareCard(canvas, { lang, usd, date, url }) {
   ctx.font = "400 38px 'Almarai', sans-serif";
   ctx.fillText(t(lang, 'shareTitle'), W / 2, 430);
   ctx.font = "400 32px 'Almarai', sans-serif";
-  ctx.fillText(when(lang, date), W / 2, 482);
+  ctx.fillText(priceTime(lang, date), W / 2, 482);
 
-  let y = 600;
+  let y = 590;
   for (const k of KARATS) {
     ctx.strokeStyle = C.hair;
     ctx.lineWidth = 2;
@@ -82,32 +76,36 @@ export function drawShareCard(canvas, { lang, usd, date, url }) {
     ctx.fillStyle = C.muted;
     ctx.font = "400 28px 'Almarai', sans-serif";
     ctx.fillText(t(lang, 'rialPerGram'), end, y + 46);
-    y += 150;
+    y += 145;
   }
 
   ctx.textAlign = 'center';
+  ctx.fillStyle = C.ink;
+  ctx.font = "400 28px 'Almarai', sans-serif";
+  ctx.fillText(t(lang, 'shareNote'), W / 2, 1150, W - 192); // raw gold, not the shop price (QA23)
   ctx.fillStyle = C.muted;
-  ctx.font = "400 30px 'Almarai', sans-serif";
-  ctx.fillText(t(lang, 'world', formatNum(usd, 0)), W / 2, 1180);
+  ctx.font = "400 26px 'Almarai', sans-serif";
+  ctx.fillText(t(lang, 'world', usd), W / 2, 1196);
   ctx.fillStyle = C.car;
-  ctx.font = "700 30px 'Almarai', sans-serif";
-  ctx.fillText(t(lang, 'shareFooter'), W / 2, 1240);
+  ctx.font = "700 28px 'Almarai', sans-serif";
+  ctx.fillText(t(lang, 'shareFooter'), W / 2, 1246);
   ctx.direction = 'ltr';
   ctx.font = "400 26px 'Almarai', sans-serif";
-  ctx.fillText(url.replace(/^https?:\/\//, ''), W / 2, 1280);
+  ctx.fillText(url.replace(/^https?:\/\//, ''), W / 2, 1284);
 }
 
 /** Plain-text version of the card, used with the image or on its own. */
 export function shareText(lang, usd, date, url) {
   const lines = KARATS.map((k) => `${t(lang, 'karatN', k)}: ${formatNum(gramPrice(usd, k), 3)} ${t(lang, 'rialPerGram')}`);
-  return [`${t(lang, 'shareTitle')} (${when(lang, date)})`, ...lines, url].join('\n');
+  return [`${t(lang, 'shareTitle')} (${priceTime(lang, date)})`, ...lines, t(lang, 'shareNote'), url].join('\n');
 }
 
 /** Share today's prices: image + text where supported, else text, else WhatsApp. */
 export async function shareToday(app) {
   const usd = app.price.usd;
   if (!Number.isFinite(usd)) return 'cancelled';
-  const lang = app.state.lang, date = new Date(), url = location.origin + location.pathname;
+  // stamp the price's own time, so a weekend or delayed price is not shown as current (QA23)
+  const lang = app.state.lang, date = new Date(app.price.updatedAt ?? Date.now()), url = location.origin + location.pathname;
   const text = shareText(lang, usd, date, url);
   try {
     await fontsReady();
@@ -130,6 +128,25 @@ export async function shareToday(app) {
   return 'text';
 }
 
+/** Share plain text (the My gold list): the share sheet where there is one, else WhatsApp. */
+export async function shareTextOnly(app, text) {
+  try {
+    if (navigator.share) {
+      await navigator.share({ text, title: t(app.state.lang, 'appName') });
+      return 'shared';
+    }
+  } catch (err) {
+    if (err?.name === 'AbortError') return 'cancelled';
+  }
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+  return 'text';
+}
+
 export function mount(app) {
-  ['share', 'share-today'].forEach((id) => document.getElementById(id)?.addEventListener('click', () => shareToday(app)));
+  const buttons = ['share', 'share-today'].map((id) => document.getElementById(id)).filter(Boolean);
+  buttons.forEach((b) => b.addEventListener('click', () => shareToday(app)));
+  // nothing to share until a price is known (QA23)
+  const sync = () => buttons.forEach((b) => { b.hidden = !Number.isFinite(app.price.usd); });
+  app.on('price', sync);
+  sync();
 }
