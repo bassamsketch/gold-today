@@ -1,5 +1,5 @@
 // Offline support (design section 9). Bump VERSION when the precache list changes.
-const VERSION = 'gold-today-v2';
+const VERSION = 'gold-today-v3';
 const PRECACHE = [
   './',
   'index.html',
@@ -15,8 +15,7 @@ const PRECACHE = [
   'fonts/Almarai-normal-400-latin.woff2',
   'fonts/Almarai-normal-700-arabic.woff2',
   'fonts/Almarai-normal-700-latin.woff2',
-  'fonts/Amiri-normal-700-arabic.woff2',
-  'fonts/Amiri-normal-700-latin.woff2',
+  'fonts/NotoNaskhArabic-normal-700-arabic.woff2',
   'fonts/SourceSerif4-normal-500-latin.woff2',
   'fonts/SourceSerif4-normal-600-latin.woff2',
   'icons/apple-touch-icon.png',

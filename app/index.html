@@ -91,13 +91,14 @@
 
     <!-- ================= Future ================= -->
     <section class="view" data-view="future">
-      <div class="pad">
+      <div class="pad future-head">
         <h1 class="h" data-t="outlook"></h1>
         <p class="cap" id="outlook-sub"></p>
+        <div class="karats small future-karats" id="future-karats" role="radiogroup"><i class="kline"></i><button type="button" role="radio" data-fk="24">24</button><button type="button" role="radio" data-fk="22">22</button><button type="button" role="radio" data-fk="21">21</button><button type="button" role="radio" data-fk="18">18</button></div>
         <div class="chart-wrap" dir="ltr">
           <svg class="fchart" id="fchart" viewBox="0 0 340 200" aria-hidden="true">
             <defs><clipPath id="fchart-clip"><rect class="f-clip" x="0" y="0" width="340" height="200"/></clipPath></defs>
-            <g clip-path="url(#fchart-clip)"><path class="f-band"/><path class="f-past"/><path class="f-mid"/><circle class="f-m" r="3.5"/><circle class="f-m" r="3.5"/><circle class="f-m" r="3.5"/></g>
+            <g clip-path="url(#fchart-clip)"><path class="f-band"/><path class="f-past"/><path class="f-mid"/><circle class="f-m" r="3.5"/><circle class="f-m" r="3.5"/><line class="f-bank-range"/><circle class="f-bank" r="4.5"/><text class="f-bank-l"></text></g>
             <line class="f-today"/><circle class="f-now" r="5"/>
             <text class="f-l0"></text><text class="f-l1" text-anchor="middle"></text><text class="f-l2" text-anchor="end"></text>
           </svg>

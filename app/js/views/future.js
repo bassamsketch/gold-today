@@ -4,6 +4,7 @@ import { dayMonthYear, monthYear } from '../i18n.js';
 import { drawFuture } from '../ui/chart.js';
 import { countUp } from '../ui/countup.js';
 import { openSheet, closeOnBackdrop } from '../ui/sheet.js';
+import { syncKarats } from '../ui/karats.js';
 
 const $ = (id) => document.getElementById(id);
 const CREDITS = '@shahmansi130, @sfhashemi, @sarimkx (Unsplash)';
@@ -14,7 +15,7 @@ export function mount(app) {
     sub: $('outlook-sub'), svg: $('fchart'), f1: $('f1'), f5: $('f5'), f10: $('f10'),
     n1: $('f1-note'), n5: $('f5-note'), n10: $('f10-note'), win0: $('win0'), win1: $('win1'), survey: $('survey'),
     updated: $('f-updated'), sources: $('f-sources'), open: $('open-sources'), sheet: $('sources-sheet'),
-    list: $('src-list'), close: $('sources-close'),
+    list: $('src-list'), close: $('sources-close'), karats: $('future-karats'),
   };
 
   function compute() {
@@ -48,7 +49,8 @@ export function mount(app) {
     el.n10.textContent = app.t('bandNote', formatNum(y10.lo, 2), formatNum(y10.hi, 2));
 
     const past = c.h.monthly.slice(-61, -1).map((m) => g(m.c)).concat(g(c.usd));
-    drawFuture(el.svg, { past, today: g(c.usd), y1, y5, y10, labels: [app.t('ago5'), app.t('today'), app.t('in10')] }, animate);
+    drawFuture(el.svg, { past, today: g(c.usd), y1, y5, y10, labels: [app.t('ago5'), app.t('today'), app.t('in10')], bankLabel: app.t('banksLabel') }, animate);
+    syncKarats(el.karats, k, 'fk');
 
     const lb = c.fc.lbma || {};
     [el.win0, el.win1].forEach((p, i) => {
@@ -92,6 +94,10 @@ export function mount(app) {
     }));
   }
 
+  el.karats.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-fk]');
+    if (b) app.setKarat(Number(b.dataset.fk)); // shared with Today; the 'karat' event re-renders this tab
+  });
   el.open.addEventListener('click', () => openSheet(el.sheet));
   el.close.addEventListener('click', () => el.sheet.close(''));
   closeOnBackdrop(el.sheet);

@@ -14,15 +14,15 @@ function smooth(pts) {
 const line = (pts) => pts.map((p, i) => `${i ? 'L' : 'M'}${f1(p[0])},${f1(p[1])}`).join(' ');
 
 /**
- * Past 5 years (solid, log scale) joined at today to the expected path (dotted) through the
- * 1, 5 and 10-year points, inside a low-high band. Values are already in rials per gram.
+ * Past 5 years (solid, log scale) joined at today to the history-based path (dotted) through the
+ * 5 and 10-year points, inside its low-high band. The banks' 1-year view is drawn apart, as its own
+ * marker with its range, so the two methods never read as one path. Values are in rials per gram.
  */
-export function drawFuture(svg, { past, today, y1, y5, y10, labels }, animate) {
+export function drawFuture(svg, { past, today, y1, y5, y10, labels, bankLabel }, animate) {
   const knots = [{ m: 0, lo: today, mid: today, hi: today }];
-  if (y1) knots.push({ m: 12, ...y1 });
   if (y5) knots.push({ m: 60, ...y5 });
   if (y10) knots.push({ m: 120, ...y10 });
-  const all = past.concat(knots.flatMap((k) => [k.lo, k.hi]));
+  const all = past.concat(knots.flatMap((k) => [k.lo, k.hi]), y1 ? [y1.lo, y1.hi] : []);
   const ymin = Math.log(Math.min(...all) * 0.92), ymax = Math.log(Math.max(...all) * 1.04);
   const Y = (v) => TOP + (1 - (Math.log(v) - ymin) / (ymax - ymin)) * (H - TOP - BOT);
   const xp = (i) => X0 + (i * (XS - X0)) / (past.length - 1);
@@ -39,6 +39,16 @@ export function drawFuture(svg, { past, today, y1, y5, y10, labels }, animate) {
     c.style.display = k ? '' : 'none';
     if (k) { c.setAttribute('cx', f1(xf(k.m))); c.setAttribute('cy', f1(Y(k.mid))); }
   });
+  const range = q('.f-bank-range'), bank = q('.f-bank'), bankText = q('.f-bank-l');
+  [range, bank, bankText].forEach((n) => { n.style.display = y1 ? '' : 'none'; });
+  if (y1) {
+    const x = xf(12);
+    range.setAttribute('x1', f1(x)); range.setAttribute('x2', f1(x));
+    range.setAttribute('y1', f1(Y(y1.hi))); range.setAttribute('y2', f1(Y(y1.lo)));
+    bank.setAttribute('cx', f1(x)); bank.setAttribute('cy', f1(Y(y1.mid)));
+    bankText.setAttribute('x', f1(x + 8)); bankText.setAttribute('y', f1(Y(y1.hi) + 4));
+    bankText.textContent = bankLabel || '';
+  }
   const td = q('.f-today');
   td.setAttribute('x1', f1(XS)); td.setAttribute('x2', f1(XS)); td.setAttribute('y1', TOP - 8); td.setAttribute('y2', H - BOT + 6);
   const now = q('.f-now');

@@ -10,7 +10,7 @@
   --backdrop: oklch(0.95 0.004 30);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
-  --display-ar: 'Amiri', 'Times New Roman', serif;
+  --display-ar: 'Noto Naskh Arabic', 'Times New Roman', serif;
   --text: 'Almarai', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
   --gutter: 22px;
   --app-max: 440px;

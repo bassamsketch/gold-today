@@ -74,8 +74,9 @@ const ar = {
   estimateTag: 'تقدير',
   badWeight: 'الوزن بين 0.1 و 5,000 جرام',
 
-  outlook: 'ماذا يتوقع الخبراء',
-  outlookSub: (k) => `السعر المتوقع لجرام عيار ${k}`,
+  outlook: 'توقعات سعر الذهب',
+  outlookSub: (k) => `لجرام عيار ${k}، من توقعات البنوك وتاريخ الذهب`,
+  banksLabel: 'البنوك',
   in1: 'بعد سنة',
   in5: 'بعد 5 سنوات',
   in10: 'بعد 10 سنوات',
@@ -219,8 +220,9 @@ const en = {
   estimateTag: 'estimate',
   badWeight: 'Weight between 0.1 and 5,000 grams',
 
-  outlook: 'What experts expect',
-  outlookSub: (k) => `Expected price per gram, ${k} karat`,
+  outlook: 'Gold price outlook',
+  outlookSub: (k) => `Per gram of ${k} karat, from bank forecasts and gold's history`,
+  banksLabel: 'Banks',
   in1: 'In 1 year',
   in5: 'In 5 years',
   in10: 'In 10 years',

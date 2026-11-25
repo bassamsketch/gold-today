@@ -5,7 +5,7 @@ import { t } from '../i18n.js';
 const W = 1080, H = 1350;
 const C = { bg: '#ffffff', ink: '#2b1d1a', muted: '#6b5c58', car: '#9e2e21', hair: '#ece2df', gold1: '#fade8c', gold2: '#b07c26' };
 const fontsReady = () => Promise.all([
-  "700 72px 'Amiri'", "600 72px 'Source Serif 4'", "400 30px 'Almarai'", "700 44px 'Almarai'",
+  "700 72px 'Noto Naskh Arabic'", "600 72px 'Source Serif 4'", "400 30px 'Almarai'", "700 44px 'Almarai'",
 ].map((f) => document.fonts?.load(f).catch(() => null)));
 
 function when(lang, date) {
@@ -53,7 +53,7 @@ export function drawShareCard(canvas, { lang, usd, date, url }) {
   ring(ctx, W / 2, 190, 52);
   ctx.textAlign = 'center';
   ctx.fillStyle = C.ink;
-  ctx.font = ar ? "700 84px 'Amiri', serif" : "600 76px 'Source Serif 4', serif";
+  ctx.font = ar ? "700 80px 'Noto Naskh Arabic', serif" : "600 76px 'Source Serif 4', serif";
   ctx.fillText(t(lang, 'appName'), W / 2, 360);
   ctx.fillStyle = C.muted;
   ctx.font = "400 38px 'Almarai', sans-serif";

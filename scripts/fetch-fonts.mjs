@@ -4,7 +4,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 const FAMILIES = [
   { q: 'Source+Serif+4:opsz,wght@24,500;24,600', keep: ['latin'] },
-  { q: 'Amiri:wght@700', keep: ['arabic', 'latin'] },
+  { q: 'Noto+Naskh+Arabic:wght@700', keep: ['arabic'] },
   { q: 'Almarai:wght@400;700', keep: ['arabic', 'latin'] },
 ];
 const out = new URL('../app/fonts/', import.meta.url);
