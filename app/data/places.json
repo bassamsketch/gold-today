@@ -1,0 +1,8 @@
+[
+  { "id": "muttrah", "ar": "سوق الذهب في مطرح", "en": "Muttrah Gold Souq", "areaAr": "مطرح، قرب الكورنيش", "areaEn": "Muttrah, by the Corniche", "lineAr": "صفوف من محلات الذهب، أغلبها عيار 22", "lineEn": "Rows of gold shops, mostly 22 karat", "maps": "Muttrah Gold Souq Muscat" },
+  { "id": "malabar-ruwi", "ar": "ملابار للذهب والألماس", "en": "Malabar Gold & Diamonds", "areaAr": "لولو، روي", "areaEn": "Lulu, Ruwi", "lineAr": "محل مجوهرات كبير داخل لولو روي", "lineEn": "Large jewellery store inside Lulu Ruwi", "maps": "Malabar Gold and Diamonds Lulu Ruwi" },
+  { "id": "kalyan-ruwi", "ar": "كاليان للمجوهرات", "en": "Kalyan Jewellers", "areaAr": "لولو، روي", "areaEn": "Lulu, Ruwi", "lineAr": "محل مجوهرات على شارع روي العام", "lineEn": "Jewellery store on Ruwi High Street", "maps": "Kalyan Jewellers Lulu Ruwi" },
+  { "id": "malabar-seeb", "ar": "ملابار للذهب والألماس", "en": "Malabar Gold & Diamonds", "areaAr": "سيتي سنتر مسقط، السيب", "areaEn": "Muscat City Centre, Seeb", "lineAr": "فرع داخل سيتي سنتر مسقط", "lineEn": "Branch inside Muscat City Centre", "maps": "Malabar Gold and Diamonds City Centre Muscat" },
+  { "id": "malabar-moo", "ar": "ملابار للذهب والألماس", "en": "Malabar Gold & Diamonds", "areaAr": "مول عُمان", "areaEn": "Mall of Oman", "lineAr": "فرع داخل مول عُمان", "lineEn": "Branch inside Mall of Oman", "maps": "Malabar Gold and Diamonds Mall of Oman" },
+  { "id": "tanishq", "ar": "تانيشك", "en": "Tanishq", "areaAr": "عُمان أفنيوز مول", "areaEn": "The Oman Avenues Mall", "lineAr": "أول فرع للعلامة في عُمان", "lineEn": "The brand's first showroom in Oman", "maps": "Tanishq Oman Avenues Mall" }
+]

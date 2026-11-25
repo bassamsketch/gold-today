@@ -1,0 +1,18 @@
+{
+  "asOf": "2026-11-25",
+  "targets": [
+    { "institution": "Goldman Sachs", "institutionAr": "غولدمان ساكس", "usd": 4650, "horizon": "2027-12", "published": "2026-11-14", "reportedBy": "Investing.com", "url": "https://finance.yahoo.com/markets/commodities/articles/goldman-sachs-just-slashed-2027-123840250.html", "reported": true },
+    { "institution": "Morgan Stanley", "institutionAr": "مورغان ستانلي", "usd": 5250, "horizon": "2027-12", "published": "2026-11-17", "reportedBy": "investinglive", "url": "https://investinglive.com/commodities/morgan-stanley-bets-on-gold-at-5-250-the-boldest-bank-call-with-bullion-near-3-875/", "reported": true },
+    { "institution": "UBS", "institutionAr": "يو بي إس", "usd": 5000, "horizon": "2027-12", "published": "2026-11-24", "reportedBy": "investinglive", "url": "https://investinglive.com/commodities/gold-s-road-back-to-5-000-four-big-banks-bet-on-recovery-but-the-fed-sets-the-pace/", "reported": true },
+    { "institution": "Société Générale", "institutionAr": "سوسيتيه جنرال", "usd": 5000, "horizon": "2027-12", "published": "2026-11-24", "reportedBy": "investinglive", "url": "https://investinglive.com/commodities/gold-s-road-back-to-5-000-four-big-banks-bet-on-recovery-but-the-fed-sets-the-pace/", "reported": true },
+    { "institution": "J.P. Morgan", "institutionAr": "جي بي مورغان", "usd": 4500, "horizon": "2027-12", "published": "2026-11-24", "reportedBy": "Phemex (PANews)", "url": "https://phemex.com/news/article/jpmorgan-forecasts-gold-reaching-4500-in-q4-2027-amid-fed-rate-hold-104702", "reported": true }
+  ],
+  "lbma": {
+    "winners": [
+      { "year": 2024, "name": "Chantelle Schieven", "org": "Capitalight Research", "forecast": 2170, "actual": 2386.2, "url": "https://www.lbma.org.uk/articles/lbma-annual-precious-metals-forecast-survey-2024-winners-announced" },
+      { "year": 2025, "name": "Keisuke (Bill) Okui", "org": "Sumitomo Corporation", "forecast": 2925, "actual": 3431.54, "url": "https://www.lbma.org.uk/articles/lbma-annual-precious-metals-forecast-survey-2025-winners-announced" }
+    ],
+    "survey2026Avg": 4741.97,
+    "surveyUrl": "https://www.lbma.org.uk/forecast-survey-2026/at-a-glance"
+  }
+}

@@ -32,11 +32,14 @@ test('buildForecast shapes y1, y5 and y10', () => {
   const fc = { asOf: '2026-11-25', targets: [4650, 5250, 5000, 5000, 4500].map((usd) => ({ usd })), lbma: {} };
   const out = buildForecast(fc, series(30, 0.08), 3500);
   assert.deepEqual([out.y1.mid, out.y1.lo, out.y1.hi, out.y1.n], [5000, 4500, 5250, 5]);
-  assert.ok(Math.abs(out.y5.mid - 3500 * Math.pow(1.08, 5)) < 1e-6);
-  assert.ok(Math.abs(out.y10.mid - 3500 * Math.pow(1.08, 10)) < 1e-6);
+  // after the first year the history bands start from the banks' 1-year median
+  assert.ok(Math.abs(out.y5.mid - 5000 * Math.pow(1.08, 4)) < 1e-6);
+  assert.ok(Math.abs(out.y10.mid - 5000 * Math.pow(1.08, 9)) < 1e-6);
 });
 
 test('buildForecast returns no 1-year view without targets', () => {
   const out = buildForecast({ asOf: '2026-11-25', targets: [], lbma: {} }, series(30, 0.08), 3500);
   assert.equal(out.y1, null);
+  assert.ok(Math.abs(out.y5.mid - 3500 * Math.pow(1.08, 5)) < 1e-6);
+  assert.ok(Math.abs(out.y10.mid - 3500 * Math.pow(1.08, 10)) < 1e-6);
 });
