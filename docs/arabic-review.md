@@ -116,7 +116,6 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | reportClose | حتى أفضل المتوقعين يخطئون غالباً بنسبة 10 إلى 15%، فالتوقعات دليل تقريبي فقط. | Even the best forecasters often miss by 10 to 15%, so treat forecasts as a rough guide. |
 | updatedOn | تم تحديث التوقعات في 25 نوفمبر 2026 | Forecasts updated on 25 November 2026 |
 | dataSources | مصادر البيانات | Data sources |
-| photos | الصور | Photos |
 | targetBy | نهاية 2027 | end of 2027 |
 | srcGram | ريال لجرام عيار 22 | rials per gram of 22 karat |
 | srcOz | 4,650 دولاراً للأونصة | $4,650 an ounce |

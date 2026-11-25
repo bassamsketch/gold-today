@@ -8,7 +8,6 @@ import { syncKarats, setKaratText } from '../ui/karats.js';
 
 const $ = (id) => document.getElementById(id);
 const DATA = 'gold-api.com, OANDA (TradingView), World Bank (freegoldapi.com), LBMA';
-const PHOTOS = '@sfhashemi, @jesus_eca, @sarimkx (Unsplash)';
 
 // Latin names inside Arabic text are isolated, so brackets and full stops stay in place (QA6).
 function latin(text) {
@@ -31,7 +30,7 @@ export function mount(app) {
   const el = {
     sub: $('outlook-sub'), svg: $('fchart'), today: $('f-today'), f1: $('f1'), f1for: $('f1-for'), n1: $('f1-note'),
     hist: $('hist'), f5: $('f5'), f10: $('f10'), win0: $('win0'), win1: $('win1'), survey: $('survey'),
-    updated: $('f-updated'), data: $('f-data'), photos: $('f-photos'), open: $('open-sources'),
+    updated: $('f-updated'), data: $('f-data'), open: $('open-sources'),
     sheet: $('sources-sheet'), list: $('src-list'), close: $('sources-close'), karats: $('future-karats'),
   };
 
@@ -91,7 +90,6 @@ export function mount(app) {
 
     el.updated.textContent = app.t('updatedOn', dayMonthYear(lang, c.fc.asOf));
     el.data.replaceChildren(`${app.t('dataSources')}: `, latin(DATA));
-    el.photos.replaceChildren(`${app.t('photos')}: `, latin(PHOTOS));
     renderSources(c.fc);
   }
 
