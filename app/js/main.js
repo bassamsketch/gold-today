@@ -94,7 +94,7 @@ async function start() {
       const mod = await import(path);
       mod.mount?.(app);
     } catch (err) {
-      if (!/Failed to fetch|Cannot find|404/i.test(String(err))) console.error(path, err);
+      console.error(path, err); // one broken tab must not stop the others
     }
   }
   await loadData();
