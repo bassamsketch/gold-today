@@ -96,6 +96,9 @@ const ar = {
   reportClose: 'حتى أفضل المتوقعين يخطئون غالباً بنسبة 10 إلى 15%، فالتوقعات دليل تقريبي فقط.',
   updatedOn: (d) => `تم تحديث التوقعات في ${d}`,
   dataSources: 'مصادر البيانات',
+  photos: 'الصور',
+  targetBy: (d) => `بحلول ${d}`,
+  publishedVia: (d, who) => `نُشر في ${d} عبر ${who}`,
 
   buySellTitle: 'بيع وشراء',
   costTitle: 'كم يجب أن تكلّف هذه القطعة؟',
@@ -238,6 +241,9 @@ const en = {
   reportClose: 'Even the best forecasters often miss by 10 to 15%, so treat forecasts as a rough guide.',
   updatedOn: (d) => `Forecasts updated on ${d}`,
   dataSources: 'Data sources',
+  photos: 'Photos',
+  targetBy: (d) => `by ${d}`,
+  publishedVia: (d, who) => `Published ${d}, reported by ${who}`,
 
   buySellTitle: 'Buy and sell',
   costTitle: 'What should this piece cost?',
