@@ -3,7 +3,7 @@ import { parseNumber } from '../calc.js';
 import { formatNum } from '../price.js';
 import { monthYear, monthNames } from '../i18n.js';
 import { countUp } from '../ui/countup.js';
-import { syncKarats } from '../ui/karats.js';
+import { syncKarats, setKaratText } from '../ui/karats.js';
 import { openSheet, closeOnBackdrop } from '../ui/sheet.js';
 import { shareTextOnly } from '../ui/share.js';
 
@@ -50,7 +50,7 @@ export function mount(app) {
     edit.dataset.edit = p.id;
     edit.textContent = app.t('edit');
     edit.setAttribute('aria-label', app.t('editNamed', name));
-    li.querySelector('.piece-meta').textContent = `${grams(p.grams)} ${app.t('grams')}${sep()}${app.t('karatN', p.karat)}`;
+    setKaratText(li.querySelector('.piece-meta'), `${grams(p.grams)} ${app.t('grams')}${sep()}${app.t('karatN', p.karat)}`, app.t('karatN', p.karat));
     const e = sellEstimate([p], app.price.usd);
     const value = li.querySelector('.piece-value');
     value.hidden = !e;

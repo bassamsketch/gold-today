@@ -5,7 +5,7 @@ import { yearShareBelow, tierOf, hintOf, newsVisible, compareClose } from '../hi
 import { startLive } from '../live.js';
 import { agoText, dayMonth, lastPriceText, closeDay } from '../i18n.js';
 import { odometer } from '../ui/odometer.js';
-import { syncKarats } from '../ui/karats.js';
+import { syncKarats, setKaratText } from '../ui/karats.js';
 
 const $ = (id) => document.getElementById(id);
 const secsSince = (t) => (Number.isFinite(t) ? Math.max(0, Math.round((Date.now() - t) / 1000)) : 0);
@@ -29,7 +29,8 @@ export function mount(app) {
 
   // The caption names the karat (QA4) and stops saying "now" when the price is not live (QA3).
   function renderCaption(s) {
-    el.cap.textContent = app.t(['live', 'recent', 'none'].includes(s) ? 'perGramNow' : 'lastGram', app.state.karat);
+    const k = app.state.karat;
+    setKaratText(el.cap, app.t(['live', 'recent', 'none'].includes(s) ? 'perGramNow' : 'lastGram', k), app.t('karatN', k));
     el.skel.hidden = has() || s !== 'loading';
     el.missing.hidden = has() || s === 'loading';
     if (!has()) el.missing.textContent = app.t('none');

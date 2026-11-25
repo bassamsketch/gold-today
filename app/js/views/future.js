@@ -4,7 +4,7 @@ import { dayMonthYear } from '../i18n.js';
 import { drawFuture } from '../ui/chart.js';
 import { countUp } from '../ui/countup.js';
 import { openSheet, closeOnBackdrop } from '../ui/sheet.js';
-import { syncKarats } from '../ui/karats.js';
+import { syncKarats, setKaratText } from '../ui/karats.js';
 
 const $ = (id) => document.getElementById(id);
 const DATA = 'gold-api.com, OANDA (TradingView), World Bank (freegoldapi.com), LBMA';
@@ -54,7 +54,7 @@ export function mount(app) {
     const band = (b) => b && { lo: g(b.lo), hi: g(b.hi) };
     const y5 = band(c.f.y5), y10 = band(c.f.y10);
     const today = g(c.live);
-    el.sub.textContent = app.t('outlookSub', k);
+    setKaratText(el.sub, app.t('outlookSub', k), app.t('karatN', k));
     el.today.textContent = formatNum(today, 1);
 
     if (y1) {
@@ -107,7 +107,9 @@ export function mount(app) {
       const num = document.createElement('span');
       num.className = 'num';
       num.textContent = formatNum(gramPrice(x.usd, k), 1);
-      main.append(num, ` ${app.t('srcGram', k)} · ${app.t('targetBy', x.horizon)}`);
+      const unit = document.createElement('span');
+      setKaratText(unit, app.t('srcGram', k), app.t('karatN', k));
+      main.append(num, ' ', unit, ` · ${app.t('targetBy', x.horizon)}`);
       const oz = document.createElement('p');
       oz.className = 'sub';
       oz.textContent = app.t('srcOz', x.usd);
