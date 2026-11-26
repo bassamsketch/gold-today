@@ -1,8 +1,8 @@
 import { buildForecast, surveyComparison } from '../forecast.js';
-import { recordHigh, pastFalls, higherOdds, moveSince } from '../insights.js';
+import { recordHigh, pastFalls, higherOdds, moveSince, bestPrice, historyWindow, recordX } from '../insights.js';
 import { yearShareBelow, tierOf } from '../history.js';
 import { gramPrice, formatNum } from '../price.js';
-import { dayMonthYear, monthYear } from '../i18n.js';
+import { dayMonthYear, monthYear, lastPriceText } from '../i18n.js';
 import { drawHistory } from '../ui/chart.js';
 import { openSheet, closeOnBackdrop } from '../ui/sheet.js';
 import { syncKarats, setKaratText } from '../ui/karats.js';
@@ -41,23 +41,26 @@ const dots = (tens) => {
 export function mount(app) {
   const el = {
     sub: $('outlook-sub'), karats: $('future-karats'), answer: $('q1-answer'), week: $('move-week'), month: $('move-month'),
-    mood: $('q1-mood'), svg: $('fchart'), today: $('f-today'), recRow: $('rec-row'), recDate: $('rec-date'), record: $('f-record'),
+    mood: $('q1-mood'), stale: $('q1-stale'), svg: $('fchart'), today: $('f-today'), recRow: $('rec-row'), recDate: $('rec-date'), record: $('f-record'),
     fallsLine: $('falls-line'), fallsRows: $('falls-rows'), odds2: $('odds2'), worstLine: $('worst-line'), worstText: $('worst-text'),
     banksLine: $('banks-line'), oddsAll: $('odds-all'), missLine: $('miss-line'), bankList: $('bank-list'),
     updated: $('f-updated'), data: $('f-data'), open: $('open-sources'), sheet: $('sources-sheet'), list: $('src-list'), close: $('sources-close'),
   };
 
-  function renderHighLow(h, live, g, animate) {
-    const lang = app.state.lang, now = new Date();
+  function renderHighLow(h, bp, g, animate) {
+    const lang = app.state.lang, live = bp.usd, at = new Date(bp.at);
     const rec = recordHigh(h, live);
     const atTop = rec.live || live >= rec.usd * 0.99;
     el.answer.textContent = atTop ? app.t('atRecord') : app.t('belowRecord', (1 - live / rec.usd) * 100);
-    const wk = moveSince(h.daily, live, now, 7), mo = moveSince(h.daily, live, now, 30);
+    // an old saved price says when it is from, and the moves count back from that time (design 6.1)
+    el.stale.hidden = !bp.old;
+    if (bp.old) el.stale.textContent = lastPriceText(lang, bp.at);
+    const wk = moveSince(h.daily, live, at, 7), mo = moveSince(h.daily, live, at, 30);
     el.week.hidden = wk == null;
     el.month.hidden = mo == null;
     if (wk != null) el.week.textContent = app.t('pastWeek', wk * 100);
     if (mo != null) el.month.textContent = app.t('pastMonth', mo * 100);
-    const share = yearShareBelow(h.daily, live, now);
+    const share = yearShareBelow(h.daily, live, at);
     el.mood.hidden = share == null;
     if (share != null) el.mood.textContent = app.t(`mood${tierOf(share)}`);
     el.today.textContent = formatNum(g(live), 1);
@@ -67,15 +70,11 @@ export function mount(app) {
       el.recDate.textContent = rec.day ? dayMonthYear(lang, rec.d) : monthYear(lang, rec.d);
     }
 
-    // the last 60 monthly closes before this month, then today; the record at its own date when it falls inside
-    const past = h.monthly.slice(-61, -1);
-    let record = null;
-    if (!rec.live && past.length) {
-      const [y0, m0] = past[0].d.split('-').map(Number);
-      const [y, m] = rec.d.slice(0, 7).split('-').map(Number);
-      const x = (y - y0) * 12 + (m - m0) + ((rec.day ? Number(rec.d.slice(8, 10)) : 15) - 1) / 31;
-      if (x >= 0) record = { x: Math.min(x, past.length), value: g(rec.usd) };
-    }
+    // the 60 completed months before this one, then today; the record at its own date when it falls inside,
+    // and no marker when today is at the record (it would sit under today's dot)
+    const past = historyWindow(h.monthly, Date.now());
+    const x = atTop || !past.length ? null : recordX(past[0].d, rec);
+    const record = x == null ? null : { x: Math.min(x, past.length), value: g(rec.usd) };
     drawHistory(el.svg, {
       past: past.map((p) => g(p.c)), today: g(live), record,
       words: { record: app.t('chartRecord'), today: app.t('today'), start: app.t('ago5') },
@@ -91,7 +90,7 @@ export function mount(app) {
     el.fallsLine.hidden = !falls.length;
     if (falls.length) el.fallsLine.textContent = app.t('fallsLine', falls.map((f) => f.months), current, longest === deepest ? longest.year : null);
     el.fallsRows.replaceChildren(...falls.map((f) => {
-      const tr = make('tr', current && f.depth >= depthNow ? 'deep' : '');
+      const tr = make('tr');
       tr.append(make('td', null, f.year), make('td', null, app.t('fallDepth', f.depth * 100)), make('td', null, app.t('fallBack', f.months)));
       return tr;
     }));
@@ -105,7 +104,7 @@ export function mount(app) {
       return row;
     }));
     el.worstLine.hidden = !o10;
-    if (o10) el.worstText.textContent = app.t('worstText', o10.worstFrom, o10.worst * 100);
+    if (o10) el.worstText.textContent = app.t('worstText', monthYear(app.state.lang, o10.worstMonth), o10.worst * 100);
 
     const y1 = fc ? buildForecast(fc).y1 : null;
     el.banksLine.hidden = !y1;
@@ -137,14 +136,14 @@ export function mount(app) {
 
   function render(animate) {
     const h = app.data.history, fc = app.data.forecasts;
-    const close = h?.daily?.at(-1)?.c;
-    const live = Number.isFinite(app.price.usd) ? app.price.usd : close;
-    if (!h || !Number.isFinite(live)) return;
+    const bp = h ? bestPrice(app.price, h.daily, Date.now()) : null;
+    if (!bp) return;
+    const live = bp.usd;
     const k = app.state.karat, lang = app.state.lang;
     const g = (usd) => gramPrice(usd, k);
     setKaratText(el.sub, app.t('pricesPerGram', k), app.t('karatN', k));
     syncKarats(el.karats, k, 'fk');
-    renderHighLow(h, live, g, animate);
+    renderHighLow(h, bp, g, animate);
     renderWillItRise(h, fc, live, g);
     el.updated.textContent = fc ? app.t('updatedOn', dayMonthYear(lang, fc.asOf)) : '';
     el.data.replaceChildren(`${app.t('dataSources')}: `, latin(DATA));

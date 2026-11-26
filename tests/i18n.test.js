@@ -12,6 +12,23 @@ test('durations use months under two years and agree in Arabic', () => {
   assert.equal(durationText('en', 6), '6 months');
 });
 
+test('short durations use the Arabic dual and singular forms', () => {
+  assert.equal(durationText('ar', 1), 'شهر');
+  assert.equal(durationText('ar', 2), 'شهرين');
+  assert.equal(durationText('ar', 26), 'سنتين');
+  assert.equal(durationText('en', 26), '2 years');
+});
+
+test('the worst 10 years name the month they began', () => {
+  assert.equal(t('ar', 'worstText', 'يوليو 1980', -0.44 * 100), 'من اشترى في يوليو 1980 وجد السعر أقل بـ 44% بعد 10 سنوات.');
+  assert.equal(t('en', 'worstText', 'July 1980', -44), 'buying in July 1980 meant a price 44% lower 10 years later.');
+});
+
+test('"not a forecast" sits with the history, not with the banks', () => {
+  assert.ok(t('ar', 'oddsSince').includes('ليس توقعاً'));
+  assert.ok(t('en', 'oddsSince').includes('Not a forecast'));
+});
+
 test('the outlook reads "in 6 cases out of 10", never "6 times higher"', () => {
   assert.ok(t('ar', 'higherCases', 6).includes('6 حالات من كل 10'));
   assert.ok(t('ar', 'higherCases', 8).includes('8 حالات من كل 10'));

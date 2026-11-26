@@ -47,6 +47,25 @@ test('priceCheck refuses impossible input', () => {
   assert.equal(priceCheck({ grams: 20, karat: 22, price: 950 }, null), null);
 });
 
+test('priceCheck judges the percentages the page prints, so the verdict never contradicts the range', () => {
+  // 980 is 20.99% over the gold value and prints as 21%, inside "13% to 21%"; 913 is 12.7% and prints as 13%
+  assert.equal(priceCheck({ grams: 20, karat: 22, price: 980 }, 3574).position, 'within');
+  assert.equal(priceCheck({ grams: 20, karat: 22, price: 913 }, 3574).position, 'within');
+  assert.equal(priceCheck({ grams: 20, karat: 22, price: 990 }, 3574).position, 'above');
+});
+
+test('priceCheck has no per-100 figure when the price is under the gold value', () => {
+  assert.equal(priceCheck({ grams: 20, karat: 22, price: 500 }, 3574).per100, null);
+});
+
+test('pieceCost can leave VAT out, for a bar or coin', () => {
+  const withVat = pieceCost({ grams: 10, karat: 24, rate: 44, making: 1, mode: 'perGram' }, 3574);
+  const noVat = pieceCost({ grams: 10, karat: 24, rate: 44, making: 1, mode: 'perGram', vat: 0 }, 3574);
+  assert.ok(near(withVat.total, 450 * 1.05, 1e-9));
+  assert.ok(near(noVat.total, 450, 1e-9));
+  assert.equal(noVat.vat, 0);
+});
+
 test('jewelleryVsBar gives what a shop pays back per 100 paid', () => {
   assert.deepEqual(jewelleryVsBar(3574), { bar: [90, 94], plain: 85, detailed: 80 });
   assert.equal(jewelleryVsBar(null), null);

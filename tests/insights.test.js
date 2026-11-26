@@ -1,7 +1,42 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { recordHigh, pastFalls, higherOdds, moveSince, yearRange, closeYearsAgo } from '../app/js/insights.js';
+import { recordHigh, pastFalls, higherOdds, moveSince, yearRange, closeYearsAgo, bestPrice, historyWindow, recordX } from '../app/js/insights.js';
+
+test('the worst 10 years name the month they started, not the peak', () => {
+  assert.equal(higherOdds(history.monthly, 10).worstMonth, '1980-07');
+});
+
+test('bestPrice uses the newer of the saved price and the last close, and says when it is old', () => {
+  const daily = [{ d: '2026-11-24', c: 3600 }, { d: '2026-11-25', c: 3574 }];
+  const now = Date.parse('2026-11-26T10:00:00Z');
+  // a saved price from before the last close loses to the close (21:00 UTC that day)
+  assert.deepEqual(bestPrice({ usd: 3700, updatedAt: Date.parse('2026-11-25T08:00:00Z') }, daily, now), { usd: 3574, at: Date.parse('2026-11-25T21:00:00Z'), old: true });
+  // a fresh live price wins and is not old
+  assert.deepEqual(bestPrice({ usd: 3580, updatedAt: now - 60e3 }, daily, now), { usd: 3580, at: now - 60e3, old: false });
+  // no saved price at all: the close
+  assert.equal(bestPrice({ usd: null, updatedAt: null }, daily, now).usd, 3574);
+  assert.equal(bestPrice({ usd: null }, [], now), null);
+});
+
+test('historyWindow keeps 60 completed months before the current one', () => {
+  const m = Array.from({ length: 70 }, (_, i) => ({ d: `${2021 + Math.floor((i + 1) / 12)}-${String(((i + 1) % 12) + 1).padStart(2, '0')}`, c: i }));
+  // the data ends in 2026-11; in November the last entry is this month's running close and is left out
+  assert.equal(m.at(-1).d, '2026-11');
+  const nov = historyWindow(m, Date.parse('2026-11-26T10:00:00Z'));
+  assert.equal(nov.length, 60);
+  assert.equal(nov.at(-1).d, '2026-10');
+  // on 1 December, before December's first close, November is complete and stays
+  const dec = historyWindow(m, Date.parse('2026-12-01T06:00:00Z'));
+  assert.equal(dec.at(-1).d, '2026-11');
+});
+
+test('recordX puts a daily record inside its own month, before that month-end point', () => {
+  // points are month-end closes; 28 January sits just before the January point
+  assert.ok(Math.abs(recordX('2021-11', { d: '2026-01-28', day: true }) - (50 - 1 + 28 / 31)) < 1e-9);
+  assert.equal(recordX('2021-11', { d: '2026-01', day: false }), 50);
+  assert.equal(recordX('2021-11', { d: '1980-01', day: false }), null);
+});
 
 const history = JSON.parse(readFileSync(new URL('../app/data/history.json', import.meta.url), 'utf8'));
 const months = (start, values) => values.map((c, i) => {

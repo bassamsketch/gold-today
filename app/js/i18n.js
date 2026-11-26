@@ -26,9 +26,13 @@ const listEn = (items) => (items.length > 1 ? `${items.slice(0, -1).join(', ')} 
 
 /** "6 أشهر" / "4 years": months under two years, whole years from there (design 7.3). */
 export function durationText(lang, months) {
-  if (months < 24) return lang === 'ar' ? `${months} ${nounAr(months, 'أشهر', 'شهراً', 'شهر')}` : `${months} ${months === 1 ? 'month' : 'months'}`;
+  if (months < 24) {
+    if (lang !== 'ar') return `${months} ${months === 1 ? 'month' : 'months'}`;
+    return months === 1 ? 'شهر' : months === 2 ? 'شهرين' : `${months} ${nounAr(months, 'أشهر', 'شهراً', 'شهر')}`;
+  }
   const y = Math.round(months / 12);
-  return lang === 'ar' ? `${y} ${nounAr(y, 'سنوات', 'سنة', 'سنة')}` : `${y} ${y === 1 ? 'year' : 'years'}`;
+  if (lang !== 'ar') return `${y} ${y === 1 ? 'year' : 'years'}`;
+  return y === 2 ? 'سنتين' : `${y} ${nounAr(y, 'سنوات', 'سنة', 'سنة')}`;
 }
 const sortedDurations = (lang, months) => [...months].sort((a, b) => a - b).map((m) => durationText(lang, m));
 // the horizon of bank targets: "بنهاية 2027" / "by the end of 2027"
@@ -161,9 +165,9 @@ const ar = {
   q2Sub: 'هذا ما حدث من قبل، وما تتوقعه البنوك:',
   afterYears: (n) => (n === 1 ? 'بعد سنة' : `بعد ${n} ${nounAr(n, 'سنوات', 'سنة', 'سنة')}`),
   higherCases: (k) => `ارتفع في ${countAr(k, CASE)} من كل 10`,
-  oddsSince: 'منذ 1971، بدءاً من كل شهر.',
+  oddsSince: 'منذ 1971، بدءاً من كل شهر، بأسعار الدولار دون احتساب التضخم. هذا ليس توقعاً.',
   worstLead: 'أسوأ 10 سنوات منذ 1971:',
-  worstText: (year, p) => `من اشترى عند قمة ${year} وجد السعر أقل بـ ${up(p)}% بعد 10 سنوات.`,
+  worstText: (when, p) => `من اشترى في ${when} وجد السعر أقل بـ ${up(p)}% بعد 10 سنوات.`,
   banksShort: (n, lo, hi, ym, today) => `${n === 1 ? 'يتوقع بنك واحد' : n === 2 ? 'يتوقع بنكان' : `تتوقع ${countAr(n, BANK, true)}`} أن يبلغ الجرام ${lo === hi ? `نحو ${lo}` : `بين ${lo} و${hi}`} ريال ${byAr(ym)} (اليوم ${today}). التوقعات ليست وعداً، وتخطئ في الاتجاهين.`,
   winnerMiss: (year, p, low) => `أفضل توقع لعام ${year} كان ${low ? 'أقل' : 'أعلى'} من الواقع بـ ${up(p)}%.`,
   surveyMiss: (year, p, high) => `وتوقعات ${year} ${high ? 'أعلى' : 'أقل'} مما حدث حتى الآن بـ ${up(p)}%.`,
@@ -173,7 +177,6 @@ const ar = {
   periodRow: (typical, worst) => `في العادة ${typical >= 0 ? 'أعلى' : 'أقل'} بـ ${up(typical)}%، وفي أسوأ حالة ${worst < 0 ? 'أقل' : 'أعلى'} بـ ${up(worst)}%`,
   overlapNote: 'الفترات متداخلة، وتبدأ البيانات في 1971 حين صار سعر الذهب حراً بعد أن كان ثابتاً.',
   banksCap: 'البنوك، كما نقلتها وسائل الإعلام:',
-  inflationNote: 'بأسعار الدولار دون احتساب التضخم. هذا ليس توقعاً.',
 
   // My gold before (design 8)
   beforeTitle: 'قيمة ذهبي من قبل',
@@ -234,6 +237,7 @@ const ar = {
   badMaking: 'يُرجى كتابة الأجرة بالأرقام، صفر أو أكثر.',
   badRate: 'يُرجى كتابة سعر الجرام بالأرقام.',
   offerTitle: 'هل هذا العرض معتاد؟',
+  vat24: 'السبائك والعملات الخالصة معفاة عادة من الضريبة.',
   pcPrompt: 'تظهر النتيجة بعد كتابة الوزن والسعر',
   offerAmount: 'المبلغ الذي عرضه المحل بالريال',
   offerValue: (v) => `قيمة الذهب اليوم ${v} ريال`,
@@ -395,9 +399,9 @@ const en = {
   q2Sub: 'Here is what happened before, and what banks expect:',
   afterYears: (n) => `After ${n} ${n === 1 ? 'year' : 'years'}`,
   higherCases: (k) => `higher in ${k} ${k === 1 ? 'case' : 'cases'} out of 10`,
-  oddsSince: 'Since 1971, starting from every month.',
+  oddsSince: 'Since 1971, starting from every month, in dollar prices before inflation. Not a forecast.',
   worstLead: 'The worst 10 years since 1971:',
-  worstText: (year, p) => `buying at the ${year} peak meant a price ${up(p)}% lower 10 years later.`,
+  worstText: (when, p) => `buying in ${when} meant a price ${up(p)}% lower 10 years later.`,
   banksShort: (n, lo, hi, ym, today) => `${n === 1 ? '1 bank expects' : `${n} banks expect`} ${lo === hi ? `about ${lo}` : `${lo} to ${hi}`} rials a gram ${byEn(ym)} (today ${today}). Forecasts are not a promise, and they miss both ways.`,
   winnerMiss: (year, p, low) => `The best forecast for ${year} was ${up(p)}% too ${low ? 'low' : 'high'}.`,
   surveyMiss: (year, p, high) => `The forecast for ${year} is ${up(p)}% ${high ? 'above' : 'below'} the year so far.`,
@@ -407,7 +411,6 @@ const en = {
   periodRow: (typical, worst) => `Usually ${up(typical)}% ${typical >= 0 ? 'higher' : 'lower'}. At worst ${up(worst)}% ${worst < 0 ? 'lower' : 'higher'}.`,
   overlapNote: "The periods overlap, and the data starts in 1971, when gold's price stopped being fixed.",
   banksCap: 'The banks, as reported in the media:',
-  inflationNote: 'In dollar prices before inflation. Not a forecast.',
 
   // My gold before (design 8)
   beforeTitle: 'What my gold was worth before',
@@ -468,6 +471,7 @@ const en = {
   badMaking: 'Please enter the making charge in numbers, zero or more.',
   badRate: 'Please enter the rate per gram in numbers.',
   offerTitle: 'Is this a normal offer?',
+  vat24: 'Pure gold bars and coins are usually VAT-free.',
   pcPrompt: 'Enter the weight and the price to see the result',
   offerAmount: "The shop's offer, in rials",
   offerValue: (v) => `Today's gold value: ${v} rials`,

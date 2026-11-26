@@ -122,7 +122,7 @@ The tab is renamed "التوقعات / Outlook" (the QA review found that "Futur
 
 - Answer line, large: "لا أحد يعرف. / No one knows."
 - History, two rows of ten dots: "بعد سنة: ارتفع في 6 حالات من كل 10 / After 1 year: higher in 6 cases out of 10" and "بعد 10 سنوات: ارتفع في 8 حالات من كل 10". ("أعلى 6 مرات" was dropped: it reads as "six times higher".) Under them: "Since 1971, starting from every month."
-- A tinted line: "أسوأ 10 سنوات منذ 1971: من اشترى عند قمة 1980 وجد السعر أقل بـ 44% بعد 10 سنوات. / The worst 10 years since 1971: buying at the 1980 peak meant a price 44% lower 10 years later." (Not "the worst case", which overclaims.)
+- A tinted line: "أسوأ 10 سنوات منذ 1971: من اشترى في يوليو 1980 وجد السعر أقل بـ 44% بعد 10 سنوات. / The worst 10 years since 1971: buying in July 1980 meant a price 44% lower 10 years later." The month is the worst window's own start (the January 1980 peak gave -39%, so "at the peak" would be false).
 - Banks, kept short: "4 banks expect 52.7 to 59.5 rials a gram by the end of 2027 (today 40.5). Forecasts are not a promise, and they miss both ways."
 - "Show details": the 1, 5, 10 and 20-year rows with the usual and worst result, then "The periods overlap, and the data starts in 1971, when gold's price stopped being fixed."; then the misses ("The best forecast for 2024 was 9% too low, and for 2025 15% too low. The forecast for 2026 is 7% above the year so far.", from the LBMA winners and survey in `forecasts.json`); the bank list with names and values; the sources link.
 - Note: "In dollar prices before inflation. Not a forecast."

@@ -10,7 +10,7 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | tabsLabel | الأقسام | Sections |
 | tabToday | اليوم | Today |
 | tabGold | ذهبي | My gold |
-| tabFuture | المستقبل | Future |
+| tabFuture | التوقعات | Outlook |
 | tabBuySell | بيع وشراء | Buy & sell |
 | rial | ريال | rials |
 | rialPerGram | ريال للجرام | rials per gram |
@@ -96,49 +96,103 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | listTitle | قائمة ذهبي | My gold list |
 | listPaid | سعر الشراء 300 ريال (مارس 2019) | paid 300 rials in March 2019 |
 | outlook | توقعات سعر الذهب | Gold price outlook |
-| outlookSub | لجرام عيار 22، من توقعات البنوك وتاريخ الذهب | Per gram of 22 karat, from bank forecasts and gold's history |
-| banksLabel | البنوك | Banks |
-| bankRow | توقع البنوك | Banks' forecast |
-| bankFor | لنهاية 2027 | for end of 2027 |
 | todayRow | اليوم | Today |
-| histTitle | لو تكرّر ما حدث منذ 1971 | If gold moves as it has since 1971 |
-| in5 | بعد 5 سنوات | In 5 years |
-| in10 | بعد 10 سنوات | In 10 years |
-| histRange | بين 32 و115 ريالاً | 32 to 115 rials |
-| histNote | هذا ليس توقعاً، بل ما فعله سعر الذهب في الماضي مطبّقاً على سعر اليوم. | Not a forecast: gold's past moves applied to today's price. |
 | ago5 | قبل 5 سنوات | 5 years ago |
 | today | اليوم | Today |
-| y1Note | الرقم الأوسط بين توقعات 4 بنوك، كما نقلتها وسائل الإعلام | The middle of 4 bank forecasts, as reported in the media |
 | sources | المصادر | Sources |
-| reportTitle | ما مدى دقة التوقعات؟ | How good are forecasts? |
-| winnerLine | أدق المتوقعين لعام 2025 توقّع 2,925 دولاراً للأونصة، وجاء المتوسط الفعلي 3,432 دولاراً، بفارق 15%. | The most accurate forecaster for 2025 expected $2,925 an ounce. The actual average was $3,432, 15% off. |
-| surveyLine | توقّع المحللون أن يبلغ متوسط 2026 نحو 4,742 دولاراً للأونصة، والمتوسط الفعلي حتى الآن 4,453 دولاراً. | Analysts expected 2026 to average about $4,742 an ounce. The actual average so far is $4,453. |
-| reportClose | حتى أفضل المتوقعين يخطئون غالباً بنسبة 10 إلى 15%، فالتوقعات دليل تقريبي فقط. | Even the best forecasters often miss by 10 to 15%, so treat forecasts as a rough guide. |
 | updatedOn | تم تحديث التوقعات في 25 نوفمبر 2026 | Forecasts updated on 25 November 2026 |
 | dataSources | مصادر البيانات | Data sources |
 | targetBy | نهاية 2027 | end of 2027 |
 | srcGram | ريال لجرام عيار 22 | rials per gram of 22 karat |
 | srcOz | 4,650 دولاراً للأونصة | $4,650 an ounce |
 | publishedVia | نُشر في 14 نوفمبر 2026 عبر | Published 14 November 2026, reported by |
+| pricesPerGram | الأسعار لجرام عيار 22 | Prices per gram of 22 karat |
+| q1 | هل السعر اليوم مرتفع أم منخفض؟ | Is the price high or low today? |
+| belowRecord | أقل بـ 34% من أعلى سعر وصل إليه | 34% below its highest ever |
+| atRecord | عند أعلى سعر وصل إليه | At its highest ever |
+| pastWeek | آخر أسبوع: أقل بـ 4% | Past week: down 4% |
+| pastMonth | آخر شهر: أقل بـ 11% | Past month: down 11% |
+| chartRecord | أعلى سعر | Highest |
+| recordRow | أعلى سعر | Highest ever |
+| fallsLine | قبل الهبوط الحالي، هبط الذهب منذ 1971 بـ 20% أو أكثر 5 مرات، وعاد إلى أعلى سعره بعد 6 أشهر و18 شهراً و4 سنوات و9 سنوات و26 سنة. أطول انتظار جاء بعد أعمق هبوط، في 1980. | Before this fall, gold fell 20% or more 5 times since 1971. It got back to its highest after 6 months, 18 months, 4 years, 9 years and 26 years. The longest wait followed the deepest fall, in 1980. |
+| fallsCap | كل هبوط بـ 20% أو أكثر منذ 1971: | Every fall of 20% or more since 1971: |
+| fallDepth | هبط 21% | down 21% |
+| fallBack | عاد بعد 6 أشهر | back after 6 months |
+| showDetails | عرض التفاصيل | Show details |
+| q2 | هل سيرتفع السعر؟ | Will it go up? |
+| noOneKnows | لا أحد يعرف. | No one knows. |
+| q2Sub | هذا ما حدث من قبل، وما تتوقعه البنوك: | Here is what happened before, and what banks expect: |
+| afterYears | بعد 10 سنوات | After 10 years |
+| higherCases | ارتفع في 6 حالات من كل 10 | higher in 6 cases out of 10 |
+| oddsSince | منذ 1971، بدءاً من كل شهر، بأسعار الدولار دون احتساب التضخم. هذا ليس توقعاً. | Since 1971, starting from every month, in dollar prices before inflation. Not a forecast. |
+| worstLead | أسوأ 10 سنوات منذ 1971: | The worst 10 years since 1971: |
+| worstText | من اشترى في يوليو 1980 وجد السعر أقل بـ 44% بعد 10 سنوات. | buying in July 1980 meant a price 44% lower 10 years later. |
+| banksShort | تتوقع 4 بنوك أن يبلغ الجرام بين 52.7 و59.5 ريال بنهاية 2027 (اليوم 40.5). التوقعات ليست وعداً، وتخطئ في الاتجاهين. | 4 banks expect 52.7 to 59.5 rials a gram by the end of 2027 (today 40.5). Forecasts are not a promise, and they miss both ways. |
+| winnerMiss | أفضل توقع لعام 2025 كان أقل من الواقع بـ 15%. | The best forecast for 2025 was 15% too low. |
+| surveyMiss | وتوقعات 2026 أعلى مما حدث حتى الآن بـ 7%. | The forecast for 2026 is 7% above the year so far. |
+| periodsCap | كل المدد منذ 1971: | Every period since 1971: |
+| periodLabel | 5 سنوات | 5 years |
+| outOf10 | 7 من 10 | 7 in 10 |
+| periodRow | في العادة أعلى بـ 35%، وفي أسوأ حالة أقل بـ 55% | Usually 35% higher. At worst 55% lower. |
+| overlapNote | الفترات متداخلة، وتبدأ البيانات في 1971 حين صار سعر الذهب حراً بعد أن كان ثابتاً. | The periods overlap, and the data starts in 1971, when gold's price stopped being fixed. |
+| banksCap | البنوك، كما نقلتها وسائل الإعلام: | The banks, as reported in the media: |
+| beforeTitle | قيمة ذهبي من قبل | What my gold was worth before |
+| yearHigh | الأعلى في آخر 12 شهراً | Highest in the last 12 months |
+| yearLow | الأدنى في آخر 12 شهراً | Lowest in the last 12 months |
+| yearsAgo | قبل 5 سنوات | 5 years ago |
+| beforeNote | القطع نفسها بأسعار تلك الأيام. | The same pieces at those days' prices. |
+| rialWord | ريالات | rials |
+| pcWhen | عند المحل، قبل الدفع | At the shop, before paying |
+| pcTitle | هل هذا السعر معتاد؟ | Is this a normal price? |
+| pcIntro | يبيّن كم من السعر ثمن الذهب نفسه، وكم يدفع المحل لو بيعت القطعة اليوم. | Shows how much of the price is the gold itself, and what a shop would pay if the piece were sold today. |
+| showExample | عرض مثال | Show an example |
+| pieceType | نوع القطعة | Type |
+| pieceOpt | مشغولات | Jewellery |
+| barOpt | سبيكة أو عملة | Bar or coin |
+| pcPrice | السعر الكامل الذي يطلبه المحل، مع الضريبة، بالريال | The full price the shop asks, with VAT, in rials |
+| pcAlt | أعطى المحل سعر الجرام والمصنعية بدلاً من ذلك؟ | The shop gave a rate per gram and a making charge instead? |
+| pcAltNote | يُحسب السعر من سعر الجرام والمصنعية وضريبة 5%. | The price is worked out from the rate, the making charge and 5% VAT. |
+| badShopPrice | يُرجى كتابة السعر بالأرقام، حتى 1,000,000 ريال. | Please enter the price in numbers, up to 1,000,000 rials. |
+| pcGold | ثمن الذهب في القطعة اليوم | The gold in this piece today |
+| pcExtra | يطلب المحل فوق ثمن الذهب | The shop asks on top |
+| pcWhy | أي 17% فوق ثمن الذهب، مقابل المصنعية والضريبة وربح المحل. | That is 17% on top of the gold, for the making, the VAT and the shop's profit. |
+| pcWhyBar | أي 6% فوق ثمن الذهب. | That is 6% on top of the gold. |
+| noExtra | بلا زيادة | No extra |
+| pcWithin | ضمن المعتاد للقطع البسيطة في مسقط. | Within the usual range for plain pieces in Muscat. |
+| pcBelow | أقل من المعتاد للقطع البسيطة. | Less than usual for plain pieces. |
+| pcAbove | أكثر من المعتاد للقطع البسيطة. التصاميم الدقيقة والماركات تكلّف أكثر عادةً. | More than usual for plain pieces. Detailed designs and brands usually cost more. |
+| pcRange | المعتاد: من 13% إلى 21% فوق ثمن الذهب. | Usual: 13% to 21% on top of the gold. |
+| pcBasis | تقدير من أجرة مصنعية 3 إلى 6 ريالات للجرام، وضريبة 5% على السعر كله كما ينص القانون. الأسعار تختلف من محل إلى آخر. | An estimate from making charges of 3 to 6 rials a gram, plus 5% VAT on the whole price as the law sets. Shops differ. |
+| pcBarWithin | ضمن المعتاد للسبائك والعملات الصغيرة. | Within the usual range for small bars and coins. |
+| pcBarBelow | أقل من المعتاد للسبائك الصغيرة. | Less than usual for small bars. |
+| pcBarAbove | أكثر من المعتاد للسبائك الصغيرة. | More than usual for small bars. |
+| pcBarBasis | علاوة السبائك الصغيرة عادةً من 2% إلى 9%، وتضاف ضريبة 5% إن احتسبها المحل. | Small-bar premiums are usually 2% to 9%, plus 5% VAT if the shop charges it. |
+| pcUnder | السعر أقل من ثمن الذهب اليوم. يُستحسن التأكد من الوزن والعيار. | The price is below today's gold value. The weight and karat are worth checking. |
+| pcBack | لو بيعت اليوم، يدفع المحل نحو | If sold back today, a shop would pay about |
+| pcPer100 | أي نحو 82 من كل 100 ريال دُفعت. | That is about 82 of every 100 rials paid. |
+| pcTarget | ليعود مبلغ 950 ريالاً كاملاً عند البيع، يلزم أن يصل سعر جرام عيار 22 إلى نحو 49.5 ريال (اليوم 40.5). | To get the 950 rials back when selling, gold would have to reach about 49.5 rials a gram for 22 karat (today 40.5). |
+| ocWhen | عند بيع الذهب لمحل | When selling to a shop |
+| ocIntro | يقارن المبلغ الذي يعرضه المحل بثمن الذهب اليوم. | Compares the shop's offer with today's gold value. |
+| jbWhen | عند التفكير في الادخار | When thinking of saving |
+| jbTitle | مشغولات أم سبيكة؟ | Jewellery or a bar? |
+| jbIntro | لكل 100 ريال تُدفع، يعيد المحل في اليوم نفسه نحو: | For every 100 rials paid, a shop would pay back about this much the same day: |
+| jbBar | سبيكة صغيرة عيار 24: | A small 24 karat bar: |
+| jbPiece | قطعة بسيطة، مصنعية 3 ريالات للجرام: | A plain piece, making 3 rials a gram: |
+| jbTo | إلى | to |
+| jbDiff | الفرق هو المصنعية والضريبة، ولا يعيدهما المحل عند البيع. لذلك تحتاج المشغولات ارتفاعاً أكبر في سعر الذهب قبل أن تعيد ما دُفع. | The difference is the making charge and VAT, which shops do not pay back. So jewellery needs a bigger rise in the gold price before it returns what was paid. |
+| jbOnlyMoney | هذا يحسب المال الذي يعود فقط، ولا يحسب لبس القطعة أو إهداءها. | This counts only the money that comes back, not wearing or giving the piece. |
+| jbFine | تقديرات للمشغولات عيار 22: ضريبة 5% على السعر كله كما ينص القانون، ويدفع المحل عند بيعها أقل من ثمن ذهبها بنحو 4%. السبيكة الصغيرة أغلى من ثمن ذهبها بنحو 5%، ويدفع المحل أقل بنحو 1%. يفرض القانون ضريبة بنسبة صفر على الذهب الاستثماري (نقاوة 99% فأكثر)، لكن لائحته تقصرها على أول بيع بعد الاستخراج، لذلك تظهر السبيكة بالضريبة وبدونها. نسب السبائك من أسعار تجار خارج عُمان. | Estimates for 22 karat jewellery: 5% VAT on the whole price, as the law sets, and shops pay about 4% under its gold value. A small bar costs about 5% over its gold value, and shops pay about 1% under. The law sets a zero VAT rate for investment gold (99% pure or more), but its regulations limit that to the first sale after extraction, so the bar is shown with and without VAT. The bar figures come from dealer prices outside Oman. |
 | buySellTitle | بيع وشراء | Buy & sell |
-| whenBuying | عند الشراء | When buying |
-| whenSelling | عند البيع | When selling |
-| costTitle | كم يجب أن تكلّف هذه القطعة؟ | What should this piece cost? |
 | making | أجرة المصنعية | Making charge |
 | perGramMode | ريال للجرام | rials per gram |
 | percentMode | نسبة % | percent |
 | shopRate | سعر الجرام في المحل | Shop's rate per gram |
 | shopRateHint | هذا سعر السوق اليوم، ويمكن تغييره ليطابق لوحة المحل | This is today's market rate. Change it to match the shop's board. |
-| goldValue | قيمة الذهب | Gold value |
-| makingLine | المصنعية | Making charge |
-| vatLine | ضريبة القيمة المضافة 5% | VAT 5% |
-| totalLine | المجموع | Total |
-| costNote | أجرة المصنعية والضريبة لا تُستردّان عادة عند البيع. | Making charges and VAT are normally not paid back when you sell. |
-| vat24 | السبائك والعملات الخالصة معفاة عادة من الضريبة. | Pure gold bars and coins are usually VAT-free. |
-| costPrompt | تظهر التكلفة بعد كتابة الوزن | Enter the weight to see the cost |
 | badMaking | يُرجى كتابة الأجرة بالأرقام، صفر أو أكثر. | Please enter the making charge in numbers, zero or more. |
 | badRate | يُرجى كتابة سعر الجرام بالأرقام. | Please enter the rate per gram in numbers. |
-| offerTitle | هل عرض المحل عادل؟ | Is this offer fair? |
+| offerTitle | هل هذا العرض معتاد؟ | Is this a normal offer? |
+| vat24 | السبائك والعملات الخالصة معفاة عادة من الضريبة. | Pure gold bars and coins are usually VAT-free. |
+| pcPrompt | تظهر النتيجة بعد كتابة الوزن والسعر | Enter the weight and the price to see the result |
 | offerAmount | المبلغ الذي عرضه المحل بالريال | The shop's offer, in rials |
 | offerValue | قيمة الذهب اليوم 393.213 ريال | Today's gold value: 393.213 rials |
 | offerPrompt | يظهر التقييم بعد كتابة الوزن والمبلغ | Enter the weight and the offer to see how it compares |

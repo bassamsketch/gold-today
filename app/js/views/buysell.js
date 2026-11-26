@@ -1,6 +1,8 @@
 import { pieceCost, offerCheck, priceCheck, jewelleryVsBar, parseNumber } from '../calc.js';
 import { gramPrice, formatNum } from '../price.js';
-import { MAX_PRICE } from '../config.js';
+import { MAX_PRICE, VAT } from '../config.js';
+import { bestPrice } from '../insights.js';
+import { lastPriceText } from '../i18n.js';
 import { syncKarats, setKaratText } from '../ui/karats.js';
 
 const $ = (id) => document.getElementById(id);
@@ -19,6 +21,7 @@ export function mount(app) {
   const el = {
     pcExample: $('pc-example'), pcGrams: $('pc-grams'), pcGramsErr: $('pc-grams-err'), pcKarats: $('pc-karats'), pcType: $('pc-type'),
     pcPrice: $('pc-price'), pcPriceErr: $('pc-price-err'), altOpen: $('pc-alt-open'), alt: $('pc-alt'),
+    altNote: $('pc-alt-note'), altVat24: $('pc-alt-vat24'), stale: $('pc-stale'),
     rate: $('cost-rate'), rateHint: $('cost-rate-hint'), rateErr: $('cost-rate-err'), mode: $('cost-mode'), making: $('cost-making'), makingErr: $('cost-making-err'),
     result: $('pc-result'), gold: $('pc-gold'), goldU: $('pc-gold-u'), over: $('pc-over'), extra: $('pc-extra'), extraU: $('pc-extra-u'),
     why: $('pc-why'), usual: $('pc-usual'), dot: $('pc-dot'), verdict: $('pc-verdict'), range: $('pc-range'), basis: $('pc-basis'),
@@ -34,7 +37,10 @@ export function mount(app) {
   let offerK = app.state.karat;
   let mode = 'perGram';
   let rateEdited = false; // the rate holds the shop's own figure
-  const live = () => (Number.isFinite(app.price.usd) ? app.price.usd : null);
+  let typed = false; // once typing starts, the prefilled rate stops following the live price (QA19)
+  // the saved live price, or the last close when that is newer (design 6.1)
+  const price = () => bestPrice(app.price, app.data.history?.daily, Date.now());
+  const live = () => price()?.usd ?? null;
   const setErr = (input, err, on) => {
     err.hidden = !on;
     input.setAttribute('aria-invalid', String(on));
@@ -59,8 +65,11 @@ export function mount(app) {
     setErr(el.rate, el.rateErr, rateBad);
     setErr(el.making, el.makingErr, makingBad);
     el.rateHint.hidden = rateEdited;
+    const bar = pcK === 24 && pcType === 'bar';
+    el.altNote.hidden = bar;
+    el.altVat24.hidden = !bar; // bars and coins are usually VAT-free (design 6.4)
     if (!okGrams(g) || rateBad || makingBad) return;
-    const cost = pieceCost({ grams: g, karat: pcK, rate: r, making: m, mode }, live());
+    const cost = pieceCost({ grams: g, karat: pcK, rate: r, making: m, mode, vat: bar ? 0 : VAT }, live());
     if (cost) el.pcPrice.value = cost.total.toFixed(3);
   }
 
@@ -94,7 +103,11 @@ export function mount(app) {
       el.basis.textContent = app.t(r.bar ? 'pcBarBasis' : 'pcBasis');
     }
     money(el.back, el.backU, r.back);
-    el.per100.textContent = app.t('pcPer100', r.per100);
+    el.per100.hidden = r.per100 == null;
+    if (r.per100 != null) el.per100.textContent = app.t('pcPer100', r.per100);
+    const bp = price();
+    el.stale.hidden = !bp?.old;
+    if (bp?.old) el.stale.textContent = lastPriceText(app.state.lang, bp.at);
     el.target.hidden = !r.target;
     if (r.target) setKaratText(el.target, app.t('pcTarget', p, formatNum(r.target, 1), pcK, formatNum(r.rate, 1)), app.t('karatN', pcK));
   }
@@ -200,11 +213,16 @@ export function mount(app) {
   }
 
   el.pcGrams.addEventListener('input', () => {
+    typed = true;
     if (!el.alt.hidden) priceFromRate();
     renderPrice();
   });
-  el.pcPrice.addEventListener('input', renderPrice);
+  el.pcPrice.addEventListener('input', () => {
+    typed = true;
+    renderPrice();
+  });
   [el.rate, el.making].forEach((i) => i.addEventListener('input', () => {
+    typed = true;
     if (i === el.rate) rateEdited = !blank(el.rate);
     priceFromRate();
     renderPrice();
@@ -230,6 +248,7 @@ export function mount(app) {
     if (!b) return;
     pcType = b.dataset.type;
     syncSelectors();
+    if (!el.alt.hidden) priceFromRate();
     renderPrice();
   });
   el.mode.addEventListener('click', (e) => {
@@ -265,7 +284,7 @@ export function mount(app) {
   });
 
   app.on('price', () => {
-    setRate();
+    if (!typed) setRate();
     renderJb();
     if (!el.pcNoPrice.hidden) renderPrice(); // waiting for the first price
     if (!el.offerNoPrice.hidden) renderOffer();
@@ -276,7 +295,11 @@ export function mount(app) {
     renderOffer();
     renderJb();
   });
-  app.on('data', renderPlaces);
+  app.on('data', () => {
+    renderPlaces();
+    renderJb(); // the last close can stand in for a missing live price
+    if (!el.pcNoPrice.hidden) renderPrice();
+  });
   app.on('view', (v) => { if (v === 'buysell') requestAnimationFrame(syncSelectors); });
   setRate();
   renderPrice();

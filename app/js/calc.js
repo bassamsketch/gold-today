@@ -22,14 +22,14 @@ export function parseNumber(input) {
 const okGrams = (g) => Number.isFinite(g) && g > 0 && g <= 5000;
 
 /** Fair price of a new piece: gold at the shop's rate (or today's), making charge, then 5% VAT on both. */
-export function pieceCost({ grams, karat, rate, making, mode }, usdPerOz) {
+export function pieceCost({ grams, karat, rate, making, mode, vat: vatRate = VAT }, usdPerOz) {
   if (!okGrams(grams) || !KARATS.includes(karat)) return null;
   const r = rate == null ? gramPrice(usdPerOz, karat) : rate;
   const m = making == null ? 0 : making;
   if (!Number.isFinite(r) || r <= 0 || !Number.isFinite(m) || m < 0) return null;
   const gold = grams * r;
   const makingTotal = mode === 'percent' ? gold * (m / 100) : grams * m;
-  const vat = VAT * (gold + makingTotal);
+  const vat = vatRate * (gold + makingTotal);
   return { gold, making: makingTotal, vat, total: gold + makingTotal + vat };
 }
 
@@ -46,10 +46,12 @@ export function priceCheck({ grams, karat, price, bar = false }, usdPerOz) {
   const deduction = isBar ? BAR.deduction : JEWEL_DEDUCTION;
   const back = gold * (1 - deduction);
   const base = { rate, gold, extra, extraPct: extra / gold, back, per100: Math.round((back / price) * 100), bar: isBar };
-  if (price < gold) return { ...base, band: null, position: 'under', target: null };
+  if (price < gold) return { ...base, band: null, position: 'under', target: null, per100: null };
   const withMaking = (mk) => ((rate + mk) * (1 + VAT)) / rate - 1;
   const band = isBar ? [BAR.premiumLow, (1 + BAR.premiumHigh) * (1 + VAT) - 1] : [withMaking(MAKING_TYPICAL.low), withMaking(MAKING_TYPICAL.high)];
-  const position = base.extraPct < band[0] ? 'below' : base.extraPct > band[1] ? 'above' : 'within';
+  // judged on the whole percentages the page prints, so the verdict never contradicts the range beside it
+  const pc = (x) => Math.round(x * 100), p = pc(base.extraPct);
+  const position = p < pc(band[0]) ? 'below' : p > pc(band[1]) ? 'above' : 'within';
   return { ...base, band, position, target: price / (grams * (1 - deduction)) };
 }
 

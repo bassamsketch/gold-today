@@ -51,7 +51,41 @@ export function higherOdds(monthly, years) {
   for (let i = 0; i + span < m.length; i++) changes.push({ from: m[i].d, r: m[i + span].c / m[i].c - 1 });
   const sorted = [...changes].sort((a, b) => a.r - b.r);
   const share = changes.filter((x) => x.r > 0).length / changes.length;
-  return { share, tens: Math.round(share * 10), typical: sorted[Math.floor(sorted.length / 2)].r, worst: sorted[0].r, worstFrom: sorted[0].from.slice(0, 4) };
+  return { share, tens: Math.round(share * 10), typical: sorted[Math.floor(sorted.length / 2)].r, worst: sorted[0].r, worstFrom: sorted[0].from.slice(0, 4), worstMonth: sorted[0].from };
+}
+
+const OLD_AFTER = 15 * 60e3;
+
+/**
+ * The price to show: the saved live price, unless the last daily close (21:00 UTC on its day) is newer.
+ * `old` says it is more than 15 minutes old, so a tab can name its time (design 6.1). Null without either.
+ */
+export function bestPrice(price, daily, now = Date.now()) {
+  const last = daily?.at(-1);
+  const closeAt = last ? Date.parse(`${last.d}T21:00:00Z`) : -Infinity;
+  const saved = Number.isFinite(price?.usd) ? { usd: price.usd, at: Number.isFinite(price.updatedAt) ? price.updatedAt : -Infinity } : null;
+  const pick = saved && (saved.at >= closeAt || !last) ? saved : last ? { usd: last.c, at: closeAt } : null;
+  return pick && { usd: pick.usd, at: pick.at, old: now - pick.at > OLD_AFTER };
+}
+
+/** The 60 completed months before the current Muscat month (the current one is drawn as today's price). */
+export function historyWindow(monthly, now = Date.now()) {
+  const month = muscatDate(now).slice(0, 7);
+  const done = monthly.at(-1)?.d >= month ? monthly.slice(0, -1) : monthly;
+  return done.slice(-60);
+}
+
+/**
+ * Where a record sits on the chart, in points from the first month: points are month-end closes, so a daily
+ * record falls inside its month, before that month's point. Null when it is older than the chart.
+ */
+export function recordX(firstYm, rec) {
+  if (!rec || rec.live || !rec.d) return null;
+  const [y0, m0] = firstYm.split('-').map(Number);
+  const [y, m] = rec.d.slice(0, 7).split('-').map(Number);
+  const idx = (y - y0) * 12 + (m - m0);
+  const x = rec.day ? idx - 1 + Number(rec.d.slice(8, 10)) / 31 : idx;
+  return x < 0 ? null : x;
 }
 
 /** Change of `priceUsd` against the last close on or before the Muscat date `days` before `now`; null without one. */
