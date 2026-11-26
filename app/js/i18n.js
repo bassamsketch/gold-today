@@ -1,6 +1,7 @@
 // All interface text. Arabic uses neutral forms (no gendered "you" verbs), design D9.
 // Money arguments are numbers; the strings format them so Arabic nouns can agree with them (QA36).
 import { formatNum } from './price.js';
+import { fmt } from './money.js';
 
 // Arabic counted nouns: 1 and 2 have their own words, 3-10 take the plural, 11-99 the singular
 // accusative, and round hundreds the plain singular. The dual has a nominative and a genitive form.
@@ -19,6 +20,22 @@ const nounAr = (n, few, many, plain) => {
 const rialsAr = (n) => `${formatNum(n, 0)} ${nounAr(n, 'ريالات', 'ريالاً', 'ريال')}`;
 const dollarsAr = (n) => `${formatNum(n, 0)} ${nounAr(n, 'دولارات', 'دولاراً', 'دولار')}`;
 const rialsEn = (n) => `${formatNum(n, 0)} ${Math.round(n) === 1 ? 'rial' : 'rials'}`;
+// display currencies (design 9): [few, many, plain] Arabic forms for whole amounts, a plain word after decimals
+const CUR_AR = { OMR: ['ريالات', 'ريالاً', 'ريال'], AED: ['دراهم', 'درهماً', 'درهم'], USD: ['دولارات', 'دولاراً', 'دولار'], EUR: ['يورو', 'يورو', 'يورو'], LBP: ['ملايين ليرة', 'مليون ليرة', 'مليون ليرة'] };
+const CUR_EN = { OMR: 'rials', AED: 'dirhams', USD: 'dollars', EUR: 'euros', LBP: 'million pounds' };
+const curWordAr = (code, n, text) => {
+  const f = CUR_AR[code] || CUR_AR.OMR;
+  return text.includes('.') ? f[2] : nounAr(n, ...f);
+};
+/** A total in a display currency with its unit: "2,276 درهماً", "1,130.3 مليون ليرة" (rials unchanged). */
+const moneyAr = (n, code = 'OMR') => {
+  const text = fmt(n, code, 'total');
+  return `${text} ${curWordAr(code, n, text)}`;
+};
+const moneyEn = (n, code = 'OMR') => {
+  const text = fmt(n, code, 'total');
+  return `${text} ${code === 'OMR' && Math.round(n) === 1 ? 'rial' : CUR_EN[code] || CUR_EN.OMR}`;
+};
 const MARRA = ['مرة واحدة', 'مرتان', 'مرتين', 'مرات', 'مرة', 'مرة'];
 const CASE = ['حالة واحدة', 'حالتان', 'حالتين', 'حالات', 'حالة', 'حالة'];
 const up = (p) => Math.abs(Math.round(p));
@@ -70,10 +87,10 @@ const ar = {
   none: 'السعر غير متاح الآن، نحاول مرة أخرى',
   yesterday: 'أمس',
   onDay: (day) => `يوم ${day}`,
-  less: (v, day) => `أقل من سعر ${day} بـ ${v} ريال`,
-  more: (v, day) => `أعلى من سعر ${day} بـ ${v} ريال`,
+  less: (v, day, code = 'OMR') => `أقل من سعر ${day} بـ ${v} ${CUR_AR[code][2]}`,
+  more: (v, day, code = 'OMR') => `أعلى من سعر ${day} بـ ${v} ${CUR_AR[code][2]}`,
   same: (day) => `نفس سعر ${day}`,
-  priceAria: (v, k) => `${v} ريال للجرام، عيار ${k}`,
+  priceAria: (v, k, code = 'OMR') => `${v} ${CUR_AR[code][2]} للجرام، عيار ${k}`,
   whyTitle: (d) => `آخر أخبار الذهب (${d})`,
   whySource: 'المصدر',
   mood0: 'الذهب اليوم أرخص من كل أيام آخر 12 شهراً تقريباً',
@@ -97,7 +114,7 @@ const ar = {
 
   myGold: 'ذهبي',
   ifSold: 'قيمة ذهبي لو بيع اليوم: نحو',
-  range: (a, b) => `بين ${formatNum(a, 0)} و${rialsAr(b)} حسب المحل`,
+  range: (a, b, code = 'OMR') => `بين ${fmt(a, code, 'total')} و${moneyAr(b, code)} حسب المحل`,
   noPrice: 'السعر غير متاح الآن، تظهر القيمة عند عودة الاتصال.',
   addPiece: 'إضافة قطعة',
   editPiece: 'تعديل القطعة',
@@ -115,11 +132,11 @@ const ar = {
   boughtWhen: 'شهر وسنة الشراء',
   monthLabel: 'الشهر',
   yearLabel: 'السنة',
-  worthToday: (v) => `تُباع اليوم بنحو ${rialsAr(v)}`,
-  gainUp: (bp, when, amt, pct) => `سعر الشراء ${rialsAr(bp)}${when ? ` (${when})` : ''}، الربح حتى الآن ${rialsAr(amt)} (${pct}%)`,
-  gainDown: (bp, when, amt, pct) => `سعر الشراء ${rialsAr(bp)}${when ? ` (${when})` : ''}، الخسارة حتى الآن ${rialsAr(amt)} (${pct}%)`,
-  totalUp: (amt, pct) => `الربح منذ الشراء ${rialsAr(amt)} (${pct}%)`,
-  totalDown: (amt, pct) => `الخسارة منذ الشراء ${rialsAr(amt)} (${pct}%)`,
+  worthToday: (v, code) => `تُباع اليوم بنحو ${moneyAr(v, code)}`,
+  gainUp: (bp, when, amt, pct, code) => `سعر الشراء ${moneyAr(bp, code)}${when ? ` (${when})` : ''}، الربح حتى الآن ${moneyAr(amt, code)} (${pct}%)`,
+  gainDown: (bp, when, amt, pct, code) => `سعر الشراء ${moneyAr(bp, code)}${when ? ` (${when})` : ''}، الخسارة حتى الآن ${moneyAr(amt, code)} (${pct}%)`,
+  totalUp: (amt, pct, code) => `الربح منذ الشراء ${moneyAr(amt, code)} (${pct}%)`,
+  totalDown: (amt, pct, code) => `الخسارة منذ الشراء ${moneyAr(amt, code)} (${pct}%)`,
   covers: (n, of) => `(محسوبة للقطع التي لها سعر شراء فقط: ${countAr(n, PIECE, true)} من ${countAr(of, PIECE)})`,
   payLessNote: 'المحلات تدفع عادة أقل قليلاً من قيمة الذهب، والسعر النهائي يحدده المحل. أجرة المصنعية والضريبة لا تُستردّان عادة عند البيع.',
   estimateTag: 'تقدير',
@@ -142,9 +159,26 @@ const ar = {
   updatedOn: (d) => `تم تحديث التوقعات في ${d}`,
   dataSources: 'مصادر البيانات',
   targetBy: (ym) => (ym.endsWith('-12') ? `نهاية ${ym.slice(0, 4)}` : `بحلول ${monthYear('ar', ym)}`),
-  srcGram: (k) => `ريال لجرام عيار ${k}`,
+  srcGram: (k, code = 'OMR') => `${CUR_AR[code][2]} لجرام عيار ${k}`,
   srcOz: (v) => `${dollarsAr(v)} للأونصة`,
   publishedVia: (d) => `نُشر في ${d} عبر`,
+  // display currency (design 9)
+  curName: (code) => ({ OMR: 'ريال عماني', AED: 'درهم إماراتي', USD: 'دولار أمريكي', EUR: 'يورو', LBP: 'ليرة لبنانية' })[code],
+  curShort: (code) => ({ OMR: 'ريال', AED: 'درهم', USD: 'دولار', EUR: 'يورو', LBP: 'ليرة' })[code],
+  curUnit: (code) => CUR_AR[code][2],
+  curPerGram: (code) => `${CUR_AR[code][2]} للجرام`,
+  boardIn: (code) => ({ OMR: 'بالريال العماني', AED: 'بالدرهم الإماراتي', USD: 'بالدولار الأمريكي', EUR: 'باليورو', LBP: 'بملايين الليرات اللبنانية' })[code],
+  curAria: (name) => `عملة العرض: ${name}`,
+  curTitle: 'العملة',
+  curCap: (k) => `سعر جرام عيار ${k} اليوم بكل عملة`,
+  curShopping: 'الشراء والبيع والحاسبات بالريال العماني دائماً.',
+  curRatesA: (d) => `الريال والدرهم مربوطان بالدولار. سعر اليورو والليرة بتاريخ ${d} من`,
+  curRatesB: '، والأرقام السابقة بسعر صرف اليوم.',
+  curLbpNote: (m, full) => `الليرة تُعرض بالملايين: ${m} مليون تعني ${full} ليرة.`,
+  curUnavailable: 'غير متاح الآن',
+  pricesIn: (code) => `الأسعار ${({ AED: 'بالدرهم الإماراتي', USD: 'بالدولار الأمريكي', EUR: 'باليورو', LBP: 'بملايين الليرات اللبنانية' })[code] || ''}.`,
+  backToRials: 'العودة إلى الريال',
+  pcConverted: (text) => `بالعملة المختارة: نحو ${text}`,
 
   // Outlook (design 7)
   pricesPerGram: (k) => `الأسعار لجرام عيار ${k}`,
@@ -168,7 +202,7 @@ const ar = {
   oddsSince: 'منذ 1971، بدءاً من كل شهر، بأسعار الدولار دون احتساب التضخم. هذا ليس توقعاً.',
   worstLead: 'أسوأ 10 سنوات منذ 1971:',
   worstText: (when, p) => `من اشترى في ${when} وجد السعر أقل بـ ${up(p)}% بعد 10 سنوات.`,
-  banksShort: (n, lo, hi, ym, today) => `${n === 1 ? 'يتوقع بنك واحد' : n === 2 ? 'يتوقع بنكان' : `تتوقع ${countAr(n, BANK, true)}`} أن يبلغ الجرام ${lo === hi ? `نحو ${lo}` : `بين ${lo} و${hi}`} ريال ${byAr(ym)} (اليوم ${today}). التوقعات ليست وعداً، وتخطئ في الاتجاهين.`,
+  banksShort: (n, lo, hi, ym, today, code = 'OMR') => `${n === 1 ? 'يتوقع بنك واحد' : n === 2 ? 'يتوقع بنكان' : `تتوقع ${countAr(n, BANK, true)}`} أن يبلغ الجرام ${lo === hi ? `نحو ${lo}` : `بين ${lo} و${hi}`} ${CUR_AR[code][2]} ${byAr(ym)} (اليوم ${today}). التوقعات ليست وعداً، وتخطئ في الاتجاهين.`,
   winnerMiss: (year, p, low) => `أفضل توقع لعام ${year} كان ${low ? 'أقل' : 'أعلى'} من الواقع بـ ${up(p)}%.`,
   surveyMiss: (year, p, high) => `وتوقعات ${year} ${high ? 'أعلى' : 'أقل'} مما حدث حتى الآن بـ ${up(p)}%.`,
   periodsCap: 'كل المدد منذ 1971:',
@@ -185,6 +219,7 @@ const ar = {
   yearsAgo: (n) => `قبل ${n} ${nounAr(n, 'سنوات', 'سنة', 'سنة')}`,
   beforeNote: 'القطع نفسها بأسعار تلك الأيام.',
   rialWord: (v) => nounAr(v, 'ريالات', 'ريالاً', 'ريال'),
+  curWord: (v, code = 'OMR') => curWordAr(code, v, fmt(v, code, 'total')),
 
   // Buy & sell (design 6)
   pcWhen: 'عند المحل، قبل الدفع',
@@ -220,7 +255,7 @@ const ar = {
   ocIntro: 'يقارن المبلغ الذي يعرضه المحل بثمن الذهب اليوم.',
   jbWhen: 'عند التفكير في الادخار',
   jbTitle: 'مشغولات أم سبيكة؟',
-  jbIntro: 'لكل 100 ريال تُدفع، يعيد المحل في اليوم نفسه نحو:',
+  jbIntro: (code = 'OMR') => `لكل 100 ${code === 'LBP' ? 'ليرة' : CUR_AR[code][2]} تُدفع، يعيد المحل في اليوم نفسه نحو:`,
   jbBar: 'سبيكة صغيرة عيار 24:',
   jbPiece: (mk, plain) => `قطعة ${plain ? 'بسيطة' : 'مشغولة'}، مصنعية ${mk} ${nounAr(mk, 'ريالات', 'ريالاً', 'ريال')} للجرام:`,
   jbTo: 'إلى',
@@ -304,10 +339,10 @@ const en = {
   none: 'Price not available right now, trying again',
   yesterday: 'yesterday',
   onDay: (day) => `on ${day}`,
-  less: (v, day) => `${v} rials less than ${day}`,
-  more: (v, day) => `${v} rials more than ${day}`,
+  less: (v, day, code = 'OMR') => `${v} ${CUR_EN[code]} less than ${day}`,
+  more: (v, day, code = 'OMR') => `${v} ${CUR_EN[code]} more than ${day}`,
   same: (day) => `Same as ${day}`,
-  priceAria: (v, k) => `${v} rials per gram, ${k} karat`,
+  priceAria: (v, k, code = 'OMR') => `${v} ${CUR_EN[code]} per gram, ${k} karat`,
   whyTitle: (d) => `Latest gold news (${d})`,
   whySource: 'Source',
   mood0: 'Gold is cheaper today than on almost every day in the past 12 months.',
@@ -331,7 +366,7 @@ const en = {
 
   myGold: 'My gold',
   ifSold: 'If sold today, it would fetch about',
-  range: (a, b) => `Between ${formatNum(a, 0)} and ${rialsEn(b)}, depending on the shop`,
+  range: (a, b, code = 'OMR') => `Between ${fmt(a, code, 'total')} and ${moneyEn(b, code)}, depending on the shop`,
   noPrice: 'Price not available right now. Values show again when the connection is back.',
   addPiece: 'Add a piece',
   editPiece: 'Edit piece',
@@ -349,11 +384,11 @@ const en = {
   boughtWhen: 'Month and year bought',
   monthLabel: 'Month',
   yearLabel: 'Year',
-  worthToday: (v) => `Would sell for about ${rialsEn(v)} today`,
-  gainUp: (bp, when, amt, pct) => `Paid ${rialsEn(bp)}${when ? ` in ${when}` : ''}, now up ${rialsEn(amt)} (${pct}%)`,
-  gainDown: (bp, when, amt, pct) => `Paid ${rialsEn(bp)}${when ? ` in ${when}` : ''}, now down ${rialsEn(amt)} (${pct}%)`,
-  totalUp: (amt, pct) => `Up ${rialsEn(amt)} (${pct}%) since bought`,
-  totalDown: (amt, pct) => `Down ${rialsEn(amt)} (${pct}%) since bought`,
+  worthToday: (v, code) => `Would sell for about ${moneyEn(v, code)} today`,
+  gainUp: (bp, when, amt, pct, code) => `Paid ${moneyEn(bp, code)}${when ? ` in ${when}` : ''}, now up ${moneyEn(amt, code)} (${pct}%)`,
+  gainDown: (bp, when, amt, pct, code) => `Paid ${moneyEn(bp, code)}${when ? ` in ${when}` : ''}, now down ${moneyEn(amt, code)} (${pct}%)`,
+  totalUp: (amt, pct, code) => `Up ${moneyEn(amt, code)} (${pct}%) since bought`,
+  totalDown: (amt, pct, code) => `Down ${moneyEn(amt, code)} (${pct}%) since bought`,
   covers: (n, of) => `(counts only the ${n} of ${of} pieces with a price paid)`,
   payLessNote: 'Shops usually pay a little under the gold value, and each sets its final price. Making charges and VAT are normally not paid back.',
   estimateTag: 'estimate',
@@ -376,9 +411,26 @@ const en = {
   updatedOn: (d) => `Forecasts updated on ${d}`,
   dataSources: 'Data sources',
   targetBy: (ym) => (ym.endsWith('-12') ? `end of ${ym.slice(0, 4)}` : `by ${monthYear('en', ym)}`),
-  srcGram: (k) => `rials per gram of ${k} karat`,
+  srcGram: (k, code = 'OMR') => `${CUR_EN[code]} per gram of ${k} karat`,
   srcOz: (v) => `$${formatNum(v, 0)} an ounce`,
   publishedVia: (d) => `Published ${d}, reported by`,
+  // display currency (design 9)
+  curName: (code) => ({ OMR: 'Omani rial', AED: 'UAE dirham', USD: 'US dollar', EUR: 'Euro', LBP: 'Lebanese pound' })[code],
+  curShort: (code) => code,
+  curUnit: (code) => CUR_EN[code],
+  curPerGram: (code) => `${CUR_EN[code]} per gram`,
+  boardIn: (code) => ({ OMR: 'In Omani rials', AED: 'In UAE dirhams', USD: 'In US dollars', EUR: 'In euros', LBP: 'In millions of Lebanese pounds' })[code],
+  curAria: (name) => `Display currency: ${name}`,
+  curTitle: 'Currency',
+  curCap: (k) => `Today's price per gram of ${k} karat in each`,
+  curShopping: 'Buying, selling and the calculators always use Omani rials.',
+  curRatesA: (d) => `The rial and dirham are fixed to the dollar. Euro and pound rates of ${d}, from`,
+  curRatesB: ". Past figures use today's rate.",
+  curLbpNote: (m, full) => `Pounds show in millions: ${m} million means ${full} pounds.`,
+  curUnavailable: 'Not available right now',
+  pricesIn: (code) => `Prices in ${({ AED: 'UAE dirhams', USD: 'US dollars', EUR: 'euros', LBP: 'millions of Lebanese pounds' })[code] || ''}.`,
+  backToRials: 'Back to rials',
+  pcConverted: (text) => `In the chosen currency: about ${text}`,
 
   // Outlook (design 7)
   pricesPerGram: (k) => `Prices per gram of ${k} karat`,
@@ -402,7 +454,7 @@ const en = {
   oddsSince: 'Since 1971, starting from every month, in dollar prices before inflation. Not a forecast.',
   worstLead: 'The worst 10 years since 1971:',
   worstText: (when, p) => `buying in ${when} meant a price ${up(p)}% lower 10 years later.`,
-  banksShort: (n, lo, hi, ym, today) => `${n === 1 ? '1 bank expects' : `${n} banks expect`} ${lo === hi ? `about ${lo}` : `${lo} to ${hi}`} rials a gram ${byEn(ym)} (today ${today}). Forecasts are not a promise, and they miss both ways.`,
+  banksShort: (n, lo, hi, ym, today, code = 'OMR') => `${n === 1 ? '1 bank expects' : `${n} banks expect`} ${lo === hi ? `about ${lo}` : `${lo} to ${hi}`} ${CUR_EN[code]} a gram ${byEn(ym)} (today ${today}). Forecasts are not a promise, and they miss both ways.`,
   winnerMiss: (year, p, low) => `The best forecast for ${year} was ${up(p)}% too ${low ? 'low' : 'high'}.`,
   surveyMiss: (year, p, high) => `The forecast for ${year} is ${up(p)}% ${high ? 'above' : 'below'} the year so far.`,
   periodsCap: 'Every period since 1971:',
@@ -419,6 +471,7 @@ const en = {
   yearsAgo: (n) => `${n} years ago`,
   beforeNote: "The same pieces at those days' prices.",
   rialWord: (v) => (Math.round(v) === 1 ? 'rial' : 'rials'),
+  curWord: (v, code = 'OMR') => (code === 'OMR' && Math.round(v) === 1 ? 'rial' : CUR_EN[code]),
 
   // Buy & sell (design 6)
   pcWhen: 'At the shop, before paying',
@@ -454,7 +507,7 @@ const en = {
   ocIntro: "Compares the shop's offer with today's gold value.",
   jbWhen: 'When thinking of saving',
   jbTitle: 'Jewellery or a bar?',
-  jbIntro: 'For every 100 rials paid, a shop would pay back about this much the same day:',
+  jbIntro: (code = 'OMR') => `For every 100 ${code === 'LBP' ? 'pounds' : CUR_EN[code]} paid, a shop would pay back about this much the same day:`,
   jbBar: 'A small 24 karat bar:',
   jbPiece: (mk, plain) => `A ${plain ? 'plain' : 'detailed'} piece, making ${mk} rials a gram:`,
   jbTo: 'to',

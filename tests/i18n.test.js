@@ -155,3 +155,26 @@ test('rials and pieces agree with their numbers in Arabic', () => {
 test('monthYear shows a year alone when the month is unknown', () => {
   assert.equal(monthYear('ar', '2019'), '2019');
 });
+
+test('amounts agree with their numbers in every display currency', () => {
+  assert.ok(t('ar', 'range', 2183, 2276, 'AED').endsWith('و2,276 درهماً حسب المحل'), t('ar', 'range', 2183, 2276, 'AED'));
+  assert.equal(t('ar', 'worthToday', 449, 'USD'), 'تُباع اليوم بنحو 449 دولاراً');
+  assert.equal(t('ar', 'worthToday', 405, 'EUR'), 'تُباع اليوم بنحو 405 يورو');
+  assert.equal(t('ar', 'worthToday', 7, 'AED'), 'تُباع اليوم بنحو 7 دراهم');
+  assert.equal(t('ar', 'worthToday', 1130.34, 'LBP'), 'تُباع اليوم بنحو 1,130.3 مليون ليرة');
+  assert.equal(t('en', 'worthToday', 1130.34, 'LBP'), 'Would sell for about 1,130.3 million pounds today');
+  // rials read exactly as before
+  assert.equal(t('ar', 'worthToday', 449), 'تُباع اليوم بنحو 449 ريالاً');
+  assert.ok(t('ar', 'range', 2183, 2276).endsWith('و2,276 ريالاً حسب المحل'));
+});
+
+test('each currency has its name, short label, per-gram unit and board caption', () => {
+  assert.equal(t('ar', 'curName', 'LBP'), 'ليرة لبنانية');
+  assert.equal(t('ar', 'curShort', 'OMR'), 'ريال');
+  assert.equal(t('en', 'curShort', 'AED'), 'AED');
+  assert.equal(t('ar', 'curPerGram', 'LBP'), 'مليون ليرة للجرام');
+  assert.equal(t('en', 'curPerGram', 'EUR'), 'euros per gram');
+  assert.equal(t('ar', 'boardIn', 'LBP'), 'بملايين الليرات اللبنانية');
+  assert.equal(t('ar', 'boardIn', 'OMR'), 'بالريال العماني');
+  assert.equal(t('ar', 'curUnit', 'AED'), 'درهم');
+});
