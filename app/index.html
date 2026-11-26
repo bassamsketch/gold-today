@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ذهب اليوم">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png" type="image/png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/gold-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/gold-180.png">
 <title>ذهب اليوم</title>
 <link rel="preload" href="fonts/SourceSerif4-normal-500_600-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/Almarai-normal-400-arabic.woff2" as="font" type="font/woff2" crossorigin>
@@ -24,8 +24,15 @@
 <body>
 <svg width="0" height="0" class="defs" aria-hidden="true" focusable="false">
   <defs>
-    <linearGradient id="gold-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3d27a"/><stop offset="1" stop-color="#b07c26"/></linearGradient>
-    <symbol id="ring" viewBox="0 0 32 32"><circle cx="16" cy="19.5" r="9.2" fill="none" stroke="url(#gold-grad)" stroke-width="3.2"/><path d="M16 2.6 20.4 7 16 11.2 11.6 7z" fill="#e9bf5c"/></symbol>
+    <!-- the app icon's polished solitaire, drawn small: a metallic band and a faceted stone (scripts/make-icons.py) -->
+    <linearGradient id="gold-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0bf"/><stop offset=".28" stop-color="#e7bd58"/><stop offset=".52" stop-color="#a6741d"/><stop offset=".74" stop-color="#f0cf78"/><stop offset="1" stop-color="#8a5a12"/></linearGradient>
+    <symbol id="ring" viewBox="0 0 32 32">
+      <circle cx="16" cy="20.4" r="8.3" fill="none" stroke="url(#gold-grad)" stroke-width="2.5"/>
+      <path d="M10.6 7.6 14.6 7.6 16 11.6z" fill="#dbe5ee"/><path d="M14.6 7.6 16 7.6 16 11.6z" fill="#f4f8fb"/><path d="M16 7.6 17.4 7.6 16 11.6z" fill="#a9bccf"/><path d="M17.4 7.6 21.4 7.6 16 11.6z" fill="#8fa5bb"/>
+      <path d="M10.6 7.6 13.2 5.4 14.6 7.6z" fill="#eef4f9"/><path d="M13.2 5.4 18.8 5.4 17.4 7.6 14.6 7.6z" fill="#fff"/><path d="M18.8 5.4 21.4 7.6 17.4 7.6z" fill="#c5d3e0"/>
+      <path d="M10.6 7.6 13.2 5.4 18.8 5.4 21.4 7.6 16 11.6z" fill="none" stroke="#6f8499" stroke-width=".55" stroke-linejoin="round"/>
+      <circle cx="10.9" cy="7.4" r=".9" fill="#d9ac48"/><circle cx="21.1" cy="7.4" r=".9" fill="#d9ac48"/>
+    </symbol>
   </defs>
 </svg>
 <div class="app">

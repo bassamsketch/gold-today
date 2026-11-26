@@ -121,10 +121,19 @@
 .status.live .live-dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: inherit; animation: ping 2s var(--ease-out) infinite; }
 @keyframes ping { from { transform: scale(1); opacity: 0.6; } to { transform: scale(3); opacity: 0; } }
 .change { font-size: 16px; color: var(--ink); margin-top: 4px; }
-.why { margin: 24px var(--gutter) 0; padding: 16px 18px 6px; background: var(--surface); border-radius: var(--radius); }
-.why-title { font-size: 15px; font-weight: 700; color: var(--muted); }
-.why-text { font-size: 16px; line-height: 1.65; margin-top: 4px; }
-.why-src { display: inline-block; padding: 12px 0; line-height: 24px; font-size: 15px; color: var(--muted); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--field); border-radius: 8px; }
+/* the news card: oxblood velvet lit from the reading corner, a hairline of gold, champagne title */
+.why {
+  margin: 24px var(--gutter) 0; padding: 18px 20px 6px; border-radius: var(--radius);
+  background: radial-gradient(130% 120% at 0% 0%, var(--deep-hi), var(--deep) 55%, var(--deep-lo));
+  box-shadow: inset 0 0 0 1px var(--gold-line);
+  color: var(--on-deep);
+}
+[dir='rtl'] .why { background: radial-gradient(130% 120% at 100% 0%, var(--deep-hi), var(--deep) 55%, var(--deep-lo)); }
+.why-title { font-size: 15px; font-weight: 700; color: var(--gold); }
+.why-text { font-size: 17px; line-height: 1.65; margin-top: 6px; }
+.why-src { display: inline-block; padding: 12px 0; line-height: 24px; font-size: 15px; color: var(--gold); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--gold-line); border-radius: 8px; }
+.why-src:active { background-color: oklch(1 0 0 / 0.1); }
+.why-src:focus-visible { outline-color: var(--gold); }
 .year { margin: 28px var(--gutter) 0; padding-top: 24px; border-top: 1px solid var(--hair); text-align: center; }
 .year-sent { font-family: var(--display-ar); font-weight: 600; font-size: 22px; line-height: 1.7; text-wrap: balance; }
 :lang(en) .year-sent { font-family: var(--serif); font-weight: 500; font-size: 21px; line-height: 1.45; }
@@ -139,15 +148,24 @@
 .hint { font-size: 16px; line-height: 1.6; margin-top: 14px; }
 .board { margin: 30px var(--gutter) 0; padding-top: 24px; border-top: 1px solid var(--hair); }
 .board-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-.board-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-.board-table th { font-size: 15px; font-weight: 400; color: var(--muted); text-align: end; padding: 6px 0; }
-.board-table th:first-child, .board-table td:first-child { text-align: start; }
-.board-table td { padding: 13px 0; border-top: 1px solid var(--hair); text-align: end; font-family: var(--serif); font-weight: 500; font-size: 19px; font-variant-numeric: lining-nums tabular-nums; }
-.board-table td:first-child { font-weight: 600; font-size: 20px; padding-inline-start: 12px; }
-.board-table td:last-child { padding-inline-end: 4px; }
+/* separate borders so the chosen karat's oxblood row can have round ends */
+.board-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
+.board-table th { font-size: 15px; font-weight: 400; color: var(--muted); text-align: end; padding: 6px 0 8px; }
+.board-table th:first-child, .board-table td:first-child { text-align: start; padding-inline-start: 12px; }
+.board-table th:last-child, .board-table td:last-child { padding-inline-end: 12px; }
+.board-table td {
+  padding-block: 14px; border-top: 1px solid var(--hair); text-align: end;
+  font-family: var(--serif); font-weight: 500; font-size: 19px; font-variant-numeric: lining-nums tabular-nums;
+  transition: background-color 0.35s var(--ease-out), color 0.35s var(--ease-out);
+}
+.board-table td:first-child { font-weight: 600; font-size: 20px; }
 .board-table tr[data-row] { cursor: pointer; }
-.board-table tr.on td { background: var(--surface); }
-.board-table tr.on td:first-child { color: var(--car-d); }
+.board-table tr.on td { background: var(--deep); color: var(--on-deep); font-weight: 600; border-top-color: transparent; }
+.board-table tr.on td:first-child { color: var(--gold); border-radius: 10px 0 0 10px; }
+.board-table tr.on td:last-child { border-radius: 0 10px 10px 0; }
+[dir='rtl'] .board-table tr.on td:first-child { border-radius: 0 10px 10px 0; }
+[dir='rtl'] .board-table tr.on td:last-child { border-radius: 10px 0 0 10px; }
+.board-table tr.on + tr td { border-top-color: transparent; }
 .world { font-size: 16px; color: var(--muted); text-align: center; margin-top: 26px; padding: 0 var(--gutter); }
 
 /* ---------- My gold ---------- */
