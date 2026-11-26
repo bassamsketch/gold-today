@@ -34,6 +34,9 @@ export function fromRials(rials, code, rates) {
   return code === 'LBP' && r !== OMR_PER_USD ? v / 1e6 : v;
 }
 
+/** How many decimals a kind of figure shows in `code`. */
+export const decimalsOf = (code, kind) => (DECIMALS[kind] || DECIMALS.gram)[code] ?? (DECIMALS[kind] || DECIMALS.gram).OMR;
+
 /** A converted amount formatted for its kind of figure: 'gram', 'short' or 'total'. */
 export function fmt(value, code, kind) {
   const d = DECIMALS[kind] || DECIMALS.gram;

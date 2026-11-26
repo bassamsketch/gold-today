@@ -2,7 +2,7 @@ import { load, save } from './store.js';
 import { t } from './i18n.js';
 import { syncKarats } from './ui/karats.js';
 import { closeOpenSheet } from './ui/sheet.js';
-import { effective, fromRials, fmt } from './money.js';
+import { effective, fromRials, fmt, decimalsOf } from './money.js';
 import { gramPrice } from './price.js';
 
 const storage = (() => {
@@ -56,6 +56,7 @@ export const app = {
     conv(rials) { return fromRials(rials, app.money.code, app.data.rates); },
     gram(usd, karat) { return app.money.conv(gramPrice(usd, karat)); },
     fmt(value, kind) { return fmt(value, app.money.code, kind); },
+    decimals(kind) { return decimalsOf(app.money.code, kind); },
   },
   setView,
 };

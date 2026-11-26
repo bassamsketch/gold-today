@@ -1,7 +1,6 @@
 import { buildForecast, surveyComparison } from '../forecast.js';
 import { recordHigh, pastFalls, higherOdds, moveSince, bestPrice, historyWindow, recordX } from '../insights.js';
 import { yearShareBelow, tierOf } from '../history.js';
-import { gramPrice, formatNum } from '../price.js';
 import { dayMonthYear, monthYear, lastPriceText } from '../i18n.js';
 import { drawHistory } from '../ui/chart.js';
 import { openSheet, closeOnBackdrop } from '../ui/sheet.js';
@@ -63,10 +62,10 @@ export function mount(app) {
     const share = yearShareBelow(h.daily, live, at);
     el.mood.hidden = share == null;
     if (share != null) el.mood.textContent = app.t(`mood${tierOf(share)}`);
-    el.today.textContent = formatNum(g(live), 1);
+    el.today.textContent = app.money.fmt(g(live), 'short');
     el.recRow.hidden = rec.live;
     if (!rec.live) {
-      el.record.textContent = formatNum(g(rec.usd), 1);
+      el.record.textContent = app.money.fmt(g(rec.usd), 'short');
       el.recDate.textContent = rec.day ? dayMonthYear(lang, rec.d) : monthYear(lang, rec.d);
     }
 
@@ -78,7 +77,7 @@ export function mount(app) {
     drawHistory(el.svg, {
       past: past.map((p) => g(p.c)), today: g(live), record,
       words: { record: app.t('chartRecord'), today: app.t('today'), start: app.t('ago5') },
-      values: { record: record ? formatNum(record.value, 1) : '', today: formatNum(g(live), 1) },
+      values: { record: record ? app.money.fmt(record.value, 'short') : '', today: app.money.fmt(g(live), 'short') },
     }, animate);
 
     // every completed fall, and whether one is under way now (the same record as the answer, design 7.1)
@@ -108,7 +107,8 @@ export function mount(app) {
 
     const y1 = fc ? buildForecast(fc).y1 : null;
     el.banksLine.hidden = !y1;
-    if (y1) el.banksLine.textContent = app.t('banksShort', y1.n, formatNum(g(y1.lo), 1), formatNum(g(y1.hi), 1), horizonOf(fc), formatNum(g(live), 1));
+    const f = (usd) => app.money.fmt(g(usd), 'short');
+    if (y1) el.banksLine.textContent = app.t('banksShort', y1.n, f(y1.lo), f(y1.hi), horizonOf(fc), f(live), app.money.code);
 
     el.oddsAll.replaceChildren(...[1, 5, 10, 20].map((n) => [n, higherOdds(h.monthly, n)]).filter(([, o]) => o).map(([n, o]) => {
       const row = make('div', 'orow');
@@ -128,7 +128,7 @@ export function mount(app) {
       const li = make('li');
       const p = Math.round((x.usd / live - 1) * 100);
       const pct = make('span', 'bp', `${p >= 0 ? '+' : '−'}${Math.abs(p)}%`);
-      li.append(make('span', null, lang === 'ar' ? x.institutionAr || x.institution : x.institution), make('span', 'num bv', formatNum(g(x.usd), 1)), pct);
+      li.append(make('span', null, lang === 'ar' ? x.institutionAr || x.institution : x.institution), make('span', 'num bv', f(x.usd)), pct);
       return li;
     }));
     el.open.hidden = !fc?.targets?.length;
@@ -139,8 +139,10 @@ export function mount(app) {
     const bp = h ? bestPrice(app.price, h.daily, Date.now()) : null;
     if (!bp) return;
     const live = bp.usd;
-    const k = app.state.karat, lang = app.state.lang;
-    const g = (usd) => gramPrice(usd, k);
+    const k = app.state.karat, lang = app.state.lang, code = app.money.code;
+    // per-gram figures in the display currency (design 9)
+    const g = (usd) => app.money.gram(usd, k);
+    document.querySelectorAll('[data-view=future] .per-gram').forEach((n) => { n.textContent = app.t('curPerGram', code); });
     setKaratText(el.sub, app.t('pricesPerGram', k), app.t('karatN', k));
     syncKarats(el.karats, k, 'fk');
     renderHighLow(h, bp, g, animate);
@@ -158,8 +160,8 @@ export function mount(app) {
       // the target for the chosen karat in rials per gram, then the dollar figure it comes from (QA25)
       const main = make('p', 'src-main');
       const unit = make('span');
-      setKaratText(unit, app.t('srcGram', k), app.t('karatN', k));
-      main.append(make('span', 'num', formatNum(gramPrice(x.usd, k), 1)), ' ', unit, ` · ${app.t('targetBy', x.horizon)}`);
+      setKaratText(unit, app.t('srcGram', k, app.money.code), app.t('karatN', k));
+      main.append(make('span', 'num', app.money.fmt(app.money.gram(x.usd, k), 'short')), ' ', unit, ` · ${app.t('targetBy', x.horizon)}`);
       const meta = make('p', 'sub');
       meta.append(`${app.t('publishedVia', dayMonthYear(lang, x.published))} `, latin(x.reportedBy || x.institution));
       li.append(name, main, make('p', 'sub', app.t('srcOz', x.usd)), meta);
@@ -183,5 +185,5 @@ export function mount(app) {
   el.close.addEventListener('click', () => el.sheet.close(''));
   closeOnBackdrop(el.sheet);
   app.on('view', (v) => { if (v === 'future') render(true); });
-  ['price', 'karat', 'lang', 'data'].forEach((evt) => app.on(evt, () => { if (app.view === 'future') render(false); }));
+  ['price', 'karat', 'lang', 'data', 'currency'].forEach((evt) => app.on(evt, () => { if (app.view === 'future') render(false); }));
 }

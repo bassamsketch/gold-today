@@ -30,7 +30,7 @@ export function mount(app) {
     ocExample: $('oc-example'), offerGrams: $('offer-grams'), offerGramsErr: $('offer-grams-err'), offerKarats: $('offer-karats'),
     offerAmount: $('offer-amount'), offerAmountErr: $('offer-amount-err'), offerResult: $('offer-result'), verdictO: $('offer-verdict'),
     gap: $('offer-gap'), value: $('offer-value'), offerPrompt: $('offer-prompt'), offerNoPrice: $('offer-noprice'),
-    jbRows: $('jb-rows'), places: $('places'),
+    jbRows: $('jb-rows'), jbIntro: $('jb-intro'), conv: $('pc-conv'), places: $('places'),
   };
   let pcK = app.state.karat;
   let pcType = 'bar'; // karat 24 is a bar or coin unless switched (design 6.1)
@@ -105,6 +105,13 @@ export function mount(app) {
     money(el.back, el.backU, r.back);
     el.per100.hidden = r.per100 == null;
     if (r.per100 != null) el.per100.textContent = app.t('pcPer100', r.per100);
+    // shopping stays in rials; one line shows the price in the display currency (design 9)
+    const code = app.money.code;
+    el.conv.hidden = code === 'OMR';
+    if (code !== 'OMR') {
+      const v = app.money.conv(p);
+      el.conv.textContent = app.t('pcConverted', `${app.money.fmt(v, 'total')} ${app.t('curWord', v, code)}`);
+    }
     const bp = price();
     el.stale.hidden = !bp?.old;
     if (bp?.old) el.stale.textContent = lastPriceText(app.state.lang, bp.at);
@@ -136,6 +143,7 @@ export function mount(app) {
     const jb = jewelleryVsBar(live());
     el.jbRows.closest('section').hidden = !jb;
     if (!jb) return;
+    el.jbIntro.textContent = app.t('jbIntro', app.money.code);
     const row = (text, phrase, lo, hi) => {
       const div = document.createElement('div');
       div.className = 'b3-row';
@@ -293,6 +301,10 @@ export function mount(app) {
     renderPlaces();
     renderPrice();
     renderOffer();
+    renderJb();
+  });
+  app.on('currency', () => {
+    renderPrice();
     renderJb();
   });
   app.on('data', () => {

@@ -97,7 +97,7 @@
         <h1 class="h" data-t="myGold"></h1>
         <div id="gold-total" hidden>
           <p class="cap gold-cap" data-t="ifSold"></p>
-          <p class="big"><span class="num" id="gold-mid"></span> <span class="unit" data-t="rial"></span></p>
+          <p class="big"><span class="num" id="gold-mid"></span> <span class="unit" id="gold-unit"></span></p>
           <p class="est"><span class="tag" data-t="estimateTag"></span><span id="gold-range"></span></p>
           <p class="gain" id="gold-gain" hidden></p>
           <p class="sub" id="gold-covers" hidden></p>
@@ -149,8 +149,8 @@
               <text class="f-axis f-l0"></text>
             </svg>
           </div>
-          <div class="srow"><span data-t="todayRow"></span><b><span class="num" id="f-today"></span> <small data-t="rialPerGram"></small></b></div>
-          <div class="srow rec" id="rec-row"><span><span data-t="recordRow"></span><small id="rec-date"></small></span><b><span class="num" id="f-record"></span> <small data-t="rialPerGram"></small></b></div>
+          <div class="srow"><span data-t="todayRow"></span><b><span class="num" id="f-today"></span> <small class="per-gram"></small></b></div>
+          <div class="srow rec" id="rec-row"><span><span data-t="recordRow"></span><small id="rec-date"></small></span><b><span class="num" id="f-record"></span> <small class="per-gram"></small></b></div>
           <p class="caution" id="falls-line"></p>
           <details class="more-info">
             <summary data-t="showDetails"></summary>
@@ -242,6 +242,7 @@
             <div class="pc-row"><span data-t="pcBack"></span><b><span class="num" id="pc-back"></span> <small id="pc-back-u"></small></b></div>
             <p class="pc-why" id="pc-per100"></p>
             <p class="pc-target" id="pc-target"></p>
+            <p class="pc-why" id="pc-conv" hidden></p>
             <p class="pc-why" id="pc-stale" hidden></p>
           </div>
           <p class="prompt" id="pc-prompt" data-t="pcPrompt"></p>
@@ -279,7 +280,7 @@
         <section class="calc" id="jb" aria-labelledby="jb-title">
           <p class="eyebrow" data-t="jbWhen"></p>
           <h2 class="sec-title" id="jb-title" data-t="jbTitle"></h2>
-          <p class="intro" data-t="jbIntro"></p>
+          <p class="intro" id="jb-intro"></p>
           <div class="b3" id="jb-rows"></div>
           <p class="plain-line" data-t="jbDiff"></p>
           <p class="caution" data-t="jbOnlyMoney"></p>

@@ -1,4 +1,5 @@
-import { gramPrice, formatNum } from '../price.js';
+import { gramPrice } from '../price.js';
+import { fromRials, fmt } from '../money.js';
 import { KARATS } from '../config.js';
 import { t, priceTime } from '../i18n.js';
 
@@ -29,7 +30,7 @@ function ring(ctx, cx, cy, r) {
 }
 
 /** Draw today's prices as a 1080 x 1350 image in the Maison style. */
-export function drawShareCard(canvas, { lang, usd, date, url }) {
+export function drawShareCard(canvas, { lang, usd, date, url, code = 'OMR', rates = null }) {
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext('2d');
@@ -70,12 +71,12 @@ export function drawShareCard(canvas, { lang, usd, date, url }) {
     ctx.textAlign = align('end');
     ctx.font = "600 70px 'Source Serif 4', serif";
     ctx.direction = 'ltr';
-    const num = formatNum(gramPrice(usd, k), 3);
+    const num = fmt(fromRials(gramPrice(usd, k), code, rates), code, 'gram');
     ctx.fillText(num, end, y + 6);
     ctx.direction = ar ? 'rtl' : 'ltr';
     ctx.fillStyle = C.muted;
     ctx.font = "400 28px 'Almarai', sans-serif";
-    ctx.fillText(t(lang, 'rialPerGram'), end, y + 46);
+    ctx.fillText(t(lang, 'curPerGram', code), end, y + 46);
     y += 145;
   }
 
@@ -95,8 +96,8 @@ export function drawShareCard(canvas, { lang, usd, date, url }) {
 }
 
 /** Plain-text version of the card, used with the image or on its own. */
-export function shareText(lang, usd, date, url) {
-  const lines = KARATS.map((k) => `${t(lang, 'karatN', k)}: ${formatNum(gramPrice(usd, k), 3)} ${t(lang, 'rialPerGram')}`);
+export function shareText(lang, usd, date, url, code = 'OMR', rates = null) {
+  const lines = KARATS.map((k) => `${t(lang, 'karatN', k)}: ${fmt(fromRials(gramPrice(usd, k), code, rates), code, 'gram')} ${t(lang, 'curPerGram', code)}`);
   return [`${t(lang, 'shareTitle')} (${priceTime(lang, date)})`, ...lines, t(lang, 'shareNote'), url].join('\n');
 }
 
@@ -106,11 +107,12 @@ export async function shareToday(app) {
   if (!Number.isFinite(usd)) return 'cancelled';
   // stamp the price's own time, so a weekend or delayed price is not shown as current (QA23)
   const lang = app.state.lang, date = new Date(app.price.updatedAt ?? Date.now()), url = location.origin + location.pathname;
-  const text = shareText(lang, usd, date, url);
+  const code = app.money.code, rates = app.data.rates;
+  const text = shareText(lang, usd, date, url, code, rates);
   try {
     await fontsReady();
     const canvas = document.createElement('canvas');
-    drawShareCard(canvas, { lang, usd, date, url });
+    drawShareCard(canvas, { lang, usd, date, url, code, rates });
     const blob = await new Promise((r) => canvas.toBlob(r, 'image/png'));
     const file = blob && new File([blob], 'gold-today.png', { type: 'image/png' });
     if (file && navigator.canShare?.({ files: [file] })) {
