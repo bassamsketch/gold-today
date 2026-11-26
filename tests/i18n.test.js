@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { STRINGS, t, agoText, monthYear, lastPriceText, durationText } from '../app/js/i18n.js';
+import { STRINGS, t, agoText, monthYear, lastPriceText, durationText, isolatePct } from '../app/js/i18n.js';
 
 test('durations use months under two years and agree in Arabic', () => {
   assert.equal(durationText('ar', 6), '6 أشهر');
@@ -20,7 +20,8 @@ test('short durations use the Arabic dual and singular forms', () => {
 });
 
 test('the worst 10 years name the month they began', () => {
-  assert.equal(t('ar', 'worstText', 'يوليو 1980', -0.44 * 100), 'من اشترى في يوليو 1980 وجد السعر أقل بـ 44% بعد 10 سنوات.');
+  const iso = (s) => `${String.fromCharCode(0x2066)}${s}${String.fromCharCode(0x2069)}`; // see the percentages test
+  assert.equal(t('ar', 'worstText', 'يوليو 1980', -0.44 * 100), `من اشترى في يوليو 1980 وجد السعر أقل بـ ${iso('44%')} بعد 10 سنوات.`);
   assert.equal(t('en', 'worstText', 'July 1980', -44), 'buying in July 1980 meant a price 44% lower 10 years later.');
 });
 
@@ -194,4 +195,23 @@ test('the currency button names its visible code, and shared pound prices say Le
   assert.equal(t('en', 'curPerGramFull', 'LBP'), 'million Lebanese pounds per gram');
   assert.equal(t('en', 'curPerGramFull', 'AED'), 'dirhams per gram');
   assert.ok(t('ar', 'pcConverted', '9,074 درهماً').startsWith('السعر المطلوب'));
+});
+
+test('Arabic percentages keep the sign to the right of the number, everywhere', () => {
+  const LRI = String.fromCharCode(0x2066), PDI = String.fromCharCode(0x2069); // left-to-right isolate
+  assert.ok(t('ar', 'belowRecord', 34).includes(`${LRI}34%${PDI}`), JSON.stringify(t('ar', 'belowRecord', 34)));
+  assert.ok(t('ar', 'pastMonth', -12).includes(`${LRI}12%${PDI}`));
+  assert.ok(t('ar', 'boardNote').includes(`${LRI}5%${PDI}`));
+  assert.ok(t('ar', 'pcRange', 13, 21).includes(`${LRI}13%${PDI}`) && t('ar', 'pcRange', 13, 21).includes(`${LRI}21%${PDI}`));
+  assert.ok(t('ar', 'g22').includes(`${LRI}91.6%${PDI}`));
+  assert.ok(t('ar', 'totalUp', 41, '14').includes(`(${LRI}14%${PDI})`));
+  // every Arabic string: no bare percentage left, and English is untouched
+  const wrapped = new RegExp(`${LRI}[+−-]?[0-9][0-9.,]*%${PDI}`, 'g');
+  for (const key of Object.keys(STRINGS.ar)) {
+    const v = typeof STRINGS.ar[key] === 'string' ? t('ar', key) : '';
+    assert.ok(!/[0-9]%/.test(v.replace(wrapped, '')), `${key}: ${v}`);
+  }
+  assert.ok(!t('en', 'belowRecord', 34).includes(LRI));
+  // the daily news line comes from data, not from these strings, and gets the same treatment
+  assert.equal(isolatePct('ارتفع الذهب 1.2% ثم −0.4%'), `ارتفع الذهب ${LRI}1.2%${PDI} ثم ${LRI}−0.4%${PDI}`);
 });

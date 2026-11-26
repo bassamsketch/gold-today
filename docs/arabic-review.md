@@ -110,8 +110,9 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | curShort | درهم | AED |
 | curUnit | درهم | dirhams |
 | curPerGram | مليون ليرة للجرام | million pounds per gram |
+| curPerGramFull | مليون ليرة لبنانية للجرام | million Lebanese pounds per gram |
 | boardIn | بملايين الليرات اللبنانية | In millions of Lebanese pounds |
-| curAria | عملة العرض: درهم إماراتي | Display currency: UAE dirham |
+| curAria | عملة العرض: درهم إماراتي | undefined: display currency, UAE dirham |
 | curTitle | العملة | Currency |
 | curCap | سعر جرام عيار 22 اليوم بكل عملة | Today's price per gram of 22 karat in each |
 | curShopping | الشراء والبيع والحاسبات بالريال العماني دائماً. | Buying, selling and the calculators always use Omani rials. |
@@ -121,7 +122,7 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | curUnavailable | غير متاح الآن | Not available right now |
 | pricesIn | الأسعار بالدرهم الإماراتي. | Prices in UAE dirhams. |
 | backToRials | العودة إلى الريال | Back to rials |
-| pcConverted | بالعملة المختارة: نحو 9,074 درهماً | In the chosen currency: about 9,074 dirhams |
+| pcConverted | السعر المطلوب بالعملة المختارة: نحو 9,074 درهماً | The asked price in the chosen currency: about 9,074 dirhams |
 | pricesPerGram | الأسعار لجرام عيار 22 | Prices per gram of 22 karat |
 | q1 | هل السعر اليوم مرتفع أم منخفض؟ | Is the price high or low today? |
 | belowRecord | أقل بـ 34% من أعلى سعر وصل إليه | 34% below its highest ever |
@@ -163,6 +164,7 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | pcTitle | هل هذا السعر معتاد؟ | Is this a normal price? |
 | pcIntro | يبيّن كم من السعر ثمن الذهب نفسه، وكم يدفع المحل لو بيعت القطعة اليوم. | Shows how much of the price is the gold itself, and what a shop would pay if the piece were sold today. |
 | showExample | عرض مثال | Show an example |
+| clearFields | مسح | Clear |
 | pieceType | نوع القطعة | Type |
 | pieceOpt | مشغولات | Jewellery |
 | barOpt | سبيكة أو عملة | Bar or coin |

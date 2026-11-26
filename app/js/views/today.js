@@ -3,7 +3,7 @@ import { KARATS, TOLA_G } from '../config.js';
 import { liveStatus } from '../time.js';
 import { yearShareBelow, tierOf, hintOf, newsVisible, compareClose } from '../history.js';
 import { startLive } from '../live.js';
-import { agoText, dayMonth, lastPriceText, closeDay } from '../i18n.js';
+import { agoText, dayMonth, lastPriceText, closeDay, isolatePct } from '../i18n.js';
 import { odometer } from '../ui/odometer.js';
 import { syncKarats, setKaratText } from '../ui/karats.js';
 
@@ -93,7 +93,7 @@ export function mount(app) {
     if (!show) return;
     const lang = app.state.lang;
     el.whyTitle.textContent = app.t('whyTitle', dayMonth(lang, w.date));
-    el.whyText.textContent = lang === 'ar' ? w.ar : w.en;
+    el.whyText.textContent = lang === 'ar' ? isolatePct(w.ar) : w.en; // "1.2%", never "%1.2"
     el.whySrcName.textContent = w.source;
     if (typeof w.url === 'string' && w.url.startsWith('https://')) el.whySrc.href = w.url;
     else el.whySrc.removeAttribute('href');

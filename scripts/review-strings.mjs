@@ -15,7 +15,7 @@ const SAMPLES = {
   pcRange: [13, 21], pcPer100: [82], pcTarget: [950, '49.5', 22, '40.5'], jbPiece: [3, true],
   targetBy: ['2027-12'], srcGram: [22], srcOz: [4650], publishedVia: ['14 نوفمبر 2026'], offerValue: ['393.213'],
   gapBelow: ['4.1'], gapAbove: ['1.2'], mapOf: ['ملابار للذهب والألماس', 'روي'],
-  curName: ['AED'], curShort: ['AED'], curUnit: ['AED'], curPerGram: ['LBP'], boardIn: ['LBP'], curAria: ['درهم إماراتي'],
+  curName: ['AED'], curShort: ['AED'], curUnit: ['AED'], curPerGram: ['LBP'], curPerGramFull: ['LBP'], boardIn: ['LBP'], curAria: ['درهم إماراتي'],
   curCap: [22], curRatesA: ['26 نوفمبر 2026'], curLbpNote: ['9.427', '9,427,000'], pricesIn: ['AED'], pcConverted: ['9,074 درهماً'],
   curWord: [810, 'AED'], jbIntro: ['AED'],
 };

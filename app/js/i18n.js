@@ -228,6 +228,7 @@ const ar = {
   pcTitle: 'هل هذا السعر معتاد؟',
   pcIntro: 'يبيّن كم من السعر ثمن الذهب نفسه، وكم يدفع المحل لو بيعت القطعة اليوم.',
   showExample: 'عرض مثال',
+  clearFields: 'مسح',
   pieceType: 'نوع القطعة',
   pieceOpt: 'مشغولات',
   barOpt: 'سبيكة أو عملة',
@@ -481,6 +482,7 @@ const en = {
   pcTitle: 'Is this a normal price?',
   pcIntro: 'Shows how much of the price is the gold itself, and what a shop would pay if the piece were sold today.',
   showExample: 'Show an example',
+  clearFields: 'Clear',
   pieceType: 'Type',
   pieceOpt: 'Jewellery',
   barOpt: 'Bar or coin',
@@ -566,10 +568,16 @@ const en = {
 export const STRINGS = { ar, en };
 
 /** Text for a key; template entries receive the extra arguments. Unknown keys return the key. */
+// In Arabic text a bare "34%" shows as "%34": the digits after Arabic letters count as Arabic numbers,
+// so the sign drifts to their left. A left-to-right isolate around each percentage keeps "34%" (owner, 2026-11-26).
+const LRI = String.fromCharCode(0x2066), PDI = String.fromCharCode(0x2069);
+export const isolatePct = (s) => s.replace(/[+−-]?[0-9][0-9.,]*%/g, (m) => `${LRI}${m}${PDI}`);
+
 export function t(lang, key, ...args) {
   const v = (STRINGS[lang] || en)[key] ?? en[key];
   if (v == null) return key;
-  return typeof v === 'function' ? v(...args) : v;
+  const out = typeof v === 'function' ? v(...args) : v;
+  return lang === 'ar' && typeof out === 'string' ? isolatePct(out) : out;
 }
 
 /** "updated N seconds/minutes ago" with Arabic number forms; minutes from 60 seconds on (review M2). */

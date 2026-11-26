@@ -13,6 +13,9 @@ const okGrams = (g) => Number.isFinite(g) && g > 0 && g <= 5000;
 const blank = (input) => input.value.trim() === '';
 const pctOf = (x) => `${Math.max(0, Math.min(100, (x / SCALE) * 100)).toFixed(1)}%`;
 
+/** The example button clears instead once any box holds a number (owner, 2026-11-26). Returns its text key. */
+export const tryKey = (...values) => (values.some((v) => v.trim() !== '') ? 'clearFields' : 'showExample');
+
 /**
  * Buy & sell tab (design 6): the price check (B1), the offer check (B2), jewellery or a bar (B3), places, the karat
  * guide and tips. Typed results change only when something is typed or chosen, never by themselves (QA19).
@@ -49,6 +52,14 @@ export function mount(app) {
     node.textContent = formatNum(v, 0);
     unit.textContent = app.t('rialWord', v);
   };
+  // the typed numbers decide whether each example button shows "Show an example" or "Clear"
+  const pcKey = () => tryKey(el.pcGrams.value, el.pcPrice.value, el.making.value, rateEdited ? el.rate.value : '');
+  const ocKey = () => tryKey(el.offerGrams.value, el.offerAmount.value);
+  const syncTry = (btn, key) => {
+    if (btn.dataset.t === key) return;
+    btn.dataset.t = key; // the language switch rewrites every data-t text, so this keeps the right one
+    btn.textContent = app.t(key);
+  };
 
   function setRate() {
     if (rateEdited || live() == null) return;
@@ -80,6 +91,7 @@ export function mount(app) {
     const priceBad = !blank(el.pcPrice) && !(Number.isFinite(p) && p > 0 && p <= MAX_PRICE);
     setErr(el.pcGrams, el.pcGramsErr, gramsBad);
     setErr(el.pcPrice, el.pcPriceErr, priceBad);
+    syncTry(el.pcExample, pcKey());
     el.pcType.hidden = pcK !== 24;
     const ready = okGrams(g) && Number.isFinite(p) && p > 0 && p <= MAX_PRICE;
     const r = ready && usd != null ? priceCheck({ grams: g, karat: pcK, price: p, bar: pcType === 'bar' }, usd) : null;
@@ -127,6 +139,7 @@ export function mount(app) {
     const offerBad = !blank(el.offerAmount) && !(Number.isFinite(o) && o > 0);
     setErr(el.offerGrams, el.offerGramsErr, gramsBad);
     setErr(el.offerAmount, el.offerAmountErr, offerBad);
+    syncTry(el.ocExample, ocKey());
     const ready = okGrams(g) && Number.isFinite(o) && o > 0;
     const res = ready && usd != null ? offerCheck({ grams: g, karat: offerK, offer: o }, usd) : null;
     el.offerResult.hidden = !res;
@@ -269,9 +282,20 @@ export function mount(app) {
     renderPrice();
   });
   el.pcExample.addEventListener('click', () => {
-    el.pcGrams.value = '20';
-    el.pcPrice.value = '950.000';
-    pcK = 22;
+    if (pcKey() === 'clearFields') {
+      // back to how the section opened: empty boxes, the family's own karat, today's rate
+      el.pcGrams.value = el.pcPrice.value = el.making.value = '';
+      rateEdited = typed = false;
+      pcK = app.state.karat;
+      pcType = 'bar';
+      setRate();
+      priceFromRate(); // with no weight it only refreshes the rate and making messages
+    } else {
+      el.pcGrams.value = '20';
+      el.pcPrice.value = '950.000'; // the example's own price, never one worked out from the rate
+      pcK = 22;
+      setRate();
+    }
     syncSelectors();
     renderPrice();
   });
@@ -284,9 +308,10 @@ export function mount(app) {
     renderOffer();
   });
   el.ocExample.addEventListener('click', () => {
-    el.offerGrams.value = '20';
-    el.offerAmount.value = '780.000';
-    offerK = 22;
+    const clear = ocKey() === 'clearFields';
+    el.offerGrams.value = clear ? '' : '20';
+    el.offerAmount.value = clear ? '' : '780.000';
+    offerK = clear ? app.state.karat : 22;
     syncSelectors();
     renderOffer();
   });
