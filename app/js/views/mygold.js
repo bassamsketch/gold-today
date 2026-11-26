@@ -248,6 +248,7 @@ export function mount(app) {
   el.shareList.addEventListener('click', () => shareTextOnly(app, listText()));
   closeOnBackdrop(el.sheet);
 
+  app.on('currency', () => { el.mid._v = undefined; }); // count in the new currency from its own figure
   ['pieces', 'price', 'lang', 'data', 'currency'].forEach((evt) => app.on(evt, render));
   render();
 }

@@ -39,3 +39,8 @@ test('decimals follow the kind of figure and the currency', () => {
   assert.equal(fmt(4666.4, 'OMR', 'total'), '4,666');
   assert.equal(fmt(1130.34, 'LBP', 'total'), '1,130.3');
 });
+
+test('rials pass through untouched, so half-baisa amounts round as before', () => {
+  assert.equal(fromRials(99.5, 'OMR', null), 99.5);
+  assert.equal(fmt(fromRials(99.5, 'OMR', null), 'OMR', 'total'), '100');
+});

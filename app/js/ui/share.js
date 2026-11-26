@@ -76,7 +76,7 @@ export function drawShareCard(canvas, { lang, usd, date, url, code = 'OMR', rate
     ctx.direction = ar ? 'rtl' : 'ltr';
     ctx.fillStyle = C.muted;
     ctx.font = "400 28px 'Almarai', sans-serif";
-    ctx.fillText(t(lang, 'curPerGram', code), end, y + 46);
+    ctx.fillText(t(lang, 'curPerGramFull', code), end, y + 46);
     y += 145;
   }
 
@@ -97,7 +97,7 @@ export function drawShareCard(canvas, { lang, usd, date, url, code = 'OMR', rate
 
 /** Plain-text version of the card, used with the image or on its own. */
 export function shareText(lang, usd, date, url, code = 'OMR', rates = null) {
-  const lines = KARATS.map((k) => `${t(lang, 'karatN', k)}: ${fmt(fromRials(gramPrice(usd, k), code, rates), code, 'gram')} ${t(lang, 'curPerGram', code)}`);
+  const lines = KARATS.map((k) => `${t(lang, 'karatN', k)}: ${fmt(fromRials(gramPrice(usd, k), code, rates), code, 'gram')} ${t(lang, 'curPerGramFull', code)}`);
   return [`${t(lang, 'shareTitle')} (${priceTime(lang, date)})`, ...lines, t(lang, 'shareNote'), url].join('\n');
 }
 

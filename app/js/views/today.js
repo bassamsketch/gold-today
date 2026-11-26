@@ -82,7 +82,8 @@ export function mount(app) {
     const a = Math.abs(diff);
     const day = closeDay(app.state.lang, ref.d, ref.yesterday);
     const shown = app.money.fmt(app.money.conv(a), 'gram'), code = app.money.code;
-    el.change.textContent = a < 0.0005 ? app.t('same', day) : diff < 0 ? `↓ ${app.t('less', shown, day, code)}` : `↑ ${app.t('more', shown, day, code)}`;
+    const zero = Number(shown.replace(/,/g, '')) === 0; // judged on the figure shown, in any currency
+    el.change.textContent = zero ? app.t('same', day) : diff < 0 ? `↓ ${app.t('less', shown, day, code)}` : `↑ ${app.t('more', shown, day, code)}`;
   }
 
   function renderWhy() {

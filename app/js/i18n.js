@@ -23,6 +23,7 @@ const rialsEn = (n) => `${formatNum(n, 0)} ${Math.round(n) === 1 ? 'rial' : 'ria
 // display currencies (design 9): [few, many, plain] Arabic forms for whole amounts, a plain word after decimals
 const CUR_AR = { OMR: ['ريالات', 'ريالاً', 'ريال'], AED: ['دراهم', 'درهماً', 'درهم'], USD: ['دولارات', 'دولاراً', 'دولار'], EUR: ['يورو', 'يورو', 'يورو'], LBP: ['ملايين ليرة', 'مليون ليرة', 'مليون ليرة'] };
 const CUR_EN = { OMR: 'rials', AED: 'dirhams', USD: 'dollars', EUR: 'euros', LBP: 'million pounds' };
+const toNum = (text) => Number(String(text).replace(/,/g, ''));
 const curWordAr = (code, n, text) => {
   const f = CUR_AR[code] || CUR_AR.OMR;
   return text.includes('.') ? f[2] : nounAr(n, ...f);
@@ -159,14 +160,15 @@ const ar = {
   updatedOn: (d) => `تم تحديث التوقعات في ${d}`,
   dataSources: 'مصادر البيانات',
   targetBy: (ym) => (ym.endsWith('-12') ? `نهاية ${ym.slice(0, 4)}` : `بحلول ${monthYear('ar', ym)}`),
-  srcGram: (k, code = 'OMR') => `${CUR_AR[code][2]} لجرام عيار ${k}`,
+  srcGram: (k, code = 'OMR', shown) => `${shown == null ? CUR_AR[code][2] : curWordAr(code, toNum(shown), String(shown))} لجرام عيار ${k}`,
   srcOz: (v) => `${dollarsAr(v)} للأونصة`,
   publishedVia: (d) => `نُشر في ${d} عبر`,
   // display currency (design 9)
   curName: (code) => ({ OMR: 'ريال عماني', AED: 'درهم إماراتي', USD: 'دولار أمريكي', EUR: 'يورو', LBP: 'ليرة لبنانية' })[code],
   curShort: (code) => ({ OMR: 'ريال', AED: 'درهم', USD: 'دولار', EUR: 'يورو', LBP: 'ليرة' })[code],
   curUnit: (code) => CUR_AR[code][2],
-  curPerGram: (code) => `${CUR_AR[code][2]} للجرام`,
+  curPerGram: (code, n) => `${n == null ? CUR_AR[code][2] : curWordAr(code, n, fmt(n, code, 'short'))} للجرام`,
+  curPerGramFull: (code) => (code === 'LBP' ? 'مليون ليرة لبنانية للجرام' : `${CUR_AR[code][2]} للجرام`),
   boardIn: (code) => ({ OMR: 'بالريال العماني', AED: 'بالدرهم الإماراتي', USD: 'بالدولار الأمريكي', EUR: 'باليورو', LBP: 'بملايين الليرات اللبنانية' })[code],
   curAria: (name) => `عملة العرض: ${name}`,
   curTitle: 'العملة',
@@ -178,7 +180,7 @@ const ar = {
   curUnavailable: 'غير متاح الآن',
   pricesIn: (code) => `الأسعار ${({ AED: 'بالدرهم الإماراتي', USD: 'بالدولار الأمريكي', EUR: 'باليورو', LBP: 'بملايين الليرات اللبنانية' })[code] || ''}.`,
   backToRials: 'العودة إلى الريال',
-  pcConverted: (text) => `بالعملة المختارة: نحو ${text}`,
+  pcConverted: (text) => `السعر المطلوب بالعملة المختارة: نحو ${text}`,
 
   // Outlook (design 7)
   pricesPerGram: (k) => `الأسعار لجرام عيار ${k}`,
@@ -202,7 +204,7 @@ const ar = {
   oddsSince: 'منذ 1971، بدءاً من كل شهر، بأسعار الدولار دون احتساب التضخم. هذا ليس توقعاً.',
   worstLead: 'أسوأ 10 سنوات منذ 1971:',
   worstText: (when, p) => `من اشترى في ${when} وجد السعر أقل بـ ${up(p)}% بعد 10 سنوات.`,
-  banksShort: (n, lo, hi, ym, today, code = 'OMR') => `${n === 1 ? 'يتوقع بنك واحد' : n === 2 ? 'يتوقع بنكان' : `تتوقع ${countAr(n, BANK, true)}`} أن يبلغ الجرام ${lo === hi ? `نحو ${lo}` : `بين ${lo} و${hi}`} ${CUR_AR[code][2]} ${byAr(ym)} (اليوم ${today}). التوقعات ليست وعداً، وتخطئ في الاتجاهين.`,
+  banksShort: (n, lo, hi, ym, today, code = 'OMR') => `${n === 1 ? 'يتوقع بنك واحد' : n === 2 ? 'يتوقع بنكان' : `تتوقع ${countAr(n, BANK, true)}`} أن يبلغ الجرام ${lo === hi ? `نحو ${lo}` : `بين ${lo} و${hi}`} ${curWordAr(code, toNum(hi), String(hi))} ${byAr(ym)} (اليوم ${today}). التوقعات ليست وعداً، وتخطئ في الاتجاهين.`,
   winnerMiss: (year, p, low) => `أفضل توقع لعام ${year} كان ${low ? 'أقل' : 'أعلى'} من الواقع بـ ${up(p)}%.`,
   surveyMiss: (year, p, high) => `وتوقعات ${year} ${high ? 'أعلى' : 'أقل'} مما حدث حتى الآن بـ ${up(p)}%.`,
   periodsCap: 'كل المدد منذ 1971:',
@@ -419,8 +421,9 @@ const en = {
   curShort: (code) => code,
   curUnit: (code) => CUR_EN[code],
   curPerGram: (code) => `${CUR_EN[code]} per gram`,
+  curPerGramFull: (code) => (code === 'LBP' ? 'million Lebanese pounds per gram' : `${CUR_EN[code]} per gram`),
   boardIn: (code) => ({ OMR: 'In Omani rials', AED: 'In UAE dirhams', USD: 'In US dollars', EUR: 'In euros', LBP: 'In millions of Lebanese pounds' })[code],
-  curAria: (name) => `Display currency: ${name}`,
+  curAria: (name, short) => `${short}: display currency, ${name}`,
   curTitle: 'Currency',
   curCap: (k) => `Today's price per gram of ${k} karat in each`,
   curShopping: 'Buying, selling and the calculators always use Omani rials.',
@@ -430,7 +433,7 @@ const en = {
   curUnavailable: 'Not available right now',
   pricesIn: (code) => `Prices in ${({ AED: 'UAE dirhams', USD: 'US dollars', EUR: 'euros', LBP: 'millions of Lebanese pounds' })[code] || ''}.`,
   backToRials: 'Back to rials',
-  pcConverted: (text) => `In the chosen currency: about ${text}`,
+  pcConverted: (text) => `The asked price in the chosen currency: about ${text}`,
 
   // Outlook (design 7)
   pricesPerGram: (k) => `Prices per gram of ${k} karat`,

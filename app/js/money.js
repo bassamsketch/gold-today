@@ -29,9 +29,10 @@ export const effective = (code, rates) => (available(code, rates) ? code : 'OMR'
 
 /** A rial amount in `code` (millions for the pound). */
 export function fromRials(rials, code, rates) {
-  const r = perUsd(code, rates) ?? OMR_PER_USD;
+  const r = perUsd(code, rates);
+  if (code === 'OMR' || r == null) return rials; // rials untouched, so half-baisa amounts round as before
   const v = (rials / OMR_PER_USD) * r;
-  return code === 'LBP' && r !== OMR_PER_USD ? v / 1e6 : v;
+  return code === 'LBP' ? v / 1e6 : v;
 }
 
 /** How many decimals a kind of figure shows in `code`. */

@@ -3,6 +3,7 @@ import { recordHigh, pastFalls, higherOdds, moveSince, bestPrice, historyWindow,
 import { yearShareBelow, tierOf } from '../history.js';
 import { dayMonthYear, monthYear, lastPriceText } from '../i18n.js';
 import { drawHistory } from '../ui/chart.js';
+import { validRates } from '../money.js';
 import { openSheet, closeOnBackdrop } from '../ui/sheet.js';
 import { syncKarats, setKaratText } from '../ui/karats.js';
 
@@ -46,7 +47,7 @@ export function mount(app) {
     updated: $('f-updated'), data: $('f-data'), open: $('open-sources'), sheet: $('sources-sheet'), list: $('src-list'), close: $('sources-close'),
   };
 
-  function renderHighLow(h, bp, g, animate) {
+  function renderHighLow(h, bp, g, animate, todayUnit, recordUnit) {
     const lang = app.state.lang, live = bp.usd, at = new Date(bp.at);
     const rec = recordHigh(h, live);
     const atTop = rec.live || live >= rec.usd * 0.99;
@@ -63,9 +64,11 @@ export function mount(app) {
     el.mood.hidden = share == null;
     if (share != null) el.mood.textContent = app.t(`mood${tierOf(share)}`);
     el.today.textContent = app.money.fmt(g(live), 'short');
+    todayUnit.textContent = app.t('curPerGram', app.money.code, g(live));
     el.recRow.hidden = rec.live;
     if (!rec.live) {
       el.record.textContent = app.money.fmt(g(rec.usd), 'short');
+      recordUnit.textContent = app.t('curPerGram', app.money.code, g(rec.usd));
       el.recDate.textContent = rec.day ? dayMonthYear(lang, rec.d) : monthYear(lang, rec.d);
     }
 
@@ -142,13 +145,13 @@ export function mount(app) {
     const k = app.state.karat, lang = app.state.lang, code = app.money.code;
     // per-gram figures in the display currency (design 9)
     const g = (usd) => app.money.gram(usd, k);
-    document.querySelectorAll('[data-view=future] .per-gram').forEach((n) => { n.textContent = app.t('curPerGram', code); });
+    const [todayUnit, recordUnit] = document.querySelectorAll('[data-view=future] .per-gram');
     setKaratText(el.sub, app.t('pricesPerGram', k), app.t('karatN', k));
     syncKarats(el.karats, k, 'fk');
-    renderHighLow(h, bp, g, animate);
+    renderHighLow(h, bp, g, animate, todayUnit, recordUnit);
     renderWillItRise(h, fc, live, g);
     el.updated.textContent = fc ? app.t('updatedOn', dayMonthYear(lang, fc.asOf)) : '';
-    el.data.replaceChildren(`${app.t('dataSources')}: `, latin(DATA));
+    el.data.replaceChildren(`${app.t('dataSources')}: `, latin(validRates(app.data.rates) ? `${DATA}, ExchangeRate-API` : DATA));
     if (fc) renderSources(fc);
   }
 
@@ -160,8 +163,9 @@ export function mount(app) {
       // the target for the chosen karat in rials per gram, then the dollar figure it comes from (QA25)
       const main = make('p', 'src-main');
       const unit = make('span');
-      setKaratText(unit, app.t('srcGram', k, app.money.code), app.t('karatN', k));
-      main.append(make('span', 'num', app.money.fmt(app.money.gram(x.usd, k), 'short')), ' ', unit, ` · ${app.t('targetBy', x.horizon)}`);
+      const shown = app.money.fmt(app.money.gram(x.usd, k), 'short');
+      setKaratText(unit, app.t('srcGram', k, app.money.code, shown), app.t('karatN', k));
+      main.append(make('span', 'num', shown), ' ', unit, ` · ${app.t('targetBy', x.horizon)}`);
       const meta = make('p', 'sub');
       meta.append(`${app.t('publishedVia', dayMonthYear(lang, x.published))} `, latin(x.reportedBy || x.institution));
       li.append(name, main, make('p', 'sub', app.t('srcOz', x.usd)), meta);

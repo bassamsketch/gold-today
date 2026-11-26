@@ -125,7 +125,7 @@
 @keyframes ping { from { transform: scale(1); opacity: 0.6; } to { transform: scale(3); opacity: 0; } }
 .change { font-size: 16px; color: var(--ink); margin-top: 4px; }
 .cur-note { font-size: 16px; color: var(--muted); margin-top: 4px; }
-.cur-note .link-btn { min-height: 44px; }
+.cur-note .link-btn { min-height: 48px; }
 /* pounds in millions and other long prices shrink to fit (design 9) */
 .price.long .odo { font-size: 60px; }
 /* the news card: oxblood velvet lit from the reading corner, a hairline of gold, champagne title */
@@ -412,4 +412,13 @@
   .board-table td { font-size: 17px; }
   .board-table td:first-child { font-size: 18px; }
   .tabbar button { font-size: 14px; }
+}
+
+/* the header keeps the wordmark on one line beside the currency and language buttons (design 9) */
+@media (max-width: 380px) {
+  .bar { gap: 6px; }
+  .word { white-space: nowrap; gap: 7px; }
+  :lang(en) .word { font-size: 20px; }
+  .cur-btn svg { display: none; }
+  .cur-btn { min-width: 48px; justify-content: center; padding: 0 4px; }
 }

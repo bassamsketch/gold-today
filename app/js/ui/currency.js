@@ -1,5 +1,5 @@
 import { CURRENCIES } from '../config.js';
-import { available, fromRials, fmt } from '../money.js';
+import { available, fromRials, fmt, validRates } from '../money.js';
 import { gramPrice, formatNum } from '../price.js';
 import { bestPrice } from '../insights.js';
 import { dayMonthYear } from '../i18n.js';
@@ -18,13 +18,13 @@ export function mount(app) {
   function renderLabel() {
     const code = app.money.code;
     el.label.textContent = app.t('curShort', code);
-    el.open.setAttribute('aria-label', app.t('curAria', app.t('curName', code)));
+    el.open.setAttribute('aria-label', app.t('curAria', app.t('curName', code), app.t('curShort', code)));
     el.note.hidden = code === 'OMR';
     if (code !== 'OMR') el.noteText.textContent = app.t('pricesIn', code);
   }
 
   function renderSheet() {
-    const rates = app.data.rates, k = app.state.karat, lang = app.state.lang, chosen = app.money.code;
+    const rates = validRates(app.data.rates), k = app.state.karat, lang = app.state.lang, chosen = app.money.code;
     const usd = bestPrice(app.price, app.data.history?.daily, Date.now())?.usd;
     setKaratText(el.cap, app.t('curCap', k), app.t('karatN', k));
     el.list.replaceChildren(...CURRENCIES.map((code) => {
@@ -84,7 +84,10 @@ export function mount(app) {
     app.setCurrency(b.dataset.cur);
     el.sheet.close('');
   });
-  el.back.addEventListener('click', () => app.setCurrency('OMR'));
+  el.back.addEventListener('click', () => {
+    app.setCurrency('OMR');
+    el.open.focus(); // the link hides with the note, so focus moves to the currency button
+  });
   ['currency', 'lang', 'data'].forEach((evt) => app.on(evt, renderLabel));
   renderLabel();
 }
