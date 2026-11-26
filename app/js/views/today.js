@@ -1,4 +1,4 @@
-import { gramPrice, formatNum } from '../price.js';
+import { gramPrice } from '../price.js';
 import { KARATS, TOLA_G } from '../config.js';
 import { liveStatus } from '../time.js';
 import { yearShareBelow, tierOf, hintOf, newsVisible, compareClose } from '../history.js';
@@ -18,6 +18,7 @@ export function mount(app) {
     statusGap: $('status-gap'), statusAgo: $('status-ago'), change: $('change'),
     why: $('why'), whyTitle: $('why-title'), whyText: $('why-text'), whySrc: $('why-src'), whySrcName: $('why-src-name'),
     year: $('year'), mood: $('mood'), dot: $('year-dot'), hint: $('hint'), rows: $('board-rows'), world: $('world'), hero: $('hero'),
+    boardUnit: $('board-unit'),
   };
   const usd = () => app.price.usd;
   const has = () => Number.isFinite(app.price.usd);
@@ -41,9 +42,13 @@ export function mount(app) {
     el.unit.hidden = !has();
     renderCaption(s);
     if (!has()) return;
-    const text = formatNum(gramPrice(usd(), app.state.karat), 3);
+    // the display currency (design 9); pounds in millions, and long prices shrink to fit
+    const code = app.money.code;
+    const text = app.money.fmt(app.money.gram(usd(), app.state.karat), 'gram');
+    el.price.parentElement.classList.toggle('long', text.length > 7);
     odometer(el.price, text);
-    el.price.setAttribute('aria-label', app.t('priceAria', text, app.state.karat));
+    el.unit.textContent = app.t('curUnit', code);
+    el.price.setAttribute('aria-label', app.t('priceAria', text, app.state.karat, code));
   }
 
   function renderStatus(s) {
@@ -76,7 +81,8 @@ export function mount(app) {
     const diff = gramPrice(usd(), k) - gramPrice(ref.c, k);
     const a = Math.abs(diff);
     const day = closeDay(app.state.lang, ref.d, ref.yesterday);
-    el.change.textContent = a < 0.0005 ? app.t('same', day) : diff < 0 ? `↓ ${app.t('less', formatNum(a, 3), day)}` : `↑ ${app.t('more', formatNum(a, 3), day)}`;
+    const shown = app.money.fmt(app.money.conv(a), 'gram'), code = app.money.code;
+    el.change.textContent = a < 0.0005 ? app.t('same', day) : diff < 0 ? `↓ ${app.t('less', shown, day, code)}` : `↑ ${app.t('more', shown, day, code)}`;
   }
 
   function renderWhy() {
@@ -103,17 +109,18 @@ export function mount(app) {
   }
 
   function renderBoard() {
+    el.boardUnit.textContent = app.t('boardIn', app.money.code);
     el.rows.querySelectorAll('tr').forEach((tr) => {
       const k = Number(tr.dataset.row);
       const on = k === app.state.karat;
       tr.classList.toggle('on', on);
       if (on) tr.setAttribute('aria-current', 'true');
       else tr.removeAttribute('aria-current');
-      const g = has() ? gramPrice(usd(), k) : null;
-      // three decimals everywhere, as rials have 1,000 baisa (QA44)
-      tr.querySelector('[data-c="1"]').textContent = g == null ? '–' : formatNum(g, 3);
-      tr.querySelector('[data-c="10"]').textContent = g == null ? '–' : formatNum(g * 10, 3);
-      tr.querySelector('[data-c="t"]').textContent = g == null ? '–' : formatNum(g * TOLA_G, 3);
+      const g = has() ? app.money.gram(usd(), k) : null;
+      // three decimals for rials, as they have 1,000 baisa (QA44); each display currency its own (design 9)
+      tr.querySelector('[data-c="1"]').textContent = g == null ? '–' : app.money.fmt(g, 'gram');
+      tr.querySelector('[data-c="10"]').textContent = g == null ? '–' : app.money.fmt(g * 10, 'gram');
+      tr.querySelector('[data-c="t"]').textContent = g == null ? '–' : app.money.fmt(g * TOLA_G, 'gram');
     });
   }
 
@@ -150,7 +157,7 @@ export function mount(app) {
       app.setKarat(Number(e.target.dataset.row));
     }
   });
-  ['karat', 'lang', 'data', 'price'].forEach((evt) => app.on(evt, renderAll));
+  ['karat', 'lang', 'data', 'price', 'currency'].forEach((evt) => app.on(evt, renderAll));
   app.on('layout', () => syncKarats(el.karats, app.state.karat, 'k'));
   app.on('view', (v) => { if (v === 'today') requestAnimationFrame(() => syncKarats(el.karats, app.state.karat, 'k')); });
 

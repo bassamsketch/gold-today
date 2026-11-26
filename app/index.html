@@ -40,6 +40,7 @@
     <div class="word"><svg class="mark" aria-hidden="true"><use href="#ring"/></svg><span data-t="appName"></span></div>
     <div class="bar-actions">
       <button class="icon-btn" id="share" type="button" data-aria="share" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v6.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V12"/></svg></button>
+      <button class="cur-btn" type="button" id="cur-open" aria-haspopup="dialog"><span id="cur-label"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
       <button class="lang-link" type="button" data-lang-toggle data-t="otherLang" lang="en"></button>
     </div>
   </header>
@@ -55,7 +56,7 @@
       <div class="price-block">
         <p class="cap" id="price-cap"></p>
         <div class="price">
-          <span class="odo" id="price" role="img"></span><span class="unit" id="price-unit" data-t="rial"></span>
+          <span class="odo" id="price" role="img"></span><span class="unit" id="price-unit"></span>
           <span class="price-skel" id="price-skel" aria-hidden="true" hidden></span>
           <span class="price-missing" id="price-missing" hidden></span>
         </div>
@@ -63,6 +64,7 @@
         <div class="karats" id="karats" role="radiogroup" aria-labelledby="karat-label"><i class="kline"></i><button type="button" role="radio" data-k="24">24</button><button type="button" role="radio" data-k="22">22</button><button type="button" role="radio" data-k="21">21</button><button type="button" role="radio" data-k="18">18</button></div>
         <p class="status" id="status"><i class="live-dot" aria-hidden="true"></i><span id="status-text"></span><span class="sep" id="status-sep" aria-hidden="true">·</span><span class="vh" id="status-gap">، </span><span id="status-ago"></span></p>
         <p class="change" id="change" hidden></p>
+        <p class="cur-note" id="cur-note" hidden><span id="cur-note-text"></span> <button class="link-btn" type="button" id="cur-back" data-t="backToRials"></button></p>
       </div>
       <section class="why" id="why" hidden>
         <h2 class="why-title" id="why-title"></h2>
@@ -76,7 +78,7 @@
         <p class="hint" id="hint"></p>
       </section>
       <section class="board">
-        <div class="board-head"><h2 class="sec-title" data-t="boardTitle"></h2><p class="cap" data-t="boardUnit"></p></div>
+        <div class="board-head"><h2 class="sec-title" data-t="boardTitle"></h2><p class="cap" id="board-unit"></p></div>
         <table class="board-table">
           <thead><tr><th scope="col" data-t="karat"></th><th scope="col" data-t="col1g"></th><th scope="col" data-t="col10g"></th><th scope="col" data-t="colTola"></th></tr></thead>
           <tbody id="board-rows"></tbody>
@@ -362,6 +364,15 @@
         </div>
       </div>
     </form>
+  </dialog>
+
+  <dialog class="sheet" id="cur-sheet" aria-labelledby="cur-title">
+    <div class="sheet-head sticky"><h2 class="sec-title" id="cur-title" data-t="curTitle"></h2><button class="btn-quiet" type="button" id="cur-close" data-t="close"></button></div>
+    <p class="cur-cap" id="cur-cap"></p>
+    <ul class="cur-list" id="cur-list" role="radiogroup" aria-labelledby="cur-title"></ul>
+    <p class="cur-foot"><b data-t="curShopping"></b></p>
+    <p class="cur-foot" id="cur-rates"></p>
+    <p class="cur-foot" id="cur-lbp"></p>
   </dialog>
 
   <dialog class="sheet" id="sources-sheet" aria-labelledby="sources-title">

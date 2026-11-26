@@ -41,6 +41,7 @@ const PRECACHE = [
   'js/time.js',
   'js/ui/chart.js',
   'js/ui/countup.js',
+  'js/ui/currency.js',
   'js/ui/karats.js',
   'js/ui/odometer.js',
   'js/ui/share.js',

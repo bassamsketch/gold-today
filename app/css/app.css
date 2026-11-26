@@ -23,12 +23,15 @@
 .word { display: flex; align-items: center; gap: 9px; font-family: var(--display-ar); font-weight: 700; font-size: 25px; line-height: 1.2; }
 .mark { width: 28px; height: 28px; flex: none; }
 :lang(en) .word { font-family: var(--serif); font-weight: 600; font-size: 22px; letter-spacing: 0.01em; }
-.bar-actions { display: flex; align-items: center; gap: 4px; }
+.bar-actions { display: flex; align-items: center; gap: 2px; }
+/* the display currency button beside the language link (design 9) */
+.cur-btn { display: inline-flex; align-items: center; gap: 3px; min-height: 48px; padding: 0 6px; border-radius: var(--radius); font-size: 16px; font-weight: 700; color: var(--car-d); }
+.cur-btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .icon-btn { width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--radius); color: var(--ink); }
 .icon-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .lang-link {
   min-height: 48px;
-  padding: 0 8px;
+  padding: 0 6px;
   border-radius: var(--radius);
   font-size: 16px;
   color: var(--muted);
@@ -121,6 +124,10 @@
 .status.live .live-dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: inherit; animation: ping 2s var(--ease-out) infinite; }
 @keyframes ping { from { transform: scale(1); opacity: 0.6; } to { transform: scale(3); opacity: 0; } }
 .change { font-size: 16px; color: var(--ink); margin-top: 4px; }
+.cur-note { font-size: 16px; color: var(--muted); margin-top: 4px; }
+.cur-note .link-btn { min-height: 44px; }
+/* pounds in millions and other long prices shrink to fit (design 9) */
+.price.long .odo { font-size: 60px; }
 /* the news card: oxblood velvet lit from the reading corner, a hairline of gold, champagne title */
 .why {
   margin: 24px var(--gutter) 0; padding: 18px 20px 6px; border-radius: var(--radius);
@@ -355,6 +362,19 @@
 .confirm p { font-size: 16px; font-weight: 700; }
 .confirm-actions { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 12px; }
 .confirm-actions .btn { margin-top: 0; }
+.cur-cap { font-size: 16px; color: var(--muted); }
+.cur-list { list-style: none; margin-top: 10px; border-bottom: 1px solid var(--hair); }
+.cur-list button { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; width: 100%; min-height: 60px; padding: 0 2px; border-top: 1px solid var(--hair); text-align: start; }
+.cur-list button:disabled { opacity: 0.5; cursor: default; }
+.cur-list .dot { width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--field); }
+.cur-list [aria-checked='true'] .dot { box-shadow: inset 0 0 0 2px var(--car), inset 0 0 0 6px var(--bg), inset 0 0 0 11px var(--car); }
+.cur-list .name { font-size: 17px; }
+.cur-list [aria-checked='true'] .name { font-weight: 700; color: var(--car-d); }
+.cur-list .val { white-space: nowrap; font-size: 15px; color: var(--muted); }
+.cur-list .val .num { font-size: 19px; font-weight: 500; color: var(--ink); }
+.cur-foot { font-size: 16px; color: var(--muted); line-height: 1.6; margin-top: 12px; }
+.cur-foot b { color: var(--ink); font-weight: 700; }
+.cur-foot a { color: var(--car-d); }
 .src-list { list-style: none; margin-top: 4px; }
 .src-list li { padding: 14px 0; border-top: 1px solid var(--hair); font-size: 16px; line-height: 1.6; }
 .src-list b { font-size: 17px; }
@@ -387,6 +407,7 @@
 @media (max-width: 370px) {
   :root { --gutter: 18px; }
   .price .odo { font-size: 68px; }
+  .price.long .odo { font-size: 54px; }
   .big { font-size: 50px; }
   .board-table td { font-size: 17px; }
   .board-table td:first-child { font-size: 18px; }

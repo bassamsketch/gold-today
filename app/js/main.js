@@ -120,7 +120,7 @@ async function loadData() {
   names.forEach((n, i) => { app.data[n] = files[i]; });
 }
 
-const VIEWS = ['./views/today.js', './views/mygold.js', './views/future.js', './views/buysell.js', './ui/share.js', './install.js'];
+const VIEWS = ['./views/today.js', './views/mygold.js', './views/future.js', './views/buysell.js', './ui/share.js', './ui/currency.js', './install.js'];
 
 // The data and every module load at once (QA35); one broken tab must not stop the others.
 async function start() {
