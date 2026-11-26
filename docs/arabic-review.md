@@ -199,14 +199,6 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | pcBack | لو بيعت اليوم، يدفع المحل نحو | If sold back today, a shop would pay about |
 | pcPer100 | أي نحو 82 من كل 100 ريال دُفعت. | That is about 82 of every 100 rials paid. |
 | ocIntro | يقارن المبلغ الذي يعرضه المحل بثمن الذهب اليوم. | Compares the shop's offer with today's gold value. |
-| jbTitle | للادخار: مشغولات أم سبيكة؟ | For saving: jewellery or a bar? |
-| jbIntro | إذا بقي سعر الذهب كما هو، يعود عند البيع من كل 1,000 ريال تُدفع اليوم نحو: | If the gold price stays the same, selling gives back about this much of every 1,000 rials paid today: |
-| jbBarRow | سبيكة صغيرة عيار 24 | A small 24 karat bar |
-| jbJewelRow | مشغولات عيار 22 | 22 karat jewellery |
-| jbRange | 900 إلى 940 ريالاً | 900 to 940 rials |
-| jbDiff | الفرق هو المصنعية والضريبة، ولا يعيدهما المحل عند البيع. | The difference is the making charge and VAT, which shops do not pay back. |
-| jbOnlyMoney | هذا يحسب المال الذي يعود فقط، ولا يحسب لبس القطعة أو إهداءها. | This counts only the money that comes back, not wearing or giving the piece. |
-| jbFine | تقديرات للمشغولات عيار 22 بأجرة مصنعية من 3 إلى 6 ريالات للجرام، وضريبة 5% على السعر كله كما ينص القانون، ويدفع المحل عند بيعها أقل من ثمن ذهبها بنحو 4%. السبيكة الصغيرة أغلى من ثمن ذهبها بنحو 5%، ويدفع المحل أقل بنحو 1%. يفرض القانون ضريبة بنسبة صفر على الذهب الاستثماري (نقاوة 99% فأكثر)، لكن لائحته تقصرها على أول بيع بعد الاستخراج، لذلك تظهر السبيكة بالضريبة وبدونها. نسب السبائك من أسعار تجار خارج عُمان. | Estimates for 22 karat jewellery with making charges of 3 to 6 rials a gram, 5% VAT on the whole price as the law sets, and shops paying about 4% under its gold value. A small bar costs about 5% over its gold value, and shops pay about 1% under. The law sets a zero VAT rate for investment gold (99% pure or more), but its regulations limit that to the first sale after extraction, so the bar is shown with and without VAT. The bar figures come from dealer prices outside Oman. |
 | buySellTitle | بيع وشراء | Buy & sell |
 | offerTitle | قبل البيع: هل العرض معتاد؟ | Before selling: is this a normal offer? |
 | pcPrompt | تظهر النتيجة بعد كتابة الوزن والسعر | Enter the weight and the price to see the result |
@@ -215,10 +207,18 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | staleUse | آخر سعر: الخميس 4:57 م. الأرقام هنا محسوبة به. | Last price: Thursday 4:57 pm. These figures use it. |
 | offerPrompt | تظهر النتيجة بعد كتابة الوزن والمبلغ | Enter the weight and the offer to see the result |
 | badOffer | يُرجى كتابة المبلغ بالأرقام، أكبر من صفر وحتى 1,000,000 ريال، مثل 780.000. | Please enter the offer in numbers, above zero and up to 1,000,000 rials, for example 780.000. |
-| verdictAbove | العرض أعلى من قيمة الذهب اليوم. | The offer is above today's gold value. |
-| verdictClose | العرض قريب جداً من قيمة الذهب. | The offer is very close to the gold value. |
-| verdictUsual | عرض معتاد: المحلات تدفع عادة أقل من قيمة الذهب بـ 2 إلى 6%. | A usual offer: shops normally pay 2 to 6% under the gold value. |
-| verdictLow | العرض أقل من المعتاد. المعتاد أن يدفع المحل أقل من قيمة الذهب بـ 2 إلى 6%. | Lower than usual. Shops usually pay 2 to 6% under the gold value. |
+| offerHeadAbove | عرض ممتاز | An excellent offer |
+| offerHeadClose | عرض جيد | A good offer |
+| offerHeadUsual | عرض عادي | A fair offer |
+| offerHeadLow | عرض منخفض | A low offer |
+| offerNoteAbove | العرض أعلى من قيمة الذهب اليوم، وهذا نادر. | The offer is above today's gold value, which is rare. |
+| offerNoteClose | المعتاد أن تدفع المحلات أقل من قيمة الذهب بنحو 34 إلى 101 ريال، وهذا العرض أقرب إلى القيمة الكاملة. | Shops usually pay about 34 to 101 rials under the gold value, so this offer is closer to the full value. |
+| offerNoteUsual | المعتاد أن تدفع المحلات أقل من قيمة الذهب بنحو 34 إلى 101 ريال، وهذا العرض ضمن ذلك. | Shops usually pay about 34 to 101 rials under the gold value, and this offer is within that. |
+| offerNoteLow | المعتاد أن تدفع المحلات أقل من قيمة الذهب بنحو 34 إلى 101 ريال فقط. | Shops usually pay only about 34 to 101 rials under the gold value. |
+| offerTipAbove | يُستحسن التأكد من الوزن والعيار المكتوبين قبل البيع. | Worth checking the weight and karat written down before selling. |
+| offerTipClose | نادراً ما تدفع المحلات أكثر من هذا. | Shops rarely pay more than this. |
+| offerTipUsual | قد يعرض محل آخر أكثر بقليل. | Another shop may offer a little more. |
+| offerTipLow | يُستحسن سؤال محل آخر قبل البيع. | Worth asking another shop before selling. |
 | placesTitle | أماكن البيع والشراء في مسقط | Where to buy and sell in Muscat |
 | mapOf | خريطة ملابار للذهب والألماس، روي | Map of Malabar Gold & Diamonds, Ruwi |
 | guideTitle | دليل العيارات والأختام | Karat and hallmark guide |

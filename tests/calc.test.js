@@ -121,14 +121,16 @@ test('a comma with three digits after it is ambiguous (thousands or baisa), so i
   assert.equal(parseNumber('1,200.500'), 1200.5);
 });
 
-test('the offer verdict is judged on the figure the page prints, one decimal (BS3)', () => {
+test('the offer verdict follows the whole rials the page shows, so it never contradicts them (BS3, owner 2026-11-26)', () => {
   const value = 20 * gramPrice(3574, 22);
-  const at = (gap) => offerCheck({ grams: 20, karat: 22, offer: value * (1 - gap) }, 3574);
-  assert.equal(at(0.06049).verdict, 'usual'); // prints 6.0%, inside "2 to 6%"
-  assert.equal(at(0.06049).gapPct, 6);
-  assert.equal(at(0.0606).verdict, 'low');
-  assert.equal(at(-0.0004).verdict, 'close'); // prints 0.0%, not "above"
-  assert.equal(Object.is(at(-0.0004).gapPct, -0), false);
+  const lo = Math.round(value * 0.02), hi = Math.round(value * 0.06);
+  const at = (offer) => offerCheck({ grams: 20, karat: 22, offer }, 3574);
+  assert.deepEqual(at(value - 10).usual, [lo, hi]); // what shops usually take off this piece, in rials
+  assert.equal(at(value - lo).verdict, 'close');
+  assert.equal(at(value - hi).verdict, 'usual');
+  assert.equal(at(value - hi - 1).verdict, 'low');
+  assert.equal(at(value + 0.3).verdict, 'close'); // shows as the same amount, not "above"
+  assert.equal(at(value + 5).verdict, 'above');
 });
 
 test('weights start at 0.1 gram and offers stop at 1,000,000 rials, as the messages say (BS7)', () => {

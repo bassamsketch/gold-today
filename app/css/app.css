@@ -220,8 +220,8 @@
 .q + .q { padding-top: 24px; border-top: 1px solid var(--hair); }
 .answer { font-family: var(--display-ar); font-weight: 700; font-size: 27px; line-height: 1.45; margin-top: 6px; text-wrap: balance; }
 /* the answer and its week and month moves in one oxblood box, like the news card on Today (owner, 2026-11-26) */
-.answer-box { margin-top: 10px; padding: 16px 18px; border-radius: var(--radius); background: radial-gradient(130% 120% at 0% 0%, var(--deep-hi), var(--deep) 55%, var(--deep-lo)); box-shadow: inset 0 0 0 1px var(--gold-line); color: var(--on-deep); }
-[dir='rtl'] .answer-box { background: radial-gradient(130% 120% at 100% 0%, var(--deep-hi), var(--deep) 55%, var(--deep-lo)); }
+.answer-box, .verdict-box { margin-top: 10px; padding: 16px 18px; border-radius: var(--radius); background: radial-gradient(130% 120% at 0% 0%, var(--deep-hi), var(--deep) 55%, var(--deep-lo)); box-shadow: inset 0 0 0 1px var(--gold-line); color: var(--on-deep); }
+[dir='rtl'] .answer-box, [dir='rtl'] .verdict-box { background: radial-gradient(130% 120% at 100% 0%, var(--deep-hi), var(--deep) 55%, var(--deep-lo)); }
 .answer-box .answer { margin-top: 0; }
 .moves { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gold-line); }
 .moves p { display: flex; flex-direction: column; gap: 2px; }
@@ -320,9 +320,17 @@
 .pc-more { margin-top: 4px; }
 .pc-more > p { margin-top: 6px; }
 .pc-range { font-size: 16px; margin-top: 2px; }
-.jb-card { margin-top: 12px; }
-.verdict { font-size: 18px; font-weight: 700; margin-top: 16px; line-height: 1.5; }
 .verdict-sub { font-size: 16px; color: var(--muted); margin-top: 4px; }
+/* the offer's verdict: the deal named with an icon, the money, what shops usually take off, a tip (owner, 2026-11-26) */
+.verdict-box { margin-top: 16px; padding: 18px; }
+.verdict-head { display: flex; align-items: center; gap: 12px; font-family: var(--display-ar); font-weight: 700; font-size: 26px; line-height: 1.3; }
+:lang(en) .verdict-head { font-family: var(--serif); font-weight: 600; font-size: 25px; }
+.verdict-icon { flex: none; display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--gold); color: var(--gold); }
+.verdict-icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+.verdict-money { font-size: 17px; line-height: 1.6; margin-top: 12px; }
+.verdict-note { font-size: 16px; line-height: 1.6; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gold-line); }
+.verdict-tip { display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; font-size: 16px; font-weight: 700; line-height: 1.6; color: var(--gold); }
+.verdict-tip svg { flex: none; width: 20px; height: 20px; margin-top: 3px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .places { list-style: none; margin-top: 8px; }
 .places li { padding: 16px 0; border-bottom: 1px solid var(--hair); }
 .places li:last-child { border-bottom: 0; } /* the next section draws its own line (BS10) */

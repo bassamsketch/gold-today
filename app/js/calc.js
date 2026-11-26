@@ -70,11 +70,11 @@ export function jewelleryVsBar(usdPerOz) {
 export function offerCheck({ grams, karat, offer }, usdPerOz) {
   if (!okGrams(grams) || !KARATS.includes(karat) || !Number.isFinite(offer) || offer <= 0 || offer > MAX_PRICE) return null;
   const value = grams * gramPrice(usdPerOz, karat);
-  // judged on the gap as the page prints it, one decimal, so the verdict never contradicts its own figure (BS3)
-  const gapPct = Math.round(((value - offer) / value) * 1000) / 10 + 0; // + 0 turns -0 into 0
-  const verdict = gapPct < 0 ? 'above' : gapPct <= DEDUCTION.low * 100 ? 'close' : gapPct <= DEDUCTION.high * 100 ? 'usual' : 'low';
-  // the result is said in rials (U3): how far the offer is from the gold value, and on which side
-  const diff = Math.abs(value - offer);
-  const dir = Math.round(diff) === 0 ? 'same' : offer < value ? 'below' : 'above';
-  return { value, gapPct, verdict, diff, dir };
+  // said in rials (U3): how far the offer is from the gold value, on which side, and what shops usually take off
+  // this piece (2-6%). The verdict follows the whole rials shown, so it never contradicts them (BS3).
+  const diff = Math.abs(value - offer), shown = Math.round(diff);
+  const usual = [Math.round(value * DEDUCTION.low), Math.round(value * DEDUCTION.high)];
+  const dir = shown === 0 ? 'same' : offer < value ? 'below' : 'above';
+  const verdict = dir === 'above' ? 'above' : shown <= usual[0] ? 'close' : shown <= usual[1] ? 'usual' : 'low';
+  return { value, diff, dir, verdict, usual };
 }

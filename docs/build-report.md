@@ -2,6 +2,12 @@
 
 Date: 2026-11-25. Branch: main. Tests: 68 passing (npm test). Code 41 KB compressed (limit 150 KB), fonts 225 KB (limit 350 KB).
 
+## The offer verdict box, and the saving section removed (2026-11-26)
+Tests: 129 passing. Offline cache v13.
+- **Offer check:** the result is a burgundy box like the Outlook's answer. It shows the deal named with an icon (عرض ممتاز ✓, عرض جيد ✓, عرض عادي =, عرض منخفض !), the money ("قيمة الذهب اليوم نحو 808 ريالات، والعرض أقل منها بـ 120 ريالاً."), what shops usually take off this piece in rials ("بنحو 16 إلى 48 ريالاً"), and a tip in gold ("يُستحسن سؤال محل آخر قبل البيع."). The owner asked for suggestions, so the tips bring back the "ask another shop" line that the QA had removed as advice. The verdict now follows the whole rials shown (2-6% of the gold value, rounded), so it can never contradict them.
+- **For saving: removed.** The owner asked what it was for and how it helps. Its one useful idea, how much of the price comes back on selling, is already in the price check's "لو بيعت اليوم، يدفع المحل نحو" row, for the piece in front of them. It did not reach the owner's 9/10 bar.
+- **Checks:** browser at 360 and 390 px in Arabic and English for all four verdicts (gold value 808: 25 over is excellent, 8 under is good, 30 under is fair, 120 under is low). No overflow, no console errors.
+
 ## The price check has one path (2026-11-26)
 Tests: 127 passing. Offline cache v12. The owner found the "rate per gram and making charge" route confusing ("I put numbers and nothing happens"). It only worked after a weight was typed in box 1, and it was a second, hidden way to give the price. It is removed: the check is weight, karat and the full price the shop asks. One line under box 3 reads: "إذا ذكر المحل سعر الجرام والمصنعية فقط، يمكن طلب السعر الكامل مع الضريبة." Checked at 360 and 390 px in Arabic and English: typing gives the answer, Clear and the example work, and the 24 karat bar or piece switch still works. No errors.
 

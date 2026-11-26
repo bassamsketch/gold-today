@@ -241,7 +241,6 @@ test('period rows describe what happened, not a rule (OL8)', () => {
 test('each check names its moment in the title, and the offer result is said in rials (U2, U3, U4)', () => {
   assert.equal(t('ar', 'pcTitle'), 'قبل الشراء: هل السعر معتاد؟');
   assert.equal(t('ar', 'offerTitle'), 'قبل البيع: هل العرض معتاد؟');
-  assert.equal(t('ar', 'jbTitle'), 'للادخار: مشغولات أم سبيكة؟');
   assert.equal(t('en', 'pcTitle'), 'Before buying: is this a normal price?');
   assert.equal(t('ar', 'offerMoney', 809.136, 29.3, 'below'), 'قيمة الذهب اليوم نحو 809 ريالات، والعرض أقل منها بـ 29 ريالاً.');
   assert.equal(t('ar', 'offerMoney', 809.136, 4, 'above'), 'قيمة الذهب اليوم نحو 809 ريالات، والعرض أعلى منها بـ 4 ريالات.');
@@ -262,10 +261,6 @@ test('the outlook moves sit in their own box as label and value, and saving read
   assert.equal(plain(t('ar', 'moveBy', -4.2)), 'أقل بـ 4%');
   assert.equal(plain(t('ar', 'moveBy', 0.3)), 'دون تغيير');
   assert.equal(t('en', 'moveBy', 11.4), 'up 11%');
-  assert.equal(t('ar', 'jbRange', 900, 940), '900 إلى 940 ريالاً');
-  assert.equal(t('ar', 'jbRange', 800, 850), '800 إلى 850 ريالاً');
-  assert.equal(t('en', 'jbRange', 900, 940), '900 to 940 rials');
-  assert.ok(t('ar', 'jbIntro').includes('1,000 ريال'), t('ar', 'jbIntro'));
   for (const gone of ['pastWeek', 'pastMonth', 'jbBar', 'jbPiece', 'jbTo']) assert.equal(STRINGS.ar[gone], undefined, gone);
 });
 
@@ -276,4 +271,21 @@ test('the price check has one way to give the price: the rate-and-making route i
   }
   assert.equal(t('ar', 'pcFullHint'), 'إذا ذكر المحل سعر الجرام والمصنعية فقط، يمكن طلب السعر الكامل مع الضريبة.');
   assert.equal(t('en', 'pcFullHint'), 'If the shop gives only a rate per gram and a making charge, ask for the full price with VAT.');
+});
+
+test('the offer verdict names the deal, gives the money, the usual range for the piece and a tip (owner, 2026-11-26)', () => {
+  assert.equal(t('ar', 'offerHeadLow'), 'عرض منخفض');
+  assert.equal(t('ar', 'offerHeadClose'), 'عرض جيد');
+  assert.equal(t('en', 'offerHeadUsual'), 'A fair offer');
+  assert.equal(t('en', 'offerHeadAbove'), 'An excellent offer');
+  assert.equal(t('ar', 'offerNoteLow', 34, 101), 'المعتاد أن تدفع المحلات أقل من قيمة الذهب بنحو 34 إلى 101 ريال فقط.');
+  assert.equal(t('ar', 'offerNoteUsual', 34, 101), 'المعتاد أن تدفع المحلات أقل من قيمة الذهب بنحو 34 إلى 101 ريال، وهذا العرض ضمن ذلك.');
+  assert.equal(t('en', 'offerNoteClose', 34, 101), 'Shops usually pay about 34 to 101 rials under the gold value, so this offer is closer to the full value.');
+  assert.equal(t('ar', 'offerNoteUsual', 1, 1), 'المعتاد أن تدفع المحلات أقل من قيمة الذهب بنحو 1 ريال، وهذا العرض ضمن ذلك.');
+  assert.equal(t('ar', 'offerTipLow'), 'يُستحسن سؤال محل آخر قبل البيع.');
+  assert.equal(t('en', 'offerTipUsual'), 'Another shop may offer a little more.');
+  // the old one-line verdicts and the saving section are gone
+  for (const gone of ['verdictAbove', 'verdictClose', 'verdictUsual', 'verdictLow', 'jbTitle', 'jbIntro', 'jbBarRow', 'jbJewelRow', 'jbRange', 'jbDiff', 'jbOnlyMoney', 'jbFine']) {
+    assert.equal(STRINGS.ar[gone], undefined, gone);
+  }
 });

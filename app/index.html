@@ -262,30 +262,20 @@
             <input class="input" id="offer-amount" inputmode="decimal" autocomplete="off" enterkeyhint="done" aria-describedby="offer-amount-err">
             <p class="err" id="offer-amount-err" data-t="badOffer" hidden></p>
           </div>
+          <!-- the verdict in a burgundy box: the deal named, the money, what shops usually take off, a tip (owner, 2026-11-26) -->
           <div id="offer-result" hidden>
-            <p class="verdict" id="offer-verdict"></p>
-            <p class="verdict-sub" id="offer-money"></p>
+            <div class="verdict-box" id="offer-box">
+              <p class="verdict-head"><span class="verdict-icon" id="offer-icon" aria-hidden="true"></span><span id="offer-verdict"></span></p>
+              <p class="verdict-money" id="offer-money"></p>
+              <p class="verdict-note" id="offer-note"></p>
+              <p class="verdict-tip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span id="offer-tip"></span></p>
+            </div>
             <p class="verdict-sub" id="offer-stale" hidden></p>
           </div>
           <p class="prompt" id="offer-prompt" data-t="offerPrompt"></p>
           <p class="notice" id="offer-noprice" data-t="noPrice" hidden></p>
         </section>
 
-        <section class="calc" id="jb" aria-labelledby="jb-title">
-          <h2 class="sec-title" id="jb-title" data-t="jbTitle"></h2>
-          <!-- two plain amounts in rials and the reason; the assumptions fold away (owner, 2026-11-26) -->
-          <p class="intro" data-t="jbIntro"></p>
-          <div class="pc jb-card">
-            <div class="pc-row"><span data-t="jbBarRow"></span><b id="jb-bar"></b></div>
-            <div class="pc-row"><span data-t="jbJewelRow"></span><b id="jb-jewel"></b></div>
-          </div>
-          <p class="plain-line" data-t="jbDiff"></p>
-          <details class="more-info">
-            <summary data-t="showDetails"></summary>
-            <p class="note" data-t="jbFine"></p>
-            <p class="note" data-t="jbOnlyMoney"></p>
-          </details>
-        </section>
 
         <section class="calc">
           <h2 class="sec-title" data-t="placesTitle"></h2>

@@ -1,4 +1,4 @@
-import { offerCheck, priceCheck, jewelleryVsBar, parseNumber } from '../calc.js';
+import { offerCheck, priceCheck, parseNumber } from '../calc.js';
 import { formatNum } from '../price.js';
 import { MAX_PRICE } from '../config.js';
 import { lastPriceText } from '../i18n.js';
@@ -6,7 +6,18 @@ import { syncKarats } from '../ui/karats.js';
 
 const $ = (id) => document.getElementById(id);
 const PIN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>';
-const VERDICT = { above: 'verdictAbove', close: 'verdictClose', usual: 'verdictUsual', low: 'verdictLow' };
+// the offer's verdict in its burgundy box: the deal named with an icon, a note and a tip for each (owner, 2026-11-26)
+const ICON = {
+  good: '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  fair: '<svg viewBox="0 0 24 24"><path d="M6 9.5h12M6 14.5h12"/></svg>',
+  low: '<svg viewBox="0 0 24 24"><path d="M12 6.5V14M12 17.5v.5"/></svg>',
+};
+export const OFFER_VIEW = {
+  above: { head: 'offerHeadAbove', note: 'offerNoteAbove', tip: 'offerTipAbove', icon: ICON.good },
+  close: { head: 'offerHeadClose', note: 'offerNoteClose', tip: 'offerTipClose', icon: ICON.good },
+  usual: { head: 'offerHeadUsual', note: 'offerNoteUsual', tip: 'offerTipUsual', icon: ICON.fair },
+  low: { head: 'offerHeadLow', note: 'offerNoteLow', tip: 'offerTipLow', icon: ICON.low },
+};
 const okGrams = (g) => Number.isFinite(g) && g >= 0.1 && g <= 5000; // as the weight message says (BS7)
 const blank = (input) => input.value.trim() === '';
 
@@ -28,7 +39,8 @@ export function mount(app) {
     ocExample: $('oc-example'), offerGrams: $('offer-grams'), offerGramsErr: $('offer-grams-err'), offerKarats: $('offer-karats'),
     offerAmount: $('offer-amount'), offerAmountErr: $('offer-amount-err'), offerResult: $('offer-result'), verdictO: $('offer-verdict'),
     offerMoney: $('offer-money'), offerPrompt: $('offer-prompt'), offerNoPrice: $('offer-noprice'), offerStale: $('offer-stale'),
-    jb: $('jb'), jbBar: $('jb-bar'), jbJewel: $('jb-jewel'), conv: $('pc-conv'), places: $('places'),
+    offerBox: $('offer-box'), offerIcon: $('offer-icon'), offerNote: $('offer-note'), offerTip: $('offer-tip'),
+    conv: $('pc-conv'), places: $('places'),
     pcClear: $('pc-clear'), ocClear: $('oc-clear'),
   };
   let pcK = app.state.karat;
@@ -108,22 +120,18 @@ export function mount(app) {
     el.offerPrompt.hidden = ready || gramsBad || offerBad;
     el.offerNoPrice.hidden = !(ready && usd == null);
     if (!res) return;
-    el.verdictO.textContent = app.t(VERDICT[res.verdict]);
+    const v = OFFER_VIEW[res.verdict];
+    el.offerBox.dataset.verdict = res.verdict;
+    el.offerIcon.innerHTML = v.icon;
+    el.verdictO.textContent = app.t(v.head);
     el.offerMoney.textContent = app.t('offerMoney', res.value, res.diff, res.dir); // in rials, not a percent (U3)
+    el.offerNote.textContent = app.t(v.note, res.usual[0], res.usual[1]);
+    el.offerTip.textContent = app.t(v.tip);
     const bp = price();
     el.offerStale.hidden = !bp?.old; // as the price check says it (BR3)
     if (bp?.old) el.offerStale.textContent = app.t('staleUse', lastPriceText(app.state.lang, bp.at));
   }
 
-  // for saving: of every 1,000 rials paid today, what comes back on selling if the gold price stays the same.
-  // Two plain amounts in rials, a bar with and without VAT and jewellery with making of 6 down to 3 rials a gram.
-  function renderJb() {
-    const jb = jewelleryVsBar(live());
-    el.jb.hidden = !jb;
-    if (!jb) return;
-    el.jbBar.textContent = app.t('jbRange', jb.bar[0] * 10, jb.bar[1] * 10);
-    el.jbJewel.textContent = app.t('jbRange', jb.detailed * 10, jb.plain * 10);
-  }
 
   function renderPlaces() {
     const ar = app.state.lang === 'ar';
@@ -250,7 +258,6 @@ export function mount(app) {
   });
 
   app.on('price', () => {
-    renderJb();
     if (!el.pcNoPrice.hidden) renderPrice(); // waiting for the first price
     if (!el.offerNoPrice.hidden) renderOffer();
   });
@@ -258,23 +265,19 @@ export function mount(app) {
     renderPlaces();
     renderPrice();
     renderOffer();
-    renderJb();
     requestAnimationFrame(syncSelectors); // the karat underlines move with the text direction (BS2)
   });
   app.on('currency', () => {
     renderPrice();
-    renderJb();
   });
   app.on('data', () => {
     renderPlaces();
-    renderJb(); // the last close can stand in for a missing live price
     if (!el.pcNoPrice.hidden) renderPrice();
     if (!el.offerNoPrice.hidden) renderOffer(); // (BS8)
   });
   app.on('view', (v) => { if (v === 'buysell') requestAnimationFrame(syncSelectors); });
   renderPrice();
   renderOffer();
-  renderJb();
   renderPlaces();
   syncSelectors();
 }

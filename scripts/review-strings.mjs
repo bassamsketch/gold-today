@@ -12,7 +12,7 @@ const SAMPLES = {
   fallDepth: [21], fallBack: [6], afterYears: [10], higherCases: [6], worstText: ['يوليو 1980', -44],
   banksShort: [4, '52.7', '59.5', '2027-12', '40.5'], winnerMiss: [2025, 15, true], surveyMiss: [2026, 7, true],
   periodLabel: [5], outOf10: [7], periodRow: [35, -55], yearsAgo: [5], rialWord: [810], pcWhy: [17], pcWhyBar: [6],
-  pcRange: [13, 21], pcPer100: [82], jbRange: [900, 940], offerMoney: [809.136, 29.3, 'below'],
+  pcRange: [13, 21], pcPer100: [82], offerNoteClose: [34, 101], offerNoteUsual: [34, 101], offerNoteLow: [34, 101], offerMoney: [809.136, 29.3, 'below'],
   targetBy: ['2027-12'], srcGram: [22], srcOz: [4650], publishedVia: ['14 نوفمبر 2026'], staleUse: ['آخر سعر: الخميس 4:57 م'],
   mapOf: ['ملابار للذهب والألماس', 'روي'],
   curName: ['AED'], curShort: ['AED'], curUnit: ['AED'], curPerGram: ['LBP'], curPerGramFull: ['LBP'], boardIn: ['LBP'], curAria: ['درهم إماراتي'],
