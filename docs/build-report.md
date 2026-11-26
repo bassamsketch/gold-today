@@ -2,6 +2,14 @@
 
 Date: 2026-11-25. Branch: main. Tests: 68 passing (npm test). Code 41 KB compressed (limit 150 KB), fonts 225 KB (limit 350 KB).
 
+## Release 2: display currency (2026-11-26)
+Plan: docs/superpowers/plans/2026-11-26-release-2-currency.md. Tests: 107 passing. Offline cache v7.
+- **Currency button** beside the language link (ريال / OMR and so on) opens a sheet of five currencies with today's gram price in each. Choosing one changes every displayed price: Today's price, change line and board, My gold, the Outlook's figures and the shared image. Typed amounts and the shop tools stay in rials; the price check adds one line in the chosen currency. Today shows "Prices in UAE dirhams. Back to rials" while another currency is on.
+- **Rates:** the rial and dirham are pegged to the dollar. The euro and pound come from app/data/rates.json, refreshed each weekday night by scripts/update-rates.mjs in the daily job (ExchangeRate-API, credited in the sheet). A bad response leaves the file as it was. Without a usable rate the euro and pound show as unavailable and rials are shown.
+- **Pounds in millions:** a gram of 22 karat is about 9.4 million pounds, so pounds show in millions ("9.427 مليون ليرة"), with the full figure explained once in the sheet.
+- **Arabic:** each currency's unit agrees with its number (درهماً, دراهم, دولاراً, يورو, مليون ليرة). docs/arabic-review.md is regenerated (236 strings).
+- **Checks:** browser at 360 px in Arabic: the sheet, LBP on Today (price, board, change line), back to rials; AED on My gold with two pieces (totals, range, gain, past values), Outlook and the price check; the share text in LBP.
+
 ## Release 1 of the decision helpers (2026-11-26)
 Design: docs/superpowers/specs/2026-11-26-decisions-and-currency-design.md (revision 3.1 and the VAT law). Plan: docs/superpowers/plans/2026-11-26-release-1-outlook-buysell.md. Tests: 88 passing. Offline cache v6.
 - **Outlook tab** (was Future, renamed after the QA review): "Is the price high or low today?" answers with the distance from the record, the past week and month, Today's 12-month sentence, a five-year chart with the record marked, and every fall of 20% or more since 1971 with its recovery time. "Will it go up?" answers "No one knows", then two rows of dots (higher in 6 and 8 cases out of 10 after 1 and 10 years), the worst 10 years since 1971, and the banks' range in one line. Tables, all periods, forecast misses and the bank list fold under "Show details". The 5 and 10-year rial ranges and the bank figure on the chart are gone.

@@ -15,8 +15,11 @@ const SAMPLES = {
   pcRange: [13, 21], pcPer100: [82], pcTarget: [950, '49.5', 22, '40.5'], jbPiece: [3, true],
   targetBy: ['2027-12'], srcGram: [22], srcOz: [4650], publishedVia: ['14 نوفمبر 2026'], offerValue: ['393.213'],
   gapBelow: ['4.1'], gapAbove: ['1.2'], mapOf: ['ملابار للذهب والألماس', 'روي'],
+  curName: ['AED'], curShort: ['AED'], curUnit: ['AED'], curPerGram: ['LBP'], boardIn: ['LBP'], curAria: ['درهم إماراتي'],
+  curCap: [22], curRatesA: ['26 نوفمبر 2026'], curLbpNote: ['9.427', '9,427,000'], pricesIn: ['AED'], pcConverted: ['9,074 درهماً'],
+  curWord: [810, 'AED'], jbIntro: ['AED'],
 };
-const EN_SAMPLES = { ...SAMPLES, editNamed: ['Bangles'], onDay: ['Friday'], less: ['0.903', 'yesterday'], more: ['0.903', 'yesterday'], same: ['yesterday'], whyTitle: ['25 November'], gainUp: [300, 'March 2019', 41, '14'], gainDown: [300, 'March 2019', 41, '14'], listPaid: [300, 'March 2019'], updatedOn: ['25 November 2026'], publishedVia: ['14 November 2026'], mapOf: ['Malabar Gold & Diamonds', 'Ruwi'], worstText: ['July 1980', -44] };
+const EN_SAMPLES = { ...SAMPLES, editNamed: ['Bangles'], onDay: ['Friday'], less: ['0.903', 'yesterday'], more: ['0.903', 'yesterday'], same: ['yesterday'], whyTitle: ['25 November'], gainUp: [300, 'March 2019', 41, '14'], gainDown: [300, 'March 2019', 41, '14'], listPaid: [300, 'March 2019'], updatedOn: ['25 November 2026'], publishedVia: ['14 November 2026'], mapOf: ['Malabar Gold & Diamonds', 'Ruwi'], worstText: ['July 1980', -44], curAria: ['UAE dirham'], curRatesA: ['26 November 2026'], pcConverted: ['9,074 dirhams'] };
 
 const cell = (v, args, comma) => {
   const s = typeof v === 'function' ? v(...(args || [])) : Array.isArray(v) ? v.join(comma) : String(v);
