@@ -1,5 +1,5 @@
 // Offline support (design section 9). Bump VERSION when the precache list changes.
-const VERSION = 'gold-today-v5';
+const VERSION = 'gold-today-v6';
 const PRECACHE = [
   './',
   'index.html',
@@ -30,6 +30,7 @@ const PRECACHE = [
   'js/gold.js',
   'js/history.js',
   'js/i18n.js',
+  'js/insights.js',
   'js/install.js',
   'js/live.js',
   'js/main.js',

@@ -60,3 +60,11 @@ test('fonts and images come from the cache first', async () => {
   const w = loadWorker(async () => new Response('net font', { status: 200 }), { [font.url]: 'cached font' });
   assert.equal(await w.fire(font), 'cached font');
 });
+
+test('every app module and data file is in the offline precache', async () => {
+  const { readdirSync } = await import('node:fs');
+  const sw = readFileSync(new URL('../app/sw.js', import.meta.url), 'utf8');
+  const walk = (dir, base) => readdirSync(new URL(dir, import.meta.url), { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(`${dir}${e.name}/`, `${base}${e.name}/`) : [`${base}${e.name}`]));
+  const files = walk('../app/js/', 'js/').concat(walk('../app/data/', 'data/'));
+  for (const f of files) assert.ok(sw.includes(`'${f}'`), `${f} is not precached`);
+});
