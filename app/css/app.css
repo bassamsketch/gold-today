@@ -307,8 +307,6 @@
 .try-clear svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
 .step { display: inline-grid; place-items: center; width: 26px; height: 26px; margin-inline-end: 8px; border-radius: 50%; background: var(--car-soft); color: var(--car-d); font-family: var(--serif); font-size: 15px; font-weight: 600; vertical-align: 1px; }
 .type-seg { margin-top: 10px; margin-bottom: 0; }
-.alt { margin-top: 4px; }
-.alt-fields { padding: 2px 0 4px; }
 .pc { margin-top: 20px; padding: 18px 16px 16px; border-radius: var(--radius); background: var(--surface); }
 .pc-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 6px 0; }
 .pc-row > span { font-size: 16px; }

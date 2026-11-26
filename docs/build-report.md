@@ -2,6 +2,9 @@
 
 Date: 2026-11-25. Branch: main. Tests: 68 passing (npm test). Code 41 KB compressed (limit 150 KB), fonts 225 KB (limit 350 KB).
 
+## The price check has one path (2026-11-26)
+Tests: 127 passing. Offline cache v12. The owner found the "rate per gram and making charge" route confusing ("I put numbers and nothing happens"). It only worked after a weight was typed in box 1, and it was a second, hidden way to give the price. It is removed: the check is weight, karat and the full price the shop asks. One line under box 3 reads: "إذا ذكر المحل سعر الجرام والمصنعية فقط، يمكن طلب السعر الكامل مع الضريبة." Checked at 360 and 390 px in Arabic and English: typing gives the answer, Clear and the example work, and the 24 karat bar or piece switch still works. No errors.
+
 ## Owner's review of the new screens (2026-11-26)
 Tests: 126 passing. Offline cache v11.
 - **Clear:** a separate "✕ مسح" button now stands beside "عرض مثال" whenever any box holds a number (the example's or typed), in both checks. The example button no longer changes its label. Clear empties the boxes, returns to the family's karat and leaves focus on the example button.

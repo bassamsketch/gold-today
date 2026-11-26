@@ -180,8 +180,7 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | pieceOpt | مشغولات | Jewellery |
 | barOpt | سبيكة أو عملة | Bar or coin |
 | pcPrice | السعر الكامل الذي يطلبه المحل، مع الضريبة، بالريال | The full price the shop asks, with VAT, in rials |
-| pcAlt | هل أعطى المحل سعر الجرام والمصنعية فقط؟ | Did the shop give only a rate per gram and a making charge? |
-| pcAltNote | يُحسب السعر من سعر الجرام والمصنعية وضريبة 5%. | The price is worked out from the rate, the making charge and 5% VAT. |
+| pcFullHint | إذا ذكر المحل سعر الجرام والمصنعية فقط، يمكن طلب السعر الكامل مع الضريبة. | If the shop gives only a rate per gram and a making charge, ask for the full price with VAT. |
 | badShopPrice | يُرجى كتابة السعر بالأرقام، أكبر من صفر وحتى 1,000,000 ريال، مثل 950.500. | Please enter the price in numbers, above zero and up to 1,000,000 rials, for example 950.500. |
 | pcGold | ثمن الذهب في القطعة اليوم | The gold in this piece today |
 | pcExtra | يطلب المحل فوق ثمن الذهب | The shop asks on top |
@@ -209,15 +208,7 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | jbOnlyMoney | هذا يحسب المال الذي يعود فقط، ولا يحسب لبس القطعة أو إهداءها. | This counts only the money that comes back, not wearing or giving the piece. |
 | jbFine | تقديرات للمشغولات عيار 22 بأجرة مصنعية من 3 إلى 6 ريالات للجرام، وضريبة 5% على السعر كله كما ينص القانون، ويدفع المحل عند بيعها أقل من ثمن ذهبها بنحو 4%. السبيكة الصغيرة أغلى من ثمن ذهبها بنحو 5%، ويدفع المحل أقل بنحو 1%. يفرض القانون ضريبة بنسبة صفر على الذهب الاستثماري (نقاوة 99% فأكثر)، لكن لائحته تقصرها على أول بيع بعد الاستخراج، لذلك تظهر السبيكة بالضريبة وبدونها. نسب السبائك من أسعار تجار خارج عُمان. | Estimates for 22 karat jewellery with making charges of 3 to 6 rials a gram, 5% VAT on the whole price as the law sets, and shops paying about 4% under its gold value. A small bar costs about 5% over its gold value, and shops pay about 1% under. The law sets a zero VAT rate for investment gold (99% pure or more), but its regulations limit that to the first sale after extraction, so the bar is shown with and without VAT. The bar figures come from dealer prices outside Oman. |
 | buySellTitle | بيع وشراء | Buy & sell |
-| making | أجرة المصنعية | Making charge |
-| perGramMode | ريال للجرام | rials per gram |
-| percentMode | نسبة % | percent |
-| shopRate | سعر الجرام في المحل | Shop's rate per gram |
-| shopRateHint | هذا سعر السوق اليوم، ويمكن تغييره ليطابق لوحة المحل | This is today's market rate. Change it to match the shop's board. |
-| badMaking | يُرجى كتابة الأجرة بالأرقام، صفر أو أكثر. | Please enter the making charge in numbers, zero or more. |
-| badRate | يُرجى كتابة سعر الجرام بالأرقام، أكبر من صفر، مثل 40.500. | Please enter the rate per gram in numbers, above zero, for example 40.500. |
 | offerTitle | قبل البيع: هل العرض معتاد؟ | Before selling: is this a normal offer? |
-| vat24 | السبائك والعملات الخالصة معفاة عادة من الضريبة. | Pure gold bars and coins are usually VAT-free. |
 | pcPrompt | تظهر النتيجة بعد كتابة الوزن والسعر | Enter the weight and the price to see the result |
 | offerAmount | المبلغ الذي عرضه المحل بالريال | The shop's offer, in rials |
 | offerMoney | قيمة الذهب اليوم نحو 809 ريالات، والعرض أقل منها بـ 29 ريالاً. | Today's gold value is about 809 rials, and the offer is 29 rials below it. |

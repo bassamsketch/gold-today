@@ -268,3 +268,12 @@ test('the outlook moves sit in their own box as label and value, and saving read
   assert.ok(t('ar', 'jbIntro').includes('1,000 ريال'), t('ar', 'jbIntro'));
   for (const gone of ['pastWeek', 'pastMonth', 'jbBar', 'jbPiece', 'jbTo']) assert.equal(STRINGS.ar[gone], undefined, gone);
 });
+
+test('the price check has one way to give the price: the rate-and-making route is gone (owner, 2026-11-26)', () => {
+  for (const gone of ['pcAlt', 'pcAltNote', 'making', 'perGramMode', 'percentMode', 'shopRate', 'shopRateHint', 'badMaking', 'badRate', 'vat24']) {
+    assert.equal(STRINGS.ar[gone], undefined, gone);
+    assert.equal(STRINGS.en[gone], undefined, gone);
+  }
+  assert.equal(t('ar', 'pcFullHint'), 'إذا ذكر المحل سعر الجرام والمصنعية فقط، يمكن طلب السعر الكامل مع الضريبة.');
+  assert.equal(t('en', 'pcFullHint'), 'If the shop gives only a rate per gram and a making charge, ask for the full price with VAT.');
+});

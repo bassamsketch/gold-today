@@ -217,25 +217,9 @@
           </div>
           <div class="field">
             <label for="pc-price"><span class="step" aria-hidden="true">3</span><span data-t="pcPrice"></span></label>
-            <input class="input" id="pc-price" inputmode="decimal" autocomplete="off" enterkeyhint="done" aria-describedby="pc-price-err">
+            <input class="input" id="pc-price" inputmode="decimal" autocomplete="off" enterkeyhint="done" aria-describedby="pc-price-hint pc-price-err">
+            <p class="hint-text" id="pc-price-hint" data-t="pcFullHint"></p>
             <p class="err" id="pc-price-err" data-t="badShopPrice" hidden></p>
-          </div>
-          <p class="alt"><button class="link-btn" type="button" id="pc-alt-open" aria-expanded="false" aria-controls="pc-alt" data-t="pcAlt"></button></p>
-          <div class="alt-fields" id="pc-alt" hidden>
-            <div class="field">
-              <label for="cost-rate" data-t="shopRate"></label>
-              <input class="input" id="cost-rate" inputmode="decimal" autocomplete="off" enterkeyhint="next" aria-describedby="cost-rate-hint cost-rate-err">
-              <p class="hint-text" id="cost-rate-hint" data-t="shopRateHint"></p>
-              <p class="err" id="cost-rate-err" data-t="badRate" hidden></p>
-            </div>
-            <div class="field">
-              <label for="cost-making" id="cost-making-label" data-t="making"></label>
-              <div class="seg" id="cost-mode" role="radiogroup" aria-labelledby="cost-making-label"><button type="button" role="radio" data-mode="perGram" class="on" data-t="perGramMode"></button><button type="button" role="radio" data-mode="percent" data-t="percentMode"></button></div>
-              <input class="input" id="cost-making" inputmode="decimal" autocomplete="off" enterkeyhint="done" aria-describedby="cost-making-err">
-              <p class="err" id="cost-making-err" data-t="badMaking" hidden></p>
-            </div>
-            <p class="hint-text" id="pc-alt-note" data-t="pcAltNote"></p>
-            <p class="hint-text" id="pc-alt-vat24" data-t="vat24" hidden></p>
           </div>
           <!-- the answer first, then three amounts; the reasons fold away (U1) -->
           <div class="pc" id="pc-result" hidden>

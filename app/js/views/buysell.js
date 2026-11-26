@@ -1,6 +1,6 @@
-import { pieceCost, offerCheck, priceCheck, jewelleryVsBar, parseNumber } from '../calc.js';
-import { gramPrice, formatNum } from '../price.js';
-import { MAX_PRICE, VAT } from '../config.js';
+import { offerCheck, priceCheck, jewelleryVsBar, parseNumber } from '../calc.js';
+import { formatNum } from '../price.js';
+import { MAX_PRICE } from '../config.js';
 import { lastPriceText } from '../i18n.js';
 import { syncKarats } from '../ui/karats.js';
 
@@ -20,9 +20,7 @@ export const hasNumbers = (...values) => values.some((v) => v.trim() !== '');
 export function mount(app) {
   const el = {
     pcExample: $('pc-example'), pcGrams: $('pc-grams'), pcGramsErr: $('pc-grams-err'), pcKarats: $('pc-karats'), pcType: $('pc-type'),
-    pcPrice: $('pc-price'), pcPriceErr: $('pc-price-err'), altOpen: $('pc-alt-open'), alt: $('pc-alt'),
-    altNote: $('pc-alt-note'), altVat24: $('pc-alt-vat24'), stale: $('pc-stale'),
-    rate: $('cost-rate'), rateHint: $('cost-rate-hint'), rateErr: $('cost-rate-err'), mode: $('cost-mode'), making: $('cost-making'), makingErr: $('cost-making-err'),
+    pcPrice: $('pc-price'), pcPriceErr: $('pc-price-err'), stale: $('pc-stale'),
     result: $('pc-result'), gold: $('pc-gold'), goldU: $('pc-gold-u'), over: $('pc-over'), extra: $('pc-extra'), extraU: $('pc-extra-u'),
     why: $('pc-why'), verdict: $('pc-verdict'), range: $('pc-range'), basis: $('pc-basis'), more: $('pc-more'),
     back: $('pc-back'), backU: $('pc-back-u'), per100: $('pc-per100'),
@@ -36,10 +34,6 @@ export function mount(app) {
   let pcK = app.state.karat;
   let pcType = 'bar'; // karat 24 is a bar or coin unless switched (design 6.1)
   let offerK = app.state.karat;
-  let mode = 'perGram';
-  let rateEdited = false; // the rate holds the shop's own figure
-  let typed = false; // once typing starts, the prefilled rate stops following the live price (QA19)
-  let routeDrives = false; // box 3 follows the rate route only after something is typed in the route (BS1)
   let pcExampleOn = false, ocExampleOn = false; // an example's numbers are in the boxes (BR1)
   // the saved live price, or the last close when that is newer (design 6.1), as on every tab
   const price = () => app.best();
@@ -53,40 +47,9 @@ export function mount(app) {
     unit.textContent = app.t('rialWord', v);
   };
   // a Clear button stands beside each example once any box holds a number; the example button never changes
-  const pcFilled = () => hasNumbers(el.pcGrams.value, el.pcPrice.value, // the route's boxes count only while it is open (BR2)
-    el.alt.hidden ? '' : el.making.value, !el.alt.hidden && rateEdited ? el.rate.value : '');
+  // one way to give the price: the full price the shop asks (the rate-and-making route is gone, owner 2026-11-26)
+  const pcFilled = () => hasNumbers(el.pcGrams.value, el.pcPrice.value);
   const ocFilled = () => hasNumbers(el.offerGrams.value, el.offerAmount.value);
-
-  function setRate() {
-    if (rateEdited || live() == null) return;
-    el.rate.value = gramPrice(live(), pcK).toFixed(3);
-  }
-
-  // the notes in the route follow the karat and type at once, typed in or not (BS4)
-  function syncRouteNotes() {
-    const bar = pcK === 24 && pcType === 'bar';
-    el.altNote.hidden = bar;
-    el.altVat24.hidden = !bar; // bars and coins are usually VAT-free (design 6.4)
-    el.rateHint.hidden = rateEdited || blank(el.rate); // "today's market rate" only under that rate (BS8)
-  }
-
-  // the old route: the shop's rate and making charge make the price, with 5% VAT on the whole (design 6.1). It fills
-  // box 3 only after something is typed in the route, so a price typed there is never replaced (BS1).
-  function priceFromRate() {
-    const g = parseNumber(el.pcGrams.value);
-    const r = parseNumber(el.rate.value);
-    const m = blank(el.making) ? 0 : parseNumber(el.making.value);
-    const rateBad = !blank(el.rate) && !(Number.isFinite(r) && r > 0);
-    const makingBad = !blank(el.making) && !(Number.isFinite(m) && m >= 0);
-    setErr(el.rate, el.rateErr, rateBad);
-    setErr(el.making, el.makingErr, makingBad);
-    syncRouteNotes();
-    if (!routeDrives) return;
-    const bar = pcK === 24 && pcType === 'bar';
-    const ok = okGrams(g) && Number.isFinite(r) && r > 0 && !makingBad;
-    const cost = ok ? pieceCost({ grams: g, karat: pcK, rate: r, making: m, mode, vat: bar ? 0 : VAT }, live()) : null;
-    el.pcPrice.value = cost ? cost.total.toFixed(3) : ''; // an error in the route leaves no old result (BS8)
-  }
 
   function renderPrice() {
     const usd = live();
@@ -196,7 +159,6 @@ export function mount(app) {
       b.classList.toggle('on', on);
       b.setAttribute('aria-checked', String(on));
     });
-    radio(el.mode, 'mode', mode);
     radio(el.pcType, 'type', pcType);
   }
 
@@ -207,74 +169,36 @@ export function mount(app) {
     s.textContent = app.t(s.dataset.t);
   }));
 
-  // Clear: back to how the section opened, with empty boxes, the family's own karat and today's rate
+  // Clear: back to how the section opened, with empty boxes and the family's own karat
   function clearPc() {
     el.more.open = false;
-    el.pcGrams.value = el.pcPrice.value = el.making.value = '';
-    rateEdited = typed = routeDrives = pcExampleOn = false;
+    el.pcGrams.value = el.pcPrice.value = '';
+    pcExampleOn = false;
     pcK = app.state.karat;
     pcType = 'bar';
-    mode = 'perGram'; // (BS9)
-    setRate();
-    priceFromRate(); // with no weight it only refreshes the rate and making messages
     syncSelectors();
     renderPrice();
   }
   function showPcExample() {
-    if (!el.alt.hidden) { // the example is a price in box 3, so the rate route closes (BS9)
-      el.alt.hidden = true;
-      el.altOpen.setAttribute('aria-expanded', 'false');
-    }
     el.pcGrams.value = '20';
-    el.pcPrice.value = '950.000'; // the example's own price, never one worked out from the rate
-    el.making.value = '';
-    routeDrives = false;
+    el.pcPrice.value = '950.000';
     pcK = 22;
     pcExampleOn = true;
-    setRate();
-    priceFromRate();
     syncSelectors();
     renderPrice();
   }
   // starting to type a real piece while the example shows empties the boxes first, so no example number is kept (BR1)
-  [el.pcGrams, el.pcPrice, el.rate, el.making].forEach((i) => i.addEventListener('focus', () => { if (pcExampleOn) clearPc(); }));
-
-  el.pcGrams.addEventListener('input', () => {
-    typed = true;
-    pcExampleOn = false;
-    priceFromRate();
-    renderPrice();
-  });
-  el.pcPrice.addEventListener('input', () => {
-    typed = true;
-    pcExampleOn = false;
-    routeDrives = false; // a typed price stays until something is typed in the route again (BS1)
-    renderPrice();
-  });
-  [el.rate, el.making].forEach((i) => i.addEventListener('input', () => {
-    typed = true;
-    pcExampleOn = false;
-    routeDrives = true;
-    if (i === el.rate) rateEdited = !blank(el.rate);
-    priceFromRate();
-    renderPrice();
-  }));
-  el.altOpen.addEventListener('click', () => {
-    const open = el.alt.hidden;
-    el.alt.hidden = !open;
-    el.altOpen.setAttribute('aria-expanded', String(open));
-    if (open) setRate();
-    else routeDrives = false; // opening or closing the route changes no price (BS1)
-    priceFromRate();
-    el.pcClear.hidden = !pcFilled();
+  [el.pcGrams, el.pcPrice].forEach((i) => {
+    i.addEventListener('focus', () => { if (pcExampleOn) clearPc(); });
+    i.addEventListener('input', () => {
+      pcExampleOn = false;
+      renderPrice();
+    });
   });
   el.pcKarats.addEventListener('click', (e) => {
     const b = e.target.closest('[data-ck]');
     if (!b) return;
     pcK = Number(b.dataset.ck);
-    rateEdited = false; // a new karat brings its own market rate
-    setRate();
-    priceFromRate();
     syncSelectors();
     renderPrice();
   });
@@ -283,16 +207,6 @@ export function mount(app) {
     if (!b) return;
     pcType = b.dataset.type;
     syncSelectors();
-    priceFromRate();
-    renderPrice();
-  });
-  el.mode.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-mode]');
-    if (!b || b.dataset.mode === mode) return;
-    mode = b.dataset.mode;
-    el.making.value = ''; // 3 rials a gram must not turn into 3% (QA19)
-    syncSelectors();
-    priceFromRate();
     renderPrice();
   });
   el.pcExample.addEventListener('click', showPcExample);
@@ -336,8 +250,6 @@ export function mount(app) {
   });
 
   app.on('price', () => {
-    if (!typed) setRate();
-    syncRouteNotes();
     renderJb();
     if (!el.pcNoPrice.hidden) renderPrice(); // waiting for the first price
     if (!el.offerNoPrice.hidden) renderOffer();
@@ -356,14 +268,10 @@ export function mount(app) {
   app.on('data', () => {
     renderPlaces();
     renderJb(); // the last close can stand in for a missing live price
-    if (!typed) setRate();
-    syncRouteNotes();
     if (!el.pcNoPrice.hidden) renderPrice();
     if (!el.offerNoPrice.hidden) renderOffer(); // (BS8)
   });
   app.on('view', (v) => { if (v === 'buysell') requestAnimationFrame(syncSelectors); });
-  setRate();
-  syncRouteNotes();
   renderPrice();
   renderOffer();
   renderJb();
