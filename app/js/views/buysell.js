@@ -12,6 +12,13 @@ const ICON = {
   fair: '<svg viewBox="0 0 24 24"><path d="M6 9.5h12M6 14.5h12"/></svg>',
   low: '<svg viewBox="0 0 24 24"><path d="M12 6.5V14M12 17.5v.5"/></svg>',
 };
+// the price check's verdict for a buyer: lower than usual is good, higher is high, under the gold's own value is unusual
+export const PRICE_VIEW = {
+  below: { head: 'pcHeadBelow', tip: 'pcTipBelow', icon: ICON.good },
+  within: { head: 'pcHeadWithin', tip: 'pcTipWithin', icon: ICON.fair },
+  above: { head: 'pcHeadAbove', tip: 'pcTipAbove', tipBar: 'pcTipAboveBar', icon: ICON.low },
+  under: { head: 'pcHeadUnder', tip: 'pcTipUnder', icon: ICON.low },
+};
 export const OFFER_VIEW = {
   above: { head: 'offerHeadAbove', note: 'offerNoteAbove', tip: 'offerTipAbove', icon: ICON.good },
   close: { head: 'offerHeadClose', note: 'offerNoteClose', tip: 'offerTipClose', icon: ICON.good },
@@ -32,8 +39,8 @@ export function mount(app) {
   const el = {
     pcExample: $('pc-example'), pcGrams: $('pc-grams'), pcGramsErr: $('pc-grams-err'), pcKarats: $('pc-karats'), pcType: $('pc-type'),
     pcPrice: $('pc-price'), pcPriceErr: $('pc-price-err'), stale: $('pc-stale'),
-    result: $('pc-result'), gold: $('pc-gold'), goldU: $('pc-gold-u'), over: $('pc-over'), extra: $('pc-extra'), extraU: $('pc-extra-u'),
-    why: $('pc-why'), verdict: $('pc-verdict'), range: $('pc-range'), basis: $('pc-basis'), more: $('pc-more'),
+    result: $('pc-result'), pcBox: $('pc-box'), pcIcon: $('pc-icon'), pcMoney: $('pc-money'), pcNote: $('pc-note'), pcTip: $('pc-tip'),
+    why: $('pc-why'), verdict: $('pc-verdict'), basis: $('pc-basis'), more: $('pc-more'),
     back: $('pc-back'), backU: $('pc-back-u'), per100: $('pc-per100'),
     pcPrompt: $('pc-prompt'), pcNoPrice: $('pc-noprice'),
     ocExample: $('oc-example'), offerGrams: $('offer-grams'), offerGramsErr: $('offer-grams-err'), offerKarats: $('offer-karats'),
@@ -78,16 +85,18 @@ export function mount(app) {
     el.pcPrompt.hidden = ready || gramsBad || priceBad;
     el.pcNoPrice.hidden = !(ready && usd == null);
     if (!r) return;
-    // the answer first, then the gold, the shop's extra and what a shop pays back; the reasons fold away (U1)
+    // the verdict in its burgundy box: the price named, the money, the usual extra for this piece, a tip (owner, 2026-11-26)
     const under = r.position === 'under';
-    const word = { within: 'Within', below: 'Below', above: 'Above' }[r.position];
-    el.verdict.textContent = under ? app.t('pcUnder') : app.t(r.bar ? `pcBar${word}` : `pc${word}`);
-    money(el.gold, el.goldU, r.gold);
-    el.over.hidden = el.more.hidden = under;
+    const v = PRICE_VIEW[r.position];
+    el.pcBox.dataset.verdict = r.position;
+    el.pcIcon.innerHTML = v.icon;
+    el.verdict.textContent = app.t(v.head);
+    el.pcMoney.textContent = app.t('pcMoney', r.gold, Math.round(r.extra) + 0);
+    el.pcNote.textContent = under ? app.t('pcNoteUnder') : app.t('pcNote', r.bar, r.position, r.usual[0], r.usual[1]);
+    el.pcTip.textContent = app.t(r.bar && v.tipBar ? v.tipBar : v.tip);
+    el.more.hidden = under;
     if (!under) {
-      money(el.extra, el.extraU, r.extra);
       el.why.textContent = app.t(r.bar ? 'pcWhyBar' : 'pcWhy', r.extraPct * 100);
-      el.range.textContent = app.t('pcRange', r.band[0] * 100, r.band[1] * 100);
       el.basis.textContent = app.t(r.bar ? 'pcBarBasis' : 'pcBasis');
     }
     money(el.back, el.backU, r.back);

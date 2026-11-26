@@ -221,21 +221,26 @@
             <p class="hint-text" id="pc-price-hint" data-t="pcFullHint"></p>
             <p class="err" id="pc-price-err" data-t="badShopPrice" hidden></p>
           </div>
-          <!-- the answer first, then three amounts; the reasons fold away (U1) -->
-          <div class="pc" id="pc-result" hidden>
-            <p class="pc-lead" id="pc-verdict"></p>
-            <div class="pc-row pc-main"><span data-t="pcGold"></span><b><span class="num" id="pc-gold"></span> <small id="pc-gold-u"></small></b></div>
-            <p class="pc-why" id="pc-stale" hidden></p>
-            <div class="pc-row" id="pc-over"><span data-t="pcExtra"></span><b><span class="num" id="pc-extra"></span> <small id="pc-extra-u"></small></b></div>
-            <div class="pc-row"><span data-t="pcBack"></span><b><span class="num" id="pc-back"></span> <small id="pc-back-u"></small></b></div>
-            <p class="pc-why" id="pc-conv" hidden></p>
-            <details class="more-info pc-more" id="pc-more">
-              <summary data-t="showDetails"></summary>
-              <p class="pc-why" id="pc-why"></p>
-              <p class="pc-range" id="pc-range"></p>
-              <p class="pc-why" id="pc-basis"></p>
-              <p class="pc-why" id="pc-per100"></p>
-            </details>
+          <!-- the verdict in a burgundy box like the offer check's: the price named, the money, the usual extra, a tip;
+               then what a shop pays back and the reasons, folded (owner, 2026-11-26) -->
+          <div id="pc-result" hidden>
+            <div class="verdict-box" id="pc-box">
+              <p class="verdict-head"><span class="verdict-icon" id="pc-icon" aria-hidden="true"></span><span id="pc-verdict"></span></p>
+              <p class="verdict-money" id="pc-money"></p>
+              <p class="verdict-note" id="pc-note"></p>
+              <p class="verdict-tip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span id="pc-tip"></span></p>
+            </div>
+            <p class="verdict-sub" id="pc-stale" hidden></p>
+            <div class="pc">
+              <div class="pc-row"><span data-t="pcBack"></span><b><span class="num" id="pc-back"></span> <small id="pc-back-u"></small></b></div>
+              <p class="pc-why" id="pc-conv" hidden></p>
+              <details class="more-info pc-more" id="pc-more">
+                <summary data-t="showDetails"></summary>
+                <p class="pc-why" id="pc-why"></p>
+                <p class="pc-why" id="pc-basis"></p>
+                <p class="pc-why" id="pc-per100"></p>
+              </details>
+            </div>
           </div>
           <p class="prompt" id="pc-prompt" data-t="pcPrompt"></p>
           <p class="notice" id="pc-noprice" data-t="noPrice" hidden></p>

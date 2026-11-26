@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { hasNumbers, OFFER_VIEW } from '../app/js/views/buysell.js';
+import { hasNumbers, OFFER_VIEW, PRICE_VIEW } from '../app/js/views/buysell.js';
 import { t, STRINGS } from '../app/js/i18n.js';
 
 test('the Clear button shows beside the example once any box holds a number', () => {
@@ -20,5 +20,13 @@ test('every offer verdict has a headline, a note, a tip and an icon, in both lan
     for (const key of [v.head, v.note, v.tip]) {
       assert.ok(STRINGS.ar[key] && STRINGS.en[key], `${verdict}: ${key}`);
     }
+  }
+});
+
+test('every price verdict has a headline, a tip and an icon, in both languages', () => {
+  for (const pos of ['below', 'within', 'above', 'under']) {
+    const v = PRICE_VIEW[pos];
+    assert.ok(v && v.icon, pos);
+    for (const key of [v.head, v.tip, v.tipBar].filter(Boolean)) assert.ok(STRINGS.ar[key] && STRINGS.en[key], `${pos}: ${key}`);
   }
 });

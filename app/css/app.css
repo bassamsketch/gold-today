@@ -308,18 +308,14 @@
 .step { display: inline-grid; place-items: center; width: 26px; height: 26px; margin-inline-end: 8px; border-radius: 50%; background: var(--car-soft); color: var(--car-d); font-family: var(--serif); font-size: 15px; font-weight: 600; vertical-align: 1px; }
 .type-seg { margin-top: 10px; margin-bottom: 0; }
 .pc { margin-top: 20px; padding: 18px 16px 16px; border-radius: var(--radius); background: var(--surface); }
+#pc-result .pc { margin-top: 12px; } /* what a shop pays back and the reasons, under the verdict box */
 .pc-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 6px 0; }
 .pc-row > span { font-size: 16px; }
 .pc-row b { font-family: var(--serif); font-weight: 600; font-size: 22px; white-space: nowrap; }
 .pc-row b small { font-family: var(--text); font-weight: 400; font-size: 15px; color: var(--muted); }
-.pc-main > span { font-weight: 700; }
-.pc-main b { font-size: 26px; }
 .pc-why { font-size: 16px; color: var(--muted); line-height: 1.6; }
-/* the answer comes first, in ink, then the amounts; the reasons fold away (U1) */
-.pc-lead { font-size: 19px; font-weight: 700; line-height: 1.5; color: var(--ink); margin-bottom: 10px; }
 .pc-more { margin-top: 4px; }
 .pc-more > p { margin-top: 6px; }
-.pc-range { font-size: 16px; margin-top: 2px; }
 .verdict-sub { font-size: 16px; color: var(--muted); margin-top: 4px; }
 /* the offer's verdict: the deal named with an icon, the money, what shops usually take off, a tip (owner, 2026-11-26) */
 .verdict-box { margin-top: 16px; padding: 18px; }

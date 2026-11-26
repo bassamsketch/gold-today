@@ -2,6 +2,9 @@
 
 Date: 2026-11-25. Branch: main. Tests: 68 passing (npm test). Code 41 KB compressed (limit 150 KB), fonts 225 KB (limit 350 KB).
 
+## The price check's verdict box (2026-11-26)
+Tests: 131 passing. Offline cache v14. The owner asked for the price check to match the offer check. Its result now opens with the same burgundy box. The box names the price with an icon (سعر جيد ✓, سعر عادي =, سعر مرتفع !, سعر غير معتاد !) and gives the money ("ثمن الذهب في القطعة نحو 808 ريالات، والمحل يطلب فوقه 140 ريالاً."). It shows the usual extra for that piece in rials ("نحو 103 إلى 166 ريالاً", or the bar range for a 24 karat bar), and a tip in gold. Under it, a light card holds what a shop pays back and the reasons, folded. The verdict follows the whole rials shown, as in the offer check. Checked at 360 and 390 px in Arabic and English for all four verdicts and a bar. No overflow, no console errors.
+
 ## The offer verdict box, and the saving section removed (2026-11-26)
 Tests: 129 passing. Offline cache v13.
 - **Offer check:** the result is a burgundy box like the Outlook's answer. It shows the deal named with an icon (عرض ممتاز ✓, عرض جيد ✓, عرض عادي =, عرض منخفض !), the money ("قيمة الذهب اليوم نحو 808 ريالات، والعرض أقل منها بـ 120 ريالاً."), what shops usually take off this piece in rials ("بنحو 16 إلى 48 ريالاً"), and a tip in gold ("يُستحسن سؤال محل آخر قبل البيع."). The owner asked for suggestions, so the tips bring back the "ask another shop" line that the QA had removed as advice. The verdict now follows the whole rials shown (2-6% of the gold value, rounded), so it can never contradict them.

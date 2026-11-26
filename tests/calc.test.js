@@ -48,11 +48,16 @@ test('priceCheck refuses impossible input', () => {
   assert.equal(priceCheck({ grams: 20, karat: 22, price: 950 }, null), null);
 });
 
-test('priceCheck judges the percentages the page prints, so the verdict never contradicts the range', () => {
-  // 980 is 20.99% over the gold value and prints as 21%, inside "13% to 21%"; 913 is 12.7% and prints as 13%
-  assert.equal(priceCheck({ grams: 20, karat: 22, price: 980 }, 3574).position, 'within');
-  assert.equal(priceCheck({ grams: 20, karat: 22, price: 913 }, 3574).position, 'within');
-  assert.equal(priceCheck({ grams: 20, karat: 22, price: 990 }, 3574).position, 'above');
+test('priceCheck judges the whole rials the box shows: the extra against the usual extra for the piece (owner, 2026-11-26)', () => {
+  const at = (price) => priceCheck({ grams: 20, karat: 22, price }, 3574);
+  const { gold, band, usual } = at(950);
+  assert.deepEqual(usual, [Math.round(gold * band[0]), Math.round(gold * band[1])]);
+  assert.equal(at(gold + usual[0]).position, 'within');
+  assert.equal(at(gold + usual[0] - 1).position, 'below');
+  assert.equal(at(gold + usual[1]).position, 'within');
+  assert.equal(at(gold + usual[1] + 1).position, 'above');
+  assert.equal(at(gold - 0.3).position, 'below'); // shows as the gold's own value, not "under"
+  assert.equal(at(gold - 2).position, 'under');
 });
 
 test('priceCheck has no per-100 figure when the price is under the gold value', () => {

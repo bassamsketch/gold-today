@@ -182,21 +182,23 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | pcPrice | السعر الكامل الذي يطلبه المحل، مع الضريبة، بالريال | The full price the shop asks, with VAT, in rials |
 | pcFullHint | إذا ذكر المحل سعر الجرام والمصنعية فقط، يمكن طلب السعر الكامل مع الضريبة. | If the shop gives only a rate per gram and a making charge, ask for the full price with VAT. |
 | badShopPrice | يُرجى كتابة السعر بالأرقام، أكبر من صفر وحتى 1,000,000 ريال، مثل 950.500. | Please enter the price in numbers, above zero and up to 1,000,000 rials, for example 950.500. |
-| pcGold | ثمن الذهب في القطعة اليوم | The gold in this piece today |
-| pcExtra | يطلب المحل فوق ثمن الذهب | The shop asks on top |
 | pcWhy | أي 17% فوق ثمن الذهب، مقابل المصنعية والضريبة وربح المحل. | That is 17% on top of the gold, for the making, the VAT and the shop's profit. |
 | pcWhyBar | أي 6% فوق ثمن الذهب. | That is 6% on top of the gold. |
-| pcWithin | ضمن المعتاد للقطع البسيطة في مسقط. | Within the usual range for plain pieces in Muscat. |
-| pcBelow | أقل من المعتاد للقطع البسيطة. | Less than usual for plain pieces. |
-| pcAbove | أكثر من المعتاد للقطع البسيطة. التصاميم الدقيقة والماركات تكلّف أكثر عادةً. | More than usual for plain pieces. Detailed designs and brands usually cost more. |
-| pcRange | المعتاد: من 13% إلى 21% فوق ثمن الذهب. | Usual: 13% to 21% on top of the gold. |
 | pcBasis | تقدير من أجرة مصنعية 3 إلى 6 ريالات للجرام، وضريبة 5% على السعر كله كما ينص القانون. الأسعار تختلف من محل إلى آخر. | An estimate from making charges of 3 to 6 rials a gram, plus 5% VAT on the whole price as the law sets. Shops differ. |
-| pcBarWithin | ضمن المعتاد للسبائك والعملات الصغيرة. | Within the usual range for small bars and coins. |
-| pcBarBelow | أقل من المعتاد للسبائك الصغيرة. | Less than usual for small bars. |
-| pcBarAbove | أكثر من المعتاد للسبائك الصغيرة. | More than usual for small bars. |
 | pcBarBasis | علاوة السبائك الصغيرة عادةً من 2% إلى 9%، وتضاف ضريبة 5% إن احتسبها المحل. | Small-bar premiums are usually 2% to 9%, plus 5% VAT if the shop charges it. |
-| pcUnder | السعر أقل من ثمن الذهب اليوم. يُستحسن التأكد من الوزن والعيار. | The price is below today's gold value. The weight and karat are worth checking. |
 | pcBack | لو بيعت اليوم، يدفع المحل نحو | If sold back today, a shop would pay about |
+| pcHeadBelow | سعر جيد | A good price |
+| pcHeadWithin | سعر عادي | A normal price |
+| pcHeadAbove | سعر مرتفع | A high price |
+| pcHeadUnder | سعر غير معتاد | An unusual price |
+| pcMoney | ثمن الذهب في القطعة نحو 810 ريالات، والمحل يطلب فوقه 140 ريالاً. | The gold in this piece is worth about 810 rials, and the shop asks 140 rials on top. |
+| pcNote | المعتاد للقطع البسيطة في مسقط أن يطلب المحل فوق ثمن الذهب نحو 104 إلى 167 ريالاً، وهذا السعر ضمن ذلك. | Shops usually ask about 104 to 167 rials on top of the gold for a plain piece in Muscat, and this price is within that. |
+| pcNoteUnder | السعر أقل من ثمن الذهب نفسه، وهذا غير معتاد. | The price is below the gold's own value, which is unusual. |
+| pcTipBelow | نادراً ما تبيع المحلات بأقل من هذا. | Shops rarely sell for less than this. |
+| pcTipWithin | قد يطلب محل آخر أقل بقليل. | Another shop may ask a little less. |
+| pcTipAbove | يُستحسن سؤال محل آخر قبل الشراء، إلا إن كانت القطعة بتصميم دقيق. | Worth asking another shop before buying, unless the piece is finely detailed. |
+| pcTipAboveBar | يُستحسن سؤال محل آخر قبل الشراء. | Worth asking another shop before buying. |
+| pcTipUnder | يُستحسن التأكد من الوزن والعيار قبل الشراء. | Worth checking the weight and karat before buying. |
 | pcPer100 | أي نحو 82 من كل 100 ريال دُفعت. | That is about 82 of every 100 rials paid. |
 | ocIntro | يقارن المبلغ الذي يعرضه المحل بثمن الذهب اليوم. | Compares the shop's offer with today's gold value. |
 | buySellTitle | بيع وشراء | Buy & sell |

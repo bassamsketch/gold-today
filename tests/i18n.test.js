@@ -201,7 +201,7 @@ test('Arabic percentages keep the sign to the right of the number, everywhere', 
   assert.ok(t('ar', 'belowRecord', 34).includes(`${LRI}34%${PDI}`), JSON.stringify(t('ar', 'belowRecord', 34)));
   assert.ok(t('ar', 'moveBy', -12).includes(`${LRI}12%${PDI}`));
   assert.ok(t('ar', 'boardNote').includes(`${LRI}5%${PDI}`));
-  assert.ok(t('ar', 'pcRange', 13, 21).includes(`${LRI}13%${PDI}`) && t('ar', 'pcRange', 13, 21).includes(`${LRI}21%${PDI}`));
+  assert.ok(t('ar', 'pcWhy', 17).includes(`${LRI}17%${PDI}`));
   assert.ok(t('ar', 'g22').includes(`${LRI}91.6%${PDI}`));
   assert.ok(t('ar', 'totalUp', 41, '14').includes(`(${LRI}14%${PDI})`));
   // every Arabic string: no bare percentage left, and English is untouched
@@ -286,6 +286,23 @@ test('the offer verdict names the deal, gives the money, the usual range for the
   assert.equal(t('en', 'offerTipUsual'), 'Another shop may offer a little more.');
   // the old one-line verdicts and the saving section are gone
   for (const gone of ['verdictAbove', 'verdictClose', 'verdictUsual', 'verdictLow', 'jbTitle', 'jbIntro', 'jbBarRow', 'jbJewelRow', 'jbRange', 'jbDiff', 'jbOnlyMoney', 'jbFine']) {
+    assert.equal(STRINGS.ar[gone], undefined, gone);
+  }
+});
+
+test('the price verdict names the price, gives the money, the usual extra for the piece and a tip (owner, 2026-11-26)', () => {
+  assert.equal(t('ar', 'pcHeadWithin'), 'سعر عادي');
+  assert.equal(t('ar', 'pcHeadAbove'), 'سعر مرتفع');
+  assert.equal(t('en', 'pcHeadBelow'), 'A good price');
+  assert.equal(t('en', 'pcHeadUnder'), 'An unusual price');
+  assert.equal(t('ar', 'pcMoney', 810, 140), 'ثمن الذهب في القطعة نحو 810 ريالات، والمحل يطلب فوقه 140 ريالاً.');
+  assert.equal(t('ar', 'pcMoney', 810, 0), 'ثمن الذهب في القطعة نحو 810 ريالات، والسعر يساويه تقريباً.');
+  assert.equal(t('ar', 'pcMoney', 810, -10), 'ثمن الذهب في القطعة نحو 810 ريالات، والسعر أقل منه بـ 10 ريالات.');
+  assert.equal(t('en', 'pcMoney', 810, 140), 'The gold in this piece is worth about 810 rials, and the shop asks 140 rials on top.');
+  assert.equal(t('ar', 'pcNote', false, 'within', 104, 167), 'المعتاد للقطع البسيطة في مسقط أن يطلب المحل فوق ثمن الذهب نحو 104 إلى 167 ريالاً، وهذا السعر ضمن ذلك.');
+  assert.equal(t('en', 'pcNote', true, 'above', 9, 64), 'Shops usually ask about 9 to 64 rials on top of the gold for a small bar or coin, and this price is higher.');
+  assert.equal(t('ar', 'pcTipAbove'), 'يُستحسن سؤال محل آخر قبل الشراء، إلا إن كانت القطعة بتصميم دقيق.');
+  for (const gone of ['pcWithin', 'pcBelow', 'pcAbove', 'pcBarWithin', 'pcBarBelow', 'pcBarAbove', 'pcUnder', 'pcRange', 'pcGold', 'pcExtra']) {
     assert.equal(STRINGS.ar[gone], undefined, gone);
   }
 });
