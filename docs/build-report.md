@@ -2,6 +2,15 @@
 
 Date: 2026-11-25. Branch: main. Tests: 68 passing (npm test). Code 41 KB compressed (limit 150 KB), fonts 225 KB (limit 350 KB).
 
+## Design and data pass (2026-11-26)
+The owner asked for more contrast and hierarchy in the news box and the price board, and a more premium icon. Tests: 72 passing.
+- **News card:** oxblood velvet (`--deep`, lit from the reading corner), a gold hairline, a champagne title and source link, 17 px text. Contrast: champagne 9.5:1, text 13.8:1.
+- **Price board:** the chosen karat's row is an oxblood band with round ends, a champagne karat and white figures. The hairlines beside it are hidden, and the headers line up with the figures. Checked at 360, 390 and 430 px in both languages with no overflow.
+- **Icon:** scripts/make-icons.py now draws a polished gold solitaire on oxblood velvet inside a fine gold frame. The band and claws are shaded as reflective metal, and the stone is a faceted round brilliant. New file names (icons/gold-180, gold-192, gold-512, gold-maskable-512) so no cache can serve the old icon. The Android round crop drops the frame and keeps the ring inside the safe zone. A black colourway is one flag away (`--colour black`). The top-bar mark is the same ring, drawn small. Offline cache bumped to v5.
+- **Home screens:** iPhones keep the icon that was saved when the app was added. To show the new one, remove the app and add it again from Safari. A home-screen app keeps its own storage apart from Safari, so pieces saved in My gold may not carry over; note them first. Android (Chrome) checks the app's details within a day or two of the app being opened. Because the icon files have new names, it offers the new icon, and recent Chrome versions ask the user to accept it ([web.dev](https://web.dev/articles/manifest-updates), [Chrome blog](https://developer.chrome.com/blog/improvements-to-web-app-updates)). The page design reaches everyone the next time they open the app online.
+- **Daily close (fixes deferred minor M1):** on 26 Nov GitHub started the 21:00 UTC job at 03:20 UTC. It saved that morning's price ($3,576.90) as a 26 Nov close, and Wednesday was missing. As a result, Thursday's change line compared with Tuesday. The data now holds 25 Nov at $3,574.00, the OANDA XAU/USD price at 21:00 UTC (TradingView 1 h bar). The script records only in the hour after 21:00 UTC on weekdays and skips a day already recorded. The job runs at 21:07 and 21:37 UTC.
+- **News routine, first scheduled run (25 Nov 22:00 UTC):** it changed nothing. Its cloud network cannot reach www.cnbc.com or www.kitco.com (the hosts do not resolve). Its checkout is a detached HEAD, so `git pull` failed. The close was also still missing, because of the late job above. The routine prompt now switches to `main` first, pushes with `git push origin HEAD:main`, and falls back to extended web search with a date check. Allowing the two news sites in the routine environment's network settings would let it read them directly.
+
 ## QA pass after the independent critique (2026-11-25)
 An independent QA agent reviewed the live app and reported 1 blocker, 11 major and 38 minor or polish findings (QA1 to QA50). Each logic change was written as a failing test first (17 new tests). Checked afterwards in the browser at 360x740, 390x844 and 430x932 in Arabic and English: no sideways overflow, no text under 14 px, no tap target under 44 px, no console errors, price and change line above the tab bar at 360x740.
 
@@ -131,7 +140,7 @@ An independent QA agent reviewed the live app and reported 1 blocker, 11 major a
 
 ## Deferred minors (not fixed, for the owner to decide)
 Fixed in the QA pass: M6 (QA8), M7 (QA16), M8 (QA24), M9 (QA35), M10 (QA23), M11 (QA10), M14 (QA15, QA31). D-2 and D-4 below are superseded by R6 and QA31.
-- M1 a daily-close run delayed past 00:00 UTC files the close under the next day.
+- M1 a daily-close run delayed past 00:00 UTC files the close under the next day. Fixed 2026-11-26 (late runs now record nothing).
 - M3 forecast targets are not filtered by age or past horizon if the monthly refresh stops (the date is shown).
 - M4 "3,125" typed as a weight reads as 3,125 g; the Arabic comma returns nothing.
 - M5 weights show one decimal (12.35 g as 12.4).
