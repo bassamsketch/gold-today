@@ -16,7 +16,7 @@ const installed = () => matchMedia('(display-mode: standalone)').matches || navi
 /** My gold tab: total sell estimate, pieces with bought-price gains, add/edit sheet (design 6, D8). */
 export function mount(app) {
   const el = {
-    total: $('gold-total'), mid: $('gold-mid'), range: $('gold-range'), gain: $('gold-gain'), covers: $('gold-covers'),
+    total: $('gold-total'), mid: $('gold-mid'), unit: $('gold-unit'), range: $('gold-range'), gain: $('gold-gain'), covers: $('gold-covers'),
     noPrice: $('gold-noprice'), empty: $('gold-empty'), list: $('pieces'), add: $('add-piece'), max: $('gold-max'),
     keep: $('gold-keep'), storageNote: $('storage-note'), how: $('storage-how'), shareList: $('share-list'),
     sheet: $('piece-sheet'), form: $('piece-form'), title: $('piece-title'), karats: $('piece-karats'),
@@ -34,7 +34,8 @@ export function mount(app) {
   function gainText(p, usd) {
     const g = pieceGain(p, usd);
     if (!g) return '';
-    const args = [p.boughtPrice, monthYear(app.state.lang, p.boughtYm), Math.abs(g.amount), formatNum(Math.abs(g.pct) * 100, 0)];
+    // the price paid is typed in rials; what is shown follows the display currency (design 9)
+    const args = [app.money.conv(p.boughtPrice), monthYear(app.state.lang, p.boughtYm), app.money.conv(Math.abs(g.amount)), formatNum(Math.abs(g.pct) * 100, 0), app.money.code];
     return g.amount >= 0 ? app.t('gainUp', ...args) : app.t('gainDown', ...args);
   }
 
@@ -56,7 +57,7 @@ export function mount(app) {
     const e = sellEstimate([p], app.price.usd);
     const value = li.querySelector('.piece-value');
     value.hidden = !e;
-    value.textContent = e ? app.t('worthToday', e.mid) : '';
+    value.textContent = e ? app.t('worthToday', app.money.conv(e.mid), app.money.code) : '';
     const gain = li.querySelector('.piece-gain');
     gain.textContent = gainText(p, app.price.usd);
     gain.hidden = !gain.textContent;
@@ -78,15 +79,17 @@ export function mount(app) {
     el.max.hidden = n < MAX_PIECES;
     if (n && has) {
       const e = sellEstimate(pieces, usd);
-      countUp(el.mid, e.mid, 0);
-      el.range.textContent = app.t('range', e.low, e.high);
+      const code = app.money.code;
+      countUp(el.mid, app.money.conv(e.mid), app.money.decimals('total'));
+      el.unit.textContent = app.t('curUnit', code);
+      el.range.textContent = app.t('range', app.money.conv(e.low), app.money.conv(e.high), code);
       const g = totalGain(pieces, usd);
       el.gain.hidden = !g;
       el.covers.hidden = !g || g.counted === g.of;
       if (g) {
         el.gain.textContent = g.amount >= 0
-          ? app.t('totalUp', g.amount, formatNum(g.pct * 100, 0))
-          : app.t('totalDown', -g.amount, formatNum(-g.pct * 100, 0));
+          ? app.t('totalUp', app.money.conv(g.amount), formatNum(g.pct * 100, 0), code)
+          : app.t('totalDown', app.money.conv(-g.amount), formatNum(-g.pct * 100, 0), code);
         el.covers.textContent = app.t('covers', g.counted, g.of);
       }
     }
@@ -117,9 +120,9 @@ export function mount(app) {
     [el.beforeHi, el.beforeLo, el.before5, el.before10].forEach((r) => { r.hidden = !rows.some(([x]) => x === r); });
     el.before.hidden = !rows.length;
     for (const [row, usd, when] of rows) {
-      const v = sellEstimate(pieces, usd).mid;
-      row.querySelector('.num').textContent = formatNum(v, 0);
-      row.querySelector('.u').textContent = app.t('rialWord', v);
+      const v = app.money.conv(sellEstimate(pieces, usd).mid);
+      row.querySelector('.num').textContent = app.money.fmt(v, 'total');
+      row.querySelector('.u').textContent = app.t('curWord', v, app.money.code);
       if (when != null) row.querySelector('.when').textContent = when;
     }
   }
@@ -245,6 +248,7 @@ export function mount(app) {
   el.shareList.addEventListener('click', () => shareTextOnly(app, listText()));
   closeOnBackdrop(el.sheet);
 
-  ['pieces', 'price', 'lang', 'data'].forEach((evt) => app.on(evt, render));
+  app.on('currency', () => { el.mid._v = undefined; }); // count in the new currency from its own figure
+  ['pieces', 'price', 'lang', 'data', 'currency'].forEach((evt) => app.on(evt, render));
   render();
 }

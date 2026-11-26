@@ -1,6 +1,8 @@
 // Constants from docs/design.md (sections 3, 7 and Global Constraints).
 export const OZ_G = 31.1034768;        // grams in one troy ounce
 export const OMR_PER_USD = 0.3845;     // fixed peg: 1 OMR = 2.6008 USD
+export const CURRENCIES = ['OMR', 'AED', 'USD', 'EUR', 'LBP']; // display only; shopping stays in rials (design 9)
+export const PEGS = { USD: 1, OMR: OMR_PER_USD, AED: 3.6725 }; // per US dollar, fixed
 export const TOLA_G = 11.6638;         // grams in one tola
 export const KARATS = [24, 22, 21, 18];
 export const DEFAULT_KARAT = 22;

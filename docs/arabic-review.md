@@ -106,6 +106,22 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | srcGram | ريال لجرام عيار 22 | rials per gram of 22 karat |
 | srcOz | 4,650 دولاراً للأونصة | $4,650 an ounce |
 | publishedVia | نُشر في 14 نوفمبر 2026 عبر | Published 14 November 2026, reported by |
+| curName | درهم إماراتي | UAE dirham |
+| curShort | درهم | AED |
+| curUnit | درهم | dirhams |
+| curPerGram | مليون ليرة للجرام | million pounds per gram |
+| boardIn | بملايين الليرات اللبنانية | In millions of Lebanese pounds |
+| curAria | عملة العرض: درهم إماراتي | Display currency: UAE dirham |
+| curTitle | العملة | Currency |
+| curCap | سعر جرام عيار 22 اليوم بكل عملة | Today's price per gram of 22 karat in each |
+| curShopping | الشراء والبيع والحاسبات بالريال العماني دائماً. | Buying, selling and the calculators always use Omani rials. |
+| curRatesA | الريال والدرهم مربوطان بالدولار. سعر اليورو والليرة بتاريخ 26 نوفمبر 2026 من | The rial and dirham are fixed to the dollar. Euro and pound rates of 26 November 2026, from |
+| curRatesB | ، والأرقام السابقة بسعر صرف اليوم. | . Past figures use today's rate. |
+| curLbpNote | الليرة تُعرض بالملايين: 9.427 مليون تعني 9,427,000 ليرة. | Pounds show in millions: 9.427 million means 9,427,000 pounds. |
+| curUnavailable | غير متاح الآن | Not available right now |
+| pricesIn | الأسعار بالدرهم الإماراتي. | Prices in UAE dirhams. |
+| backToRials | العودة إلى الريال | Back to rials |
+| pcConverted | بالعملة المختارة: نحو 9,074 درهماً | In the chosen currency: about 9,074 dirhams |
 | pricesPerGram | الأسعار لجرام عيار 22 | Prices per gram of 22 karat |
 | q1 | هل السعر اليوم مرتفع أم منخفض؟ | Is the price high or low today? |
 | belowRecord | أقل بـ 34% من أعلى سعر وصل إليه | 34% below its highest ever |
@@ -142,6 +158,7 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | yearsAgo | قبل 5 سنوات | 5 years ago |
 | beforeNote | القطع نفسها بأسعار تلك الأيام. | The same pieces at those days' prices. |
 | rialWord | ريالات | rials |
+| curWord | دراهم | dirhams |
 | pcWhen | عند المحل، قبل الدفع | At the shop, before paying |
 | pcTitle | هل هذا السعر معتاد؟ | Is this a normal price? |
 | pcIntro | يبيّن كم من السعر ثمن الذهب نفسه، وكم يدفع المحل لو بيعت القطعة اليوم. | Shows how much of the price is the gold itself, and what a shop would pay if the piece were sold today. |
@@ -175,7 +192,7 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | ocIntro | يقارن المبلغ الذي يعرضه المحل بثمن الذهب اليوم. | Compares the shop's offer with today's gold value. |
 | jbWhen | عند التفكير في الادخار | When thinking of saving |
 | jbTitle | مشغولات أم سبيكة؟ | Jewellery or a bar? |
-| jbIntro | لكل 100 ريال تُدفع، يعيد المحل في اليوم نفسه نحو: | For every 100 rials paid, a shop would pay back about this much the same day: |
+| jbIntro | لكل 100 درهم تُدفع، يعيد المحل في اليوم نفسه نحو: | For every 100 dirhams paid, a shop would pay back about this much the same day: |
 | jbBar | سبيكة صغيرة عيار 24: | A small 24 karat bar: |
 | jbPiece | قطعة بسيطة، مصنعية 3 ريالات للجرام: | A plain piece, making 3 rials a gram: |
 | jbTo | إلى | to |

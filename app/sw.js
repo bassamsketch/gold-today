@@ -1,5 +1,5 @@
 // Offline support (design section 9). Bump VERSION when the precache list changes.
-const VERSION = 'gold-today-v6';
+const VERSION = 'gold-today-v7';
 const PRECACHE = [
   './',
   'index.html',
@@ -10,6 +10,7 @@ const PRECACHE = [
   'data/forecasts.json',
   'data/history.json',
   'data/places.json',
+  'data/rates.json',
   'data/why.json',
   'fonts/Almarai-normal-400-arabic.woff2',
   'fonts/Almarai-normal-400-latin.woff2',
@@ -34,11 +35,13 @@ const PRECACHE = [
   'js/install.js',
   'js/live.js',
   'js/main.js',
+  'js/money.js',
   'js/price.js',
   'js/store.js',
   'js/time.js',
   'js/ui/chart.js',
   'js/ui/countup.js',
+  'js/ui/currency.js',
   'js/ui/karats.js',
   'js/ui/odometer.js',
   'js/ui/share.js',

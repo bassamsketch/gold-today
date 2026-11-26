@@ -155,3 +155,43 @@ test('rials and pieces agree with their numbers in Arabic', () => {
 test('monthYear shows a year alone when the month is unknown', () => {
   assert.equal(monthYear('ar', '2019'), '2019');
 });
+
+test('amounts agree with their numbers in every display currency', () => {
+  assert.ok(t('ar', 'range', 2183, 2276, 'AED').endsWith('و2,276 درهماً حسب المحل'), t('ar', 'range', 2183, 2276, 'AED'));
+  assert.equal(t('ar', 'worthToday', 449, 'USD'), 'تُباع اليوم بنحو 449 دولاراً');
+  assert.equal(t('ar', 'worthToday', 405, 'EUR'), 'تُباع اليوم بنحو 405 يورو');
+  assert.equal(t('ar', 'worthToday', 7, 'AED'), 'تُباع اليوم بنحو 7 دراهم');
+  assert.equal(t('ar', 'worthToday', 1130.34, 'LBP'), 'تُباع اليوم بنحو 1,130.3 مليون ليرة');
+  assert.equal(t('en', 'worthToday', 1130.34, 'LBP'), 'Would sell for about 1,130.3 million pounds today');
+  // rials read exactly as before
+  assert.equal(t('ar', 'worthToday', 449), 'تُباع اليوم بنحو 449 ريالاً');
+  assert.ok(t('ar', 'range', 2183, 2276).endsWith('و2,276 ريالاً حسب المحل'));
+});
+
+test('each currency has its name, short label, per-gram unit and board caption', () => {
+  assert.equal(t('ar', 'curName', 'LBP'), 'ليرة لبنانية');
+  assert.equal(t('ar', 'curShort', 'OMR'), 'ريال');
+  assert.equal(t('en', 'curShort', 'AED'), 'AED');
+  assert.equal(t('ar', 'curPerGram', 'LBP'), 'مليون ليرة للجرام');
+  assert.equal(t('en', 'curPerGram', 'EUR'), 'euros per gram');
+  assert.equal(t('ar', 'boardIn', 'LBP'), 'بملايين الليرات اللبنانية');
+  assert.equal(t('ar', 'boardIn', 'OMR'), 'بالريال العماني');
+  assert.equal(t('ar', 'curUnit', 'AED'), 'درهم');
+});
+
+test('whole dirham figures agree with their unit on the Outlook', () => {
+  assert.ok(t('ar', 'banksShort', 4, '503', '568', '2027-12', '387', 'AED').includes('بين 503 و568 درهماً'), t('ar', 'banksShort', 4, '503', '568', '2027-12', '387', 'AED'));
+  assert.equal(t('ar', 'curPerGram', 'AED', 387), 'درهماً للجرام');
+  assert.equal(t('ar', 'curPerGram', 'USD', 105.4), 'دولار للجرام');
+  assert.ok(t('ar', 'srcGram', 22, 'AED', '503').startsWith('دراهم لجرام'), t('ar', 'srcGram', 22, 'AED', '503'));
+  // rials keep their plain per-gram unit after one decimal
+  assert.equal(t('ar', 'curPerGram', 'OMR', 40.5), 'ريال للجرام');
+});
+
+test('the currency button names its visible code, and shared pound prices say Lebanese', () => {
+  assert.ok(t('en', 'curAria', 'Omani rial', 'OMR').includes('OMR'));
+  assert.equal(t('ar', 'curPerGramFull', 'LBP'), 'مليون ليرة لبنانية للجرام');
+  assert.equal(t('en', 'curPerGramFull', 'LBP'), 'million Lebanese pounds per gram');
+  assert.equal(t('en', 'curPerGramFull', 'AED'), 'dirhams per gram');
+  assert.ok(t('ar', 'pcConverted', '9,074 درهماً').startsWith('السعر المطلوب'));
+});
