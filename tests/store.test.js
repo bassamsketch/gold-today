@@ -8,7 +8,7 @@ const memory = (init) => {
 };
 
 test('load survives corrupted storage', () => {
-  assert.deepEqual(load(memory([['goldToday', '{not json']])), { v: 1, lang: 'ar', karat: 22, pieces: [], last: null, tips: {} });
+  assert.deepEqual(load(memory([['goldToday', '{not json']])), { v: 1, lang: 'ar', karat: 22, currency: 'OMR', pieces: [], last: null, tips: {} });
 });
 
 test('load keeps good fields and drops bad pieces', () => {
@@ -26,7 +26,13 @@ test('load works without any storage', () => {
 
 test('save then load round-trips the state', () => {
   const st = memory([]);
-  const state = { v: 1, lang: 'en', karat: 21, pieces: [], last: { usd: 3470, updatedAt: 1795608000000 }, tips: { install: true } };
+  const state = { v: 1, lang: 'en', karat: 21, currency: 'AED', pieces: [], last: { usd: 3470, updatedAt: 1795608000000 }, tips: { install: true } };
   save(state, st);
   assert.deepEqual(load(st), state);
+});
+
+test('the display currency defaults to rials and refuses unknown codes', () => {
+  assert.equal(load(memory([])).currency, 'OMR');
+  assert.equal(load(memory([['goldToday', JSON.stringify({ currency: 'LBP' })]])).currency, 'LBP');
+  assert.equal(load(memory([['goldToday', JSON.stringify({ currency: 'XYZ' })]])).currency, 'OMR');
 });

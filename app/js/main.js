@@ -2,6 +2,8 @@ import { load, save } from './store.js';
 import { t } from './i18n.js';
 import { syncKarats } from './ui/karats.js';
 import { closeOpenSheet } from './ui/sheet.js';
+import { effective, fromRials, fmt } from './money.js';
+import { gramPrice } from './price.js';
 
 const storage = (() => {
   try {
@@ -14,10 +16,10 @@ const storage = (() => {
 const state = load(storage);
 const listeners = new Map();
 
-/** Shared app object handed to every view's mount(app). Events: lang, karat, price, data, view, pieces, layout. */
+/** Shared app object handed to every view's mount(app). Events: lang, karat, currency, price, data, view, pieces, layout. */
 export const app = {
   state,
-  data: { history: null, forecasts: null, why: null, places: null },
+  data: { history: null, forecasts: null, why: null, places: null, rates: null },
   price: { usd: state.last?.usd ?? null, updatedAt: state.last?.updatedAt ?? null, fetchedAt: null },
   startedAt: Date.now(),
   view: 'today',
@@ -42,6 +44,18 @@ export const app = {
     state.karat = k;
     app.persist();
     app.emit('karat');
+  },
+  setCurrency(code) {
+    state.currency = code;
+    app.persist();
+    app.emit('currency');
+  },
+  // the display currency (design 9): rial amounts converted at today's rate; typed amounts stay in rials
+  money: {
+    get code() { return effective(state.currency, app.data.rates); },
+    conv(rials) { return fromRials(rials, app.money.code, app.data.rates); },
+    gram(usd, karat) { return app.money.conv(gramPrice(usd, karat)); },
+    fmt(value, kind) { return fmt(value, app.money.code, kind); },
   },
   setView,
 };
@@ -99,7 +113,7 @@ document.addEventListener('click', (e) => {
 });
 
 async function loadData() {
-  const names = ['history', 'forecasts', 'why', 'places'];
+  const names = ['history', 'forecasts', 'why', 'places', 'rates'];
   const files = await Promise.all(
     names.map((n) => fetch(`data/${n}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null)),
   );
