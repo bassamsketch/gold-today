@@ -1,5 +1,5 @@
 // Offline support (design section 9). Bump VERSION when the precache list changes.
-const VERSION = 'gold-today-v14';
+const VERSION = 'gold-today-v15';
 const PRECACHE = [
   './',
   'index.html',
@@ -24,7 +24,7 @@ const PRECACHE = [
   'icons/gold-maskable-512.png',
   'img/gold-1200.webp',
   'img/hero-1200.webp',
-  'img/shop-1200.webp',
+  'img/bangles-1200.webp',
   'js/calc.js',
   'js/config.js',
   'js/forecast.js',

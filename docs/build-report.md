@@ -2,6 +2,9 @@
 
 Date: 2026-11-25. Branch: main. Tests: 68 passing (npm test). Code 41 KB compressed (limit 150 KB), fonts 225 KB (limit 350 KB).
 
+## A classier Buy & sell photo (2026-11-27)
+Offline cache v15. The owner found the crowded souq window "not classy". They compared five, then seven, candidates previewed in the band at phone size, then two full phone screens. They chose ornate 22 karat gold bangles on a dark, reflective surface, by Zayed Ahmed Zadu (@zayed_ahmed_zadu, Unsplash licence, photo wreS7kv_tLE). New file names (img/bangles-600.webp 600x400 at 52 KB, img/bangles-1200.webp 1200x800 at 159 KB, under the 160 KB budget) mean no cache can serve the old photo. The old shop-600/1200 files are removed. The band still shows the centre 3:1 strip, as previewed.
+
 ## The price check's verdict box (2026-11-26)
 Tests: 131 passing. Offline cache v14. The owner asked for the price check to match the offer check. Its result now opens with the same burgundy box. The box names the price with an icon (سعر جيد ✓, سعر عادي =, سعر مرتفع !, سعر غير معتاد !) and gives the money ("ثمن الذهب في القطعة نحو 808 ريالات، والمحل يطلب فوقه 140 ريالاً."). It shows the usual extra for that piece in rials ("نحو 103 إلى 166 ريالاً", or the bar range for a 24 karat bar), and a tip in gold. Under it, a light card holds what a shop pays back and the reasons, folded. The verdict follows the whole rials shown, as in the offer check. Checked at 360 and 390 px in Arabic and English for all four verdicts and a bar. No overflow, no console errors.
 
