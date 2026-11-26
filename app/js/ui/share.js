@@ -3,7 +3,7 @@ import { KARATS } from '../config.js';
 import { t, priceTime } from '../i18n.js';
 
 const W = 1080, H = 1350;
-const C = { bg: '#ffffff', ink: '#2b1d1a', muted: '#6b5c58', car: '#9e2e21', hair: '#ece2df', gold1: '#fade8c', gold2: '#b07c26' };
+const C = { bg: '#ffffff', ink: '#2b1d1a', muted: '#6b5c58', car: '#621d1b', hair: '#ece2df', gold1: '#fade8c', gold2: '#b07c26' };
 const fontsReady = () => Promise.all([
   "700 72px 'Noto Naskh Arabic'", "600 72px 'Source Serif 4'", "400 30px 'Almarai'", "700 44px 'Almarai'",
 ].map((f) => document.fonts?.load(f).catch(() => null)));

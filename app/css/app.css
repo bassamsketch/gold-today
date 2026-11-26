@@ -53,7 +53,7 @@
 .fine { font-size: 14px; color: var(--muted); text-align: center; padding: 14px var(--gutter) 0; line-height: 1.6; }
 .fine.disclaimer { font-size: 16px; }
 .num { font-family: var(--serif); font-variant-numeric: lining-nums tabular-nums; direction: ltr; unicode-bidi: isolate; }
-/* the karat inside a sentence: bold and carnelian, its number in the serif face of the karat selector */
+/* the karat inside a sentence: bold and burgundy, its number in the serif face of the karat selector */
 .kt { font-weight: 700; color: var(--car-d); white-space: nowrap; }
 .kt-n { font-family: var(--serif); font-weight: 600; font-size: 1.15em; line-height: 1; font-variant-numeric: lining-nums; }
 .unit { font-size: 16px; color: var(--muted); font-family: var(--text); }
@@ -64,11 +64,11 @@
 .btn {
   display: flex; align-items: center; justify-content: center; gap: 8px;
   width: 100%; min-height: 54px; margin-top: 18px; border-radius: var(--radius);
-  background: var(--car); color: #fff; font-size: 17px; font-weight: 700;
+  background: var(--deep); color: #fff; font-size: 17px; font-weight: 700; /* the news card's burgundy */
 }
-.btn:active { background: var(--car-d); }
+.btn:active { background: var(--deep-lo); }
 .btn:disabled { opacity: 0.45; cursor: default; }
-.btn:disabled:active { background: var(--car); }
+.btn:disabled:active { background: var(--deep); }
 .btn-outline {
   display: flex; align-items: center; justify-content: center; gap: 10px;
   width: 100%; min-height: 52px; margin-top: 18px; border-radius: var(--radius);
@@ -298,7 +298,6 @@
 .confirm p { font-size: 16px; font-weight: 700; }
 .confirm-actions { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 12px; }
 .confirm-actions .btn { margin-top: 0; }
-.btn.danger { background: var(--car-d); }
 .src-list { list-style: none; margin-top: 4px; }
 .src-list li { padding: 14px 0; border-top: 1px solid var(--hair); font-size: 16px; line-height: 1.6; }
 .src-list b { font-size: 17px; }
@@ -315,8 +314,8 @@
 }
 .install b { font-size: 17px; }
 .install p { font-size: 16px; line-height: 1.6; margin-top: 4px; }
-.install button { margin-top: 12px; min-height: 48px; padding: 0 22px; border-radius: var(--radius); background: var(--car); color: #fff; font-weight: 700; }
-.install button:active { background: var(--car-d); }
+.install button { margin-top: 12px; min-height: 48px; padding: 0 22px; border-radius: var(--radius); background: var(--deep); color: #fff; font-weight: 700; }
+.install button:active { background: var(--deep-lo); }
 
 /* ---------- tab bar ---------- */
 .tabbar {
