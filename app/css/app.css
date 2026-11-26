@@ -287,6 +287,38 @@
 .result .total dt { color: var(--ink); font-weight: 700; }
 .result .total dd .num { font-weight: 600; font-size: 28px; }
 .prompt { font-size: 16px; color: var(--muted); margin-top: 16px; }
+/* the price check, the offer check and jewellery or a bar (design 6) */
+.band.slim { aspect-ratio: 3 / 1; }
+.intro { font-size: 16px; line-height: 1.6; margin-top: 6px; }
+.try { display: inline-flex; align-items: center; min-height: 48px; margin-top: 10px; padding: 0 16px; border-radius: var(--radius); box-shadow: inset 0 0 0 1.5px var(--hair); font-size: 16px; font-weight: 700; color: var(--car-d); }
+.step { display: inline-grid; place-items: center; width: 26px; height: 26px; margin-inline-end: 8px; border-radius: 50%; background: var(--car-soft); color: var(--car-d); font-family: var(--serif); font-size: 15px; font-weight: 600; vertical-align: 1px; }
+.type-seg { margin-top: 10px; margin-bottom: 0; }
+.alt { margin-top: 4px; }
+.alt-fields { padding: 2px 0 4px; }
+.pc { margin-top: 20px; padding: 18px 16px 16px; border-radius: var(--radius); background: var(--surface); }
+.pc-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 6px 0; }
+.pc-row > span { font-size: 16px; }
+.pc-row b { font-family: var(--serif); font-weight: 600; font-size: 22px; white-space: nowrap; }
+.pc-row b small { font-family: var(--text); font-weight: 400; font-size: 15px; color: var(--muted); }
+.pc-main > span { font-weight: 700; }
+.pc-main b { font-size: 26px; }
+.pc-why { font-size: 15px; color: var(--muted); line-height: 1.6; }
+.pc-track { position: relative; height: 8px; margin: 22px 4px 8px; border-radius: 4px; background: var(--hair); }
+.pc-track .usual { position: absolute; top: 0; bottom: 0; border-radius: 4px; background: rgba(98, 29, 27, 0.28); background: oklch(0.34 0.1 26 / 0.28); }
+.pc-track .dot { position: absolute; top: 50%; width: 16px; height: 16px; margin-top: -8px; margin-inline-start: -8px; border-radius: 50%; background: var(--car); box-shadow: 0 0 0 4px var(--surface); }
+.pc-ends { font-size: 14px; color: var(--muted); }
+.pc-verdict { font-size: 16px; font-weight: 700; line-height: 1.6; margin-top: 8px; }
+.pc-range { font-size: 16px; margin-top: 2px; }
+.pc-sep { border: 0; border-top: 1px solid var(--hair); margin: 14px 0 8px; }
+.pc-target { font-size: 16px; line-height: 1.65; margin-top: 6px; }
+.b3 { margin-top: 12px; }
+.b3-row { padding: 10px 0 12px; border-top: 1px solid var(--hair); }
+.b3-top { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; font-size: 16px; }
+.b3-top b { font-family: var(--serif); font-weight: 600; font-size: 22px; white-space: nowrap; }
+.b3-top b small { font-family: var(--text); font-weight: 400; font-size: 15px; color: var(--muted); }
+.b3-bar { display: block; position: relative; height: 12px; border-radius: 6px; background: var(--hair); overflow: hidden; }
+.b3-bar i { position: absolute; top: 0; bottom: 0; inset-inline-start: 0; border-radius: 6px; background: var(--car); }
+.b3-bar i.ext { border-radius: 0; background: rgba(98, 29, 27, 0.35); background: oklch(0.34 0.1 26 / 0.35); }
 .verdict { font-size: 18px; font-weight: 700; margin-top: 16px; line-height: 1.5; }
 .verdict-sub { font-size: 16px; color: var(--muted); margin-top: 4px; }
 .places { list-style: none; margin-top: 8px; }
