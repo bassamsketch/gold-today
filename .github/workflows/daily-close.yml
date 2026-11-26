@@ -2,7 +2,10 @@ name: Daily close
 
 on:
   schedule:
-    - cron: '0 21 * * 1-5' # 21:00 UTC, Monday to Friday (gold's daily close)
+    # gold's daily close is read in the hour after 21:00 UTC, Monday to Friday (design D7). GitHub starts busy
+    # top-of-the-hour runs late, once by six hours, so try twice off the hour; the script skips late runs.
+    - cron: '7 21 * * 1-5'
+    - cron: '37 21 * * 1-5'
   workflow_dispatch:
 
 permissions:

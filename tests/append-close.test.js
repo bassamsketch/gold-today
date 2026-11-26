@@ -1,6 +1,21 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { appendClose } from '../scripts/append-close.mjs';
+import { appendClose, closeDay } from '../scripts/append-close.mjs';
+
+// The live feed shows the close only in the hour after 21:00 UTC (design D7). GitHub sometimes starts a
+// scheduled run hours late: on 2026-11-26 it ran at 03:20 UTC and saved that morning's price as a close.
+test('a run in the hour after the 21:00 UTC close records that day', () => {
+  assert.equal(closeDay(new Date('2026-11-25T21:07:00Z')), '2026-11-25');
+  assert.equal(closeDay(new Date('2026-11-25T21:59:59Z')), '2026-11-25');
+  assert.equal(closeDay(new Date('2026-11-27T21:37:00Z')), '2026-11-27'); // Friday
+});
+
+test('a late, early or weekend run records nothing', () => {
+  assert.equal(closeDay(new Date('2026-11-26T03:20:45Z')), null); // the run GitHub started six hours late
+  assert.equal(closeDay(new Date('2026-11-25T22:00:00Z')), null);
+  assert.equal(closeDay(new Date('2026-11-25T20:59:00Z')), null);
+  assert.equal(closeDay(new Date('2026-11-28T21:10:00Z')), null); // Saturday
+});
 
 const base = () => ({
   source: 's',
