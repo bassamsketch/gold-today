@@ -187,6 +187,13 @@
 .piece-edit { grid-row: 1 / span 3; grid-column: 2; align-self: center; min-width: 48px; min-height: 48px; padding: 0 14px; border-radius: var(--radius); font-size: 16px; font-weight: 700; color: var(--car-d); box-shadow: inset 0 0 0 1.5px var(--hair); }
 .max-note { text-align: center; margin-top: 8px; }
 .keep { margin-top: 22px; padding-top: 4px; border-top: 1px solid var(--hair); }
+/* what the same pieces fetched before (design 8) */
+.then { margin-top: 20px; padding-top: 6px; border-top: 1px solid var(--hair); }
+.then-t { font-size: 16px; font-weight: 700; padding-top: 10px; }
+.then .hrow b { font-family: var(--serif); font-weight: 500; font-size: 19px; white-space: nowrap; }
+.then .hrow b small { font-family: var(--text); font-size: 15px; color: var(--muted); }
+.then .hrow > span small { display: block; font-size: 14px; color: var(--muted); }
+.then .note { margin-top: 10px; }
 
 /* ---------- Future ---------- */
 .future-head { padding-top: 10px; }
