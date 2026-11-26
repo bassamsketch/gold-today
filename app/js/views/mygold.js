@@ -1,7 +1,8 @@
 import { sellEstimate, pieceGain, totalGain, validatePiece } from '../gold.js';
 import { parseNumber } from '../calc.js';
 import { formatNum } from '../price.js';
-import { monthYear, monthNames } from '../i18n.js';
+import { monthYear, monthNames, dayMonth } from '../i18n.js';
+import { yearRange, closeYearsAgo } from '../insights.js';
 import { countUp } from '../ui/countup.js';
 import { syncKarats, setKaratText } from '../ui/karats.js';
 import { openSheet, closeOnBackdrop } from '../ui/sheet.js';
@@ -23,6 +24,7 @@ export function mount(app) {
     paid: $('piece-paid'), paidErr: $('piece-paid-err'), month: $('piece-month'), year: $('piece-year'),
     cancel: $('piece-cancel'), removeRow: $('piece-remove-row'), remove: $('piece-remove'), confirm: $('piece-confirm'),
     removeYes: $('piece-remove-yes'), removeNo: $('piece-remove-no'),
+    before: $('gold-before'), beforeHi: $('before-hi'), beforeLo: $('before-lo'), before5: $('before-5'), before10: $('before-10'),
   };
   const sep = () => (app.state.lang === 'ar' ? '، ' : ', ');
   const rows = new Map(); // piece id -> its list item, updated in place (QA15)
@@ -88,12 +90,38 @@ export function mount(app) {
         el.covers.textContent = app.t('covers', g.counted, g.of);
       }
     }
+    renderBefore(pieces, n && has);
     const ids = new Set(pieces.map((p) => p.id));
     for (const [id, li] of rows) if (!ids.has(id)) { li.remove(); rows.delete(id); }
     pieces.forEach((p, i) => {
       const li = rowFor(p);
       if (el.list.children[i] !== li) el.list.insertBefore(li, el.list.children[i] || null);
     });
+  }
+
+  // what the same pieces would have fetched before: the 12-month high and low, then 5 and 10 years ago (design 8)
+  function renderBefore(pieces, show) {
+    const h = app.data.history;
+    const rows = [];
+    if (show && h) {
+      const lang = app.state.lang, yr = yearRange(h.daily, new Date());
+      if (yr) rows.push([el.beforeHi, yr.hi.c, dayMonth(lang, yr.hi.d)], [el.beforeLo, yr.lo.c, dayMonth(lang, yr.lo.d)]);
+      for (const [row, n] of [[el.before5, 5], [el.before10, 10]]) {
+        const c = closeYearsAgo(h.monthly, n);
+        if (c) {
+          row.querySelector('.lbl').textContent = app.t('yearsAgo', n);
+          rows.push([row, c.c, null]);
+        }
+      }
+    }
+    [el.beforeHi, el.beforeLo, el.before5, el.before10].forEach((r) => { r.hidden = !rows.some(([x]) => x === r); });
+    el.before.hidden = !rows.length;
+    for (const [row, usd, when] of rows) {
+      const v = sellEstimate(pieces, usd).mid;
+      row.querySelector('.num').textContent = formatNum(v, 0);
+      row.querySelector('.u').textContent = app.t('rialWord', v);
+      if (when != null) row.querySelector('.when').textContent = when;
+    }
   }
 
   function fillPickers() {

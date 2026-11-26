@@ -99,6 +99,14 @@
           <p class="est"><span class="tag" data-t="estimateTag"></span><span id="gold-range"></span></p>
           <p class="gain" id="gold-gain" hidden></p>
           <p class="sub" id="gold-covers" hidden></p>
+          <div class="then" id="gold-before" hidden>
+            <p class="then-t" data-t="beforeTitle"></p>
+            <div class="hrow" id="before-hi"><span><span data-t="yearHigh"></span><small class="when"></small></span><b><span class="num"></span> <small class="u"></small></b></div>
+            <div class="hrow" id="before-lo"><span><span data-t="yearLow"></span><small class="when"></small></span><b><span class="num"></span> <small class="u"></small></b></div>
+            <div class="hrow" id="before-5"><span class="lbl"></span><b><span class="num"></span> <small class="u"></small></b></div>
+            <div class="hrow" id="before-10"><span class="lbl"></span><b><span class="num"></span> <small class="u"></small></b></div>
+            <p class="note" data-t="beforeNote"></p>
+          </div>
         </div>
         <p class="notice" id="gold-noprice" data-t="noPrice" hidden></p>
         <div class="empty" id="gold-empty" hidden>
@@ -117,38 +125,56 @@
       </div>
     </section>
 
-    <!-- ================= Future ================= -->
+    <!-- ================= Outlook ================= -->
     <section class="view" data-view="future">
       <div class="pad future-head">
         <h1 class="h" data-t="outlook"></h1>
         <p class="cap" id="outlook-sub"></p>
         <div class="karats small future-karats" id="future-karats" role="radiogroup" data-aria="karat"><i class="kline"></i><button type="button" role="radio" data-fk="24">24</button><button type="button" role="radio" data-fk="22">22</button><button type="button" role="radio" data-fk="21">21</button><button type="button" role="radio" data-fk="18">18</button></div>
-        <div class="chart-wrap" dir="ltr">
-          <svg class="fchart" id="fchart" viewBox="0 0 340 210" aria-hidden="true">
-            <defs><clipPath id="fchart-clip"><rect class="f-clip" x="0" y="0" width="340" height="210"/></clipPath></defs>
-            <g clip-path="url(#fchart-clip)"><path class="f-band"/><path class="f-past"/><line class="f-bank-range"/><circle class="f-bank" r="4.5"/><text class="f-tag f-bank-w"></text><text class="f-val f-bank-v"></text></g>
-            <line class="f-today"/><circle class="f-now" r="5"/>
-            <text class="f-tag f-now-w"></text><text class="f-val f-now-v"></text>
-            <text class="f-axis f-l0"></text><text class="f-axis f-l2" text-anchor="end"></text>
-          </svg>
-        </div>
-        <div class="frows">
-          <div class="frow today-row"><span data-t="todayRow"></span><b><span class="num" id="f-today"></span> <small data-t="rialPerGram"></small></b></div>
-          <div class="frow bank-row"><span class="frow-label"><span data-t="bankRow"></span><small id="f1-for"></small></span><b><span class="num" id="f1"></span> <small data-t="rialPerGram"></small></b></div>
-          <p class="row-note"><span id="f1-note"></span> <button class="link-btn" type="button" id="open-sources" data-t="sources"></button></p>
-          <section class="hist" id="hist">
-            <h2 class="hist-title" data-t="histTitle"></h2>
-            <div class="hrow"><span data-t="in5"></span><b id="f5"></b></div>
-            <div class="hrow"><span data-t="in10"></span><b id="f10"></b></div>
-            <p class="row-note" data-t="histNote"></p>
-          </section>
-        </div>
-        <section class="report">
-          <h2 class="sec-title" data-t="reportTitle"></h2>
-          <p id="win0"></p>
-          <p id="win1"></p>
-          <p id="survey"></p>
-          <p class="sub" data-t="reportClose"></p>
+
+        <section class="q" aria-labelledby="q1-title">
+          <h2 class="sec-title" id="q1-title" data-t="q1"></h2>
+          <p class="answer" id="q1-answer"></p>
+          <p class="moves"><span id="move-week"></span><span id="move-month"></span></p>
+          <p class="sub" id="q1-stale" hidden></p>
+          <p class="sub" id="q1-mood"></p>
+          <div class="chart-wrap" dir="ltr">
+            <svg class="fchart" id="fchart" viewBox="0 0 340 214" aria-hidden="true">
+              <defs><clipPath id="fchart-clip"><rect class="f-clip" x="0" y="0" width="340" height="214"/></clipPath></defs>
+              <g clip-path="url(#fchart-clip)"><path class="f-past"/><circle class="f-rec" r="4.6"/><text class="f-tag f-rec-w" text-anchor="end"></text><text class="f-val f-rec-v" text-anchor="end"></text></g>
+              <circle class="f-now" r="5"/>
+              <text class="f-tag f-now-w" text-anchor="end"></text><text class="f-val f-now-v" text-anchor="end"></text>
+              <text class="f-axis f-l0"></text>
+            </svg>
+          </div>
+          <div class="srow"><span data-t="todayRow"></span><b><span class="num" id="f-today"></span> <small data-t="rialPerGram"></small></b></div>
+          <div class="srow rec" id="rec-row"><span><span data-t="recordRow"></span><small id="rec-date"></small></span><b><span class="num" id="f-record"></span> <small data-t="rialPerGram"></small></b></div>
+          <p class="caution" id="falls-line"></p>
+          <details class="more-info">
+            <summary data-t="showDetails"></summary>
+            <p class="fold-cap" data-t="fallsCap"></p>
+            <table class="falls"><tbody id="falls-rows"></tbody></table>
+          </details>
+        </section>
+
+        <section class="q" aria-labelledby="q2-title">
+          <h2 class="sec-title" id="q2-title" data-t="q2"></h2>
+          <p class="answer" data-t="noOneKnows"></p>
+          <p class="sub" data-t="q2Sub"></p>
+          <div class="odds2" id="odds2"></div>
+          <p class="sub" data-t="oddsSince"></p>
+          <p class="caution" id="worst-line"><b data-t="worstLead"></b> <span id="worst-text"></span></p>
+          <p class="plain-line" id="banks-line"></p>
+          <details class="more-info">
+            <summary data-t="showDetails"></summary>
+            <p class="fold-cap" data-t="periodsCap"></p>
+            <div class="odds" id="odds-all"></div>
+            <p class="note" data-t="overlapNote"></p>
+            <p class="fold-cap" data-t="banksCap"></p>
+            <p class="note" id="miss-line"></p>
+            <ul class="banks" id="bank-list"></ul>
+            <p><button class="link-btn" type="button" id="open-sources" data-t="sources"></button></p>
+          </details>
         </section>
         <p class="fine" id="f-updated"></p>
         <p class="fine credit" id="f-data"></p>
@@ -157,60 +183,85 @@
 
     <!-- ================= Buy & sell ================= -->
     <section class="view" data-view="buysell">
-      <figure class="band"><img src="img/shop-600.webp" srcset="img/shop-600.webp 600w, img/shop-1200.webp 1200w" sizes="(max-width: 440px) 100vw, 440px" width="600" height="338" alt="" loading="lazy"></figure>
+      <figure class="band slim"><img src="img/shop-600.webp" srcset="img/shop-600.webp 600w, img/shop-1200.webp 1200w" sizes="(max-width: 440px) 100vw, 440px" width="600" height="338" alt="" loading="lazy"></figure>
       <div class="pad">
         <h1 class="h" data-t="buySellTitle"></h1>
 
-        <section class="calc" id="cost" aria-labelledby="cost-title">
-          <p class="eyebrow" data-t="whenBuying"></p>
-          <h2 class="sec-title" id="cost-title" data-t="costTitle"></h2>
+        <section class="calc" id="pc" aria-labelledby="pc-title">
+          <p class="eyebrow" data-t="pcWhen"></p>
+          <h2 class="sec-title" id="pc-title" data-t="pcTitle"></h2>
+          <p class="intro" data-t="pcIntro"></p>
+          <button class="try" type="button" id="pc-example" data-t="showExample"></button>
           <div class="field">
-            <label for="cost-grams" data-t="weightG"></label>
-            <input class="input" id="cost-grams" inputmode="decimal" autocomplete="off" enterkeyhint="next" aria-describedby="cost-grams-err">
-            <p class="err" id="cost-grams-err" data-t="badWeight" hidden></p>
+            <label for="pc-grams"><span class="step" aria-hidden="true">1</span><span data-t="weightG"></span></label>
+            <input class="input" id="pc-grams" inputmode="decimal" autocomplete="off" enterkeyhint="next" aria-describedby="pc-grams-err">
+            <p class="err" id="pc-grams-err" data-t="badWeight" hidden></p>
           </div>
           <div class="field">
-            <p class="label" id="cost-k-label" data-t="karat"></p>
-            <div class="karats small" id="cost-karats" role="radiogroup" aria-labelledby="cost-k-label"><i class="kline"></i><button type="button" role="radio" data-ck="24">24</button><button type="button" role="radio" data-ck="22">22</button><button type="button" role="radio" data-ck="21">21</button><button type="button" role="radio" data-ck="18">18</button></div>
+            <p class="label" id="pc-k-label"><span class="step" aria-hidden="true">2</span><span data-t="karat"></span></p>
+            <div class="karats small" id="pc-karats" role="radiogroup" aria-labelledby="pc-k-label"><i class="kline"></i><button type="button" role="radio" data-ck="24">24</button><button type="button" role="radio" data-ck="22">22</button><button type="button" role="radio" data-ck="21">21</button><button type="button" role="radio" data-ck="18">18</button></div>
+            <div class="seg type-seg" id="pc-type" role="radiogroup" data-aria="pieceType" hidden><button type="button" role="radio" data-type="piece" data-t="pieceOpt"></button><button type="button" role="radio" data-type="bar" data-t="barOpt"></button></div>
           </div>
           <div class="field">
-            <label for="cost-making" id="cost-making-label" data-t="making"></label>
-            <div class="seg" id="cost-mode" role="radiogroup" aria-labelledby="cost-making-label"><button type="button" role="radio" data-mode="perGram" class="on" data-t="perGramMode"></button><button type="button" role="radio" data-mode="percent" data-t="percentMode"></button></div>
-            <input class="input" id="cost-making" inputmode="decimal" autocomplete="off" enterkeyhint="next" aria-describedby="cost-making-err">
-            <p class="err" id="cost-making-err" data-t="badMaking" hidden></p>
+            <label for="pc-price"><span class="step" aria-hidden="true">3</span><span data-t="pcPrice"></span></label>
+            <input class="input" id="pc-price" inputmode="decimal" autocomplete="off" enterkeyhint="done" aria-describedby="pc-price-err">
+            <p class="err" id="pc-price-err" data-t="badShopPrice" hidden></p>
           </div>
-          <div class="field">
-            <label for="cost-rate" data-t="shopRate"></label>
-            <input class="input" id="cost-rate" inputmode="decimal" autocomplete="off" enterkeyhint="done" aria-describedby="cost-rate-hint cost-rate-err">
-            <p class="hint-text" id="cost-rate-hint" data-t="shopRateHint"></p>
-            <p class="err" id="cost-rate-err" data-t="badRate" hidden></p>
+          <p class="alt"><button class="link-btn" type="button" id="pc-alt-open" aria-expanded="false" aria-controls="pc-alt" data-t="pcAlt"></button></p>
+          <div class="alt-fields" id="pc-alt" hidden>
+            <div class="field">
+              <label for="cost-rate" data-t="shopRate"></label>
+              <input class="input" id="cost-rate" inputmode="decimal" autocomplete="off" enterkeyhint="next" aria-describedby="cost-rate-hint cost-rate-err">
+              <p class="hint-text" id="cost-rate-hint" data-t="shopRateHint"></p>
+              <p class="err" id="cost-rate-err" data-t="badRate" hidden></p>
+            </div>
+            <div class="field">
+              <label for="cost-making" id="cost-making-label" data-t="making"></label>
+              <div class="seg" id="cost-mode" role="radiogroup" aria-labelledby="cost-making-label"><button type="button" role="radio" data-mode="perGram" class="on" data-t="perGramMode"></button><button type="button" role="radio" data-mode="percent" data-t="percentMode"></button></div>
+              <input class="input" id="cost-making" inputmode="decimal" autocomplete="off" enterkeyhint="done" aria-describedby="cost-making-err">
+              <p class="err" id="cost-making-err" data-t="badMaking" hidden></p>
+            </div>
+            <p class="hint-text" id="pc-alt-note" data-t="pcAltNote"></p>
+            <p class="hint-text" id="pc-alt-vat24" data-t="vat24" hidden></p>
           </div>
-          <dl class="result" id="cost-result" hidden>
-            <div><dt data-t="goldValue"></dt><dd><span class="num" id="cost-gold"></span> <small data-t="rial"></small></dd></div>
-            <div><dt data-t="makingLine"></dt><dd><span class="num" id="cost-mk"></span> <small data-t="rial"></small></dd></div>
-            <div><dt data-t="vatLine"></dt><dd><span class="num" id="cost-vat"></span> <small data-t="rial"></small></dd></div>
-            <div class="total"><dt data-t="totalLine"></dt><dd><span class="num" id="cost-total"></span> <small data-t="rial"></small></dd></div>
-          </dl>
-          <p class="hint-text" id="cost-vat24" data-t="vat24" hidden></p>
-          <p class="prompt" id="cost-prompt" data-t="costPrompt"></p>
-          <p class="notice" id="cost-noprice" data-t="noPrice" hidden></p>
-          <p class="note" data-t="costNote"></p>
+          <div class="pc" id="pc-result" hidden>
+            <div class="pc-row pc-main"><span data-t="pcGold"></span><b><span class="num" id="pc-gold"></span> <small id="pc-gold-u"></small></b></div>
+            <div id="pc-over">
+              <div class="pc-row"><span data-t="pcExtra"></span><b><span class="num" id="pc-extra"></span> <small id="pc-extra-u"></small></b></div>
+              <p class="pc-why" id="pc-why"></p>
+              <div class="pc-track" aria-hidden="true"><i class="usual" id="pc-usual"></i><i class="dot" id="pc-dot"></i></div>
+              <div class="pc-ends" aria-hidden="true"><span data-t="noExtra"></span></div>
+              <p class="pc-verdict" id="pc-verdict"></p>
+              <p class="pc-range" id="pc-range"></p>
+              <p class="pc-why" id="pc-basis"></p>
+            </div>
+            <p class="pc-verdict" id="pc-under" data-t="pcUnder" hidden></p>
+            <hr class="pc-sep">
+            <div class="pc-row"><span data-t="pcBack"></span><b><span class="num" id="pc-back"></span> <small id="pc-back-u"></small></b></div>
+            <p class="pc-why" id="pc-per100"></p>
+            <p class="pc-target" id="pc-target"></p>
+            <p class="pc-why" id="pc-stale" hidden></p>
+          </div>
+          <p class="prompt" id="pc-prompt" data-t="pcPrompt"></p>
+          <p class="notice" id="pc-noprice" data-t="noPrice" hidden></p>
         </section>
 
         <section class="calc" id="offer" aria-labelledby="offer-title">
-          <p class="eyebrow" data-t="whenSelling"></p>
+          <p class="eyebrow" data-t="ocWhen"></p>
           <h2 class="sec-title" id="offer-title" data-t="offerTitle"></h2>
+          <p class="intro" data-t="ocIntro"></p>
+          <button class="try" type="button" id="oc-example" data-t="showExample"></button>
           <div class="field">
-            <label for="offer-grams" data-t="weightG"></label>
+            <label for="offer-grams"><span class="step" aria-hidden="true">1</span><span data-t="weightG"></span></label>
             <input class="input" id="offer-grams" inputmode="decimal" autocomplete="off" enterkeyhint="next" aria-describedby="offer-grams-err">
             <p class="err" id="offer-grams-err" data-t="badWeight" hidden></p>
           </div>
           <div class="field">
-            <p class="label" id="offer-k-label" data-t="karat"></p>
+            <p class="label" id="offer-k-label"><span class="step" aria-hidden="true">2</span><span data-t="karat"></span></p>
             <div class="karats small" id="offer-karats" role="radiogroup" aria-labelledby="offer-k-label"><i class="kline"></i><button type="button" role="radio" data-ok="24">24</button><button type="button" role="radio" data-ok="22">22</button><button type="button" role="radio" data-ok="21">21</button><button type="button" role="radio" data-ok="18">18</button></div>
           </div>
           <div class="field">
-            <label for="offer-amount" data-t="offerAmount"></label>
+            <label for="offer-amount"><span class="step" aria-hidden="true">3</span><span data-t="offerAmount"></span></label>
             <input class="input" id="offer-amount" inputmode="decimal" autocomplete="off" enterkeyhint="done" aria-describedby="offer-amount-err">
             <p class="err" id="offer-amount-err" data-t="badOffer" hidden></p>
           </div>
@@ -221,6 +272,16 @@
           </div>
           <p class="prompt" id="offer-prompt" data-t="offerPrompt"></p>
           <p class="notice" id="offer-noprice" data-t="noPrice" hidden></p>
+        </section>
+
+        <section class="calc" id="jb" aria-labelledby="jb-title">
+          <p class="eyebrow" data-t="jbWhen"></p>
+          <h2 class="sec-title" id="jb-title" data-t="jbTitle"></h2>
+          <p class="intro" data-t="jbIntro"></p>
+          <div class="b3" id="jb-rows"></div>
+          <p class="plain-line" data-t="jbDiff"></p>
+          <p class="caution" data-t="jbOnlyMoney"></p>
+          <p class="note" data-t="jbFine"></p>
         </section>
 
         <section class="calc">

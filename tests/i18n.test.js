@@ -1,6 +1,72 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { STRINGS, t, agoText, monthYear, lastPriceText } from '../app/js/i18n.js';
+import { STRINGS, t, agoText, monthYear, lastPriceText, durationText } from '../app/js/i18n.js';
+
+test('durations use months under two years and agree in Arabic', () => {
+  assert.equal(durationText('ar', 6), '6 أشهر');
+  assert.equal(durationText('ar', 18), '18 شهراً');
+  assert.equal(durationText('ar', 43), '4 سنوات');
+  assert.equal(durationText('ar', 106), '9 سنوات');
+  assert.equal(durationText('ar', 316), '26 سنة');
+  assert.equal(durationText('en', 106), '9 years');
+  assert.equal(durationText('en', 6), '6 months');
+});
+
+test('short durations use the Arabic dual and singular forms', () => {
+  assert.equal(durationText('ar', 1), 'شهر');
+  assert.equal(durationText('ar', 2), 'شهرين');
+  assert.equal(durationText('ar', 26), 'سنتين');
+  assert.equal(durationText('en', 26), '2 years');
+});
+
+test('the worst 10 years name the month they began', () => {
+  assert.equal(t('ar', 'worstText', 'يوليو 1980', -0.44 * 100), 'من اشترى في يوليو 1980 وجد السعر أقل بـ 44% بعد 10 سنوات.');
+  assert.equal(t('en', 'worstText', 'July 1980', -44), 'buying in July 1980 meant a price 44% lower 10 years later.');
+});
+
+test('"not a forecast" sits with the history, not with the banks', () => {
+  assert.ok(t('ar', 'oddsSince').includes('ليس توقعاً'));
+  assert.ok(t('en', 'oddsSince').includes('Not a forecast'));
+});
+
+test('the outlook reads "in 6 cases out of 10", never "6 times higher"', () => {
+  assert.ok(t('ar', 'higherCases', 6).includes('6 حالات من كل 10'));
+  assert.ok(t('ar', 'higherCases', 8).includes('8 حالات من كل 10'));
+  assert.ok(!t('ar', 'higherCases', 6).includes('مرات'));
+  assert.equal(t('en', 'higherCases', 6), 'higher in 6 cases out of 10');
+});
+
+test('the Future tab is now called Outlook', () => {
+  assert.equal(t('ar', 'tabFuture'), 'التوقعات');
+  assert.equal(t('en', 'tabFuture'), 'Outlook');
+});
+
+test('the falls line lists every recovery and says when a fall is under way', () => {
+  const ar = t('ar', 'fallsLine', [6, 43, 316, 18, 106], true, 1980);
+  assert.ok(ar.startsWith('قبل الهبوط الحالي'), ar);
+  assert.ok(ar.includes('5 مرات'), ar);
+  assert.ok(ar.includes('6 أشهر و18 شهراً و4 سنوات و9 سنوات و26 سنة'), ar);
+  assert.ok(ar.includes('1980'), ar);
+  const en = t('en', 'fallsLine', [6, 43, 316, 18, 106], false, null);
+  assert.ok(en.startsWith('Gold fell 20% or more 5 times since 1971.'), en);
+  assert.ok(en.includes('6 months, 18 months, 4 years, 9 years and 26 years'), en);
+});
+
+test('price check amounts agree with their numbers in Arabic', () => {
+  assert.ok(t('ar', 'pcTarget', 950, '49.5', 22, '40.5').includes('950 ريالاً'));
+  assert.equal(t('ar', 'rialWord', 810), 'ريالات');
+  assert.equal(t('ar', 'rialWord', 140), 'ريالاً');
+  assert.equal(t('ar', 'rialWord', 100), 'ريال');
+});
+
+test('the new sections state facts, not advice', () => {
+  for (const lang of ['ar', 'en']) {
+    for (const [key, v] of Object.entries(STRINGS[lang])) {
+      if (typeof v !== 'string') continue;
+      assert.ok(!/مناسب|ننصح|good time|we recommend|you should/i.test(v), `${lang}.${key}`);
+    }
+  }
+});
 
 test('Arabic and English have the same keys', () => {
   assert.deepEqual(Object.keys(STRINGS.ar).sort(), Object.keys(STRINGS.en).sort());
@@ -48,10 +114,12 @@ test('the delayed message no longer says "slightly"', () => {
 });
 
 test('bank counts agree in Arabic', () => {
-  assert.ok(t('ar', 'y1Note', 1).includes('بنك واحد'));
-  assert.ok(t('ar', 'y1Note', 2).includes('بنكين'));
-  assert.ok(t('ar', 'y1Note', 4).includes('4 بنوك'));
-  assert.ok(t('ar', 'y1Note', 11).includes('11 بنكاً'));
+  const banks = (n) => t('ar', 'banksShort', n, '52.7', '59.5', '2027-12', '40.5');
+  assert.ok(banks(1).startsWith('يتوقع بنك واحد'), banks(1));
+  assert.ok(banks(2).startsWith('يتوقع بنكان'), banks(2));
+  assert.ok(banks(4).startsWith('تتوقع 4 بنوك'), banks(4));
+  assert.ok(banks(11).startsWith('تتوقع 11 بنكاً'), banks(11));
+  assert.ok(banks(4).includes('بنهاية 2027'), banks(4));
 });
 
 test('year wording says the past 12 months, not this year', () => {

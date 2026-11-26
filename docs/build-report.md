@@ -2,6 +2,14 @@
 
 Date: 2026-11-25. Branch: main. Tests: 68 passing (npm test). Code 41 KB compressed (limit 150 KB), fonts 225 KB (limit 350 KB).
 
+## Release 1 of the decision helpers (2026-11-26)
+Design: docs/superpowers/specs/2026-11-26-decisions-and-currency-design.md (revision 3.1 and the VAT law). Plan: docs/superpowers/plans/2026-11-26-release-1-outlook-buysell.md. Tests: 88 passing. Offline cache v6.
+- **Outlook tab** (was Future, renamed after the QA review): "Is the price high or low today?" answers with the distance from the record, the past week and month, Today's 12-month sentence, a five-year chart with the record marked, and every fall of 20% or more since 1971 with its recovery time. "Will it go up?" answers "No one knows", then two rows of dots (higher in 6 and 8 cases out of 10 after 1 and 10 years), the worst 10 years since 1971, and the banks' range in one line. Tables, all periods, forecast misses and the bank list fold under "Show details". The 5 and 10-year rial ranges and the bank figure on the chart are gone.
+- **Buy & sell:** "Is this a normal price?" takes the weight, the karat and the full price the shop asks, and answers in money: the gold in the piece, the extra on top on a usual band (making 3 to 6 rials a gram with VAT on the whole price, 13% to 21% for 22 karat today), what a shop pays back today and per 100 paid, and the gram price gold must reach to return the price. Karat 24 offers a piece or bar switch. The old rate-and-making route stays behind a link. "Is this a normal offer?" gains a when line, numbered fields and an example. "Jewellery or a bar?" shows what a shop pays back per 100 paid: a small bar 90 to 94 (with or without VAT), plain 85, detailed 80.
+- **My gold:** the same pieces' highest and lowest value in the last 12 months, and their value 5 and 10 years ago.
+- **VAT (owner asked to apply the law):** jewellery carries 5% on the full price: the VAT Law (Royal Decree 121/2020) and its regulations (Decision 53/2021) have no jewellery rule, and the Tax Authority's own example taxes the total. Investment gold of 99% purity or more is zero-rated by Article 51(3), but Regulation Article 88 limits the zero rate to the first supply after extraction, so bars are shown with and without VAT.
+- **Checks:** browser at 390 px in Arabic and English and 360 px in English, all states of the price check (example, price under the gold value, karat 24 as bar and as piece, the rate route, a zero price, Arabic digits), the offer example and the My gold block with two pieces.
+
 ## Design and data pass (2026-11-26)
 The owner asked for more contrast and hierarchy in the news box and the price board, and a more premium icon. Tests: 72 passing.
 - **News card:** oxblood velvet (`--deep`, lit from the reading corner), a gold hairline, a champagne title and source link, 17 px text. Contrast: champagne 9.5:1, text 13.8:1.
