@@ -62,7 +62,7 @@
         </div>
         <p class="karat-label" id="karat-label" data-t="karat"></p>
         <div class="karats" id="karats" role="radiogroup" aria-labelledby="karat-label"><i class="kline"></i><button type="button" role="radio" data-k="24">24</button><button type="button" role="radio" data-k="22">22</button><button type="button" role="radio" data-k="21">21</button><button type="button" role="radio" data-k="18">18</button></div>
-        <p class="status" id="status"><i class="live-dot" aria-hidden="true"></i><span id="status-text"></span><span class="sep" id="status-sep" aria-hidden="true">·</span><span class="vh" id="status-gap">، </span><span id="status-ago"></span></p>
+        <p class="status" id="status"><i class="live-dot" aria-hidden="true"></i><span id="status-text"></span><span class="sep" id="status-sep" aria-hidden="true">·</span><span class="vh" id="status-gap" data-t="listSep"></span><span id="status-ago"></span></p>
         <p class="change" id="change" hidden></p>
         <p class="cur-note" id="cur-note" hidden><span id="cur-note-text"></span> <button class="link-btn" type="button" id="cur-back" data-t="backToRials"></button></p>
       </div>
@@ -101,6 +101,8 @@
           <p class="est"><span class="tag" data-t="estimateTag"></span><span id="gold-range"></span></p>
           <p class="gain" id="gold-gain" hidden></p>
           <p class="sub" id="gold-covers" hidden></p>
+          <p class="sub" id="gold-stale" hidden></p>
+          <p class="sub" id="gold-fx" data-t="pastAtToday" hidden></p>
           <div class="then" id="gold-before" hidden>
             <p class="then-t" data-t="beforeTitle"></p>
             <div class="hrow" id="before-hi"><span><span data-t="yearHigh"></span><small class="when"></small></span><b><span class="num"></span> <small class="u"></small></b></div>
@@ -133,6 +135,7 @@
         <h1 class="h" data-t="outlook"></h1>
         <p class="cap" id="outlook-sub"></p>
         <div class="karats small future-karats" id="future-karats" role="radiogroup" data-aria="karat"><i class="kline"></i><button type="button" role="radio" data-fk="24">24</button><button type="button" role="radio" data-fk="22">22</button><button type="button" role="radio" data-fk="21">21</button><button type="button" role="radio" data-fk="18">18</button></div>
+        <p class="notice" id="f-nodata" data-t="noHistory" hidden></p>
 
         <section class="q" aria-labelledby="q1-title">
           <h2 class="sec-title" id="q1-title" data-t="q1"></h2>
@@ -172,9 +175,9 @@
             <p class="fold-cap" data-t="periodsCap"></p>
             <div class="odds" id="odds-all"></div>
             <p class="note" data-t="overlapNote"></p>
-            <p class="fold-cap" data-t="banksCap"></p>
-            <p class="note" id="miss-line"></p>
+            <p class="fold-cap" id="banks-cap" data-t="banksCap"></p>
             <ul class="banks" id="bank-list"></ul>
+            <p class="note" id="miss-line"></p>
             <p><button class="link-btn" type="button" id="open-sources" data-t="sources"></button></p>
           </details>
         </section>
@@ -228,6 +231,7 @@
           </div>
           <div class="pc" id="pc-result" hidden>
             <div class="pc-row pc-main"><span data-t="pcGold"></span><b><span class="num" id="pc-gold"></span> <small id="pc-gold-u"></small></b></div>
+            <p class="pc-why" id="pc-stale" hidden></p>
             <div id="pc-over">
               <div class="pc-row"><span data-t="pcExtra"></span><b><span class="num" id="pc-extra"></span> <small id="pc-extra-u"></small></b></div>
               <p class="pc-why" id="pc-why"></p>
@@ -243,7 +247,6 @@
             <p class="pc-why" id="pc-per100"></p>
             <p class="pc-target" id="pc-target"></p>
             <p class="pc-why" id="pc-conv" hidden></p>
-            <p class="pc-why" id="pc-stale" hidden></p>
           </div>
           <p class="prompt" id="pc-prompt" data-t="pcPrompt"></p>
           <p class="notice" id="pc-noprice" data-t="noPrice" hidden></p>
@@ -272,6 +275,7 @@
             <p class="verdict" id="offer-verdict"></p>
             <p class="verdict-sub" id="offer-gap"></p>
             <p class="verdict-sub" id="offer-value"></p>
+            <p class="verdict-sub" id="offer-stale" hidden></p>
           </div>
           <p class="prompt" id="offer-prompt" data-t="offerPrompt"></p>
           <p class="notice" id="offer-noprice" data-t="noPrice" hidden></p>
@@ -320,10 +324,10 @@
 
   <dialog class="sheet" id="piece-sheet" aria-labelledby="piece-title">
     <form method="dialog" id="piece-form" novalidate>
-      <div class="sheet-head"><h2 class="sec-title" id="piece-title"></h2></div>
+      <div class="sheet-head"><h2 class="sec-title" id="piece-title" tabindex="-1" autofocus></h2></div>
       <div class="field">
         <label for="piece-grams" data-t="weightG"></label>
-        <input class="input" id="piece-grams" name="grams" inputmode="decimal" autocomplete="off" required autofocus aria-describedby="piece-grams-err">
+        <input class="input" id="piece-grams" name="grams" inputmode="decimal" autocomplete="off" required aria-describedby="piece-grams-err">
         <p class="err" id="piece-grams-err" data-t="badWeight" hidden></p>
       </div>
       <div class="field">
@@ -348,6 +352,7 @@
             <select class="input select" id="piece-month" name="month" data-aria="monthLabel"></select>
             <select class="input select" id="piece-year" name="year" data-aria="yearLabel"></select>
           </div>
+          <p class="err" id="piece-when-err" data-t="badWhen" hidden></p>
         </div>
       </fieldset>
       <div class="sheet-actions">

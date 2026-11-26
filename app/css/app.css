@@ -187,7 +187,7 @@
 .empty .sub { max-width: 32ch; margin: 6px auto 0; }
 .pieces { list-style: none; margin-top: 18px; border-top: 1px solid var(--hair); }
 .piece { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 16px 0; border-bottom: 1px solid var(--hair); }
-.piece-name { font-size: 17px; font-weight: 700; }
+.piece-name { font-size: 17px; font-weight: 700; overflow-wrap: anywhere; min-width: 0; }
 .piece-meta { font-size: 16px; color: var(--muted); }
 .piece-value { grid-column: 1; font-size: 16px; }
 .piece-gain { grid-column: 1 / -1; font-size: 16px; color: var(--muted); line-height: 1.6; }
@@ -212,8 +212,9 @@
 .fchart .f-now { fill: var(--car); }
 .fchart .f-rec { fill: var(--bg); stroke: var(--ink); stroke-width: 1.8; }
 .fchart text { font-family: var(--text); }
-.fchart .f-axis, .fchart .f-tag { font-size: 13px; fill: var(--muted); }
-.fchart .f-val { font-size: 14px; font-weight: 600; fill: var(--ink); font-family: var(--serif); }
+/* in viewBox units: the 340-unit chart draws a little smaller than its width on a 360 px phone (OL9) */
+.fchart .f-axis, .fchart .f-tag { font-size: 15px; fill: var(--muted); }
+.fchart .f-val { font-size: 16px; font-weight: 600; fill: var(--ink); font-family: var(--serif); }
 /* a question as the heading, then one large answer in ink (design 7) */
 .q { margin-top: 26px; }
 .q + .q { padding-top: 24px; border-top: 1px solid var(--hair); }
@@ -326,6 +327,7 @@
 .verdict-sub { font-size: 16px; color: var(--muted); margin-top: 4px; }
 .places { list-style: none; margin-top: 8px; }
 .places li { padding: 16px 0; border-bottom: 1px solid var(--hair); }
+.places li:last-child { border-bottom: 0; } /* the next section draws its own line (BS10) */
 .places b { display: block; font-size: 17px; }
 .places p { font-size: 16px; color: var(--muted); line-height: 1.55; margin-top: 2px; }
 .place-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
@@ -355,9 +357,12 @@
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .chips button { min-height: 48px; padding: 0 16px; border-radius: var(--radius); background: var(--surface); font-size: 16px; }
 .chips button:active { background: var(--car-soft); }
-.sheet-actions { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 24px; }
+/* Save and Cancel stay on screen however long the form is (MG6) */
+#piece-sheet { padding-bottom: 0; }
+#piece-title:focus { outline: none; }
+.sheet-actions { position: sticky; bottom: 0; z-index: 1; display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 24px; padding: 12px 0 calc(var(--safe-bottom) + 14px); background: var(--bg); box-shadow: 0 -1px 0 var(--hair); }
 .sheet-actions .btn { margin-top: 0; }
-.remove-row { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--hair); text-align: center; }
+.remove-row { margin-top: 14px; padding: 10px 0 calc(var(--safe-bottom) + 22px); border-top: 1px solid var(--hair); text-align: center; }
 .confirm { text-align: start; padding: 6px 0 2px; }
 .confirm p { font-size: 16px; font-weight: 700; }
 .confirm-actions { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 12px; }
@@ -419,6 +424,6 @@
   .bar { gap: 6px; }
   .word { white-space: nowrap; gap: 7px; }
   :lang(en) .word { font-size: 20px; }
-  .cur-btn svg { display: none; }
-  .cur-btn { min-width: 48px; justify-content: center; padding: 0 4px; }
+  .cur-btn svg { width: 11px; height: 11px; } /* kept small, so it still reads as a button (TD12) */
+  .cur-btn { min-width: 48px; justify-content: center; gap: 2px; padding: 0 4px; }
 }

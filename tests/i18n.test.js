@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { STRINGS, t, agoText, monthYear, lastPriceText, durationText, isolatePct } from '../app/js/i18n.js';
+import { STRINGS, t, agoText, monthYear, lastPriceText, durationText, isolatePct, newsText, closeDay } from '../app/js/i18n.js';
 
 test('durations use months under two years and agree in Arabic', () => {
   assert.equal(durationText('ar', 6), '6 أشهر');
@@ -49,7 +49,7 @@ test('the falls line lists every recovery and says when a fall is under way', ()
   assert.ok(ar.includes('6 أشهر و18 شهراً و4 سنوات و9 سنوات و26 سنة'), ar);
   assert.ok(ar.includes('1980'), ar);
   const en = t('en', 'fallsLine', [6, 43, 316, 18, 106], false, null);
-  assert.ok(en.startsWith('Gold fell 20% or more 5 times since 1971.'), en);
+  assert.ok(en.startsWith('Gold has fallen 20% or more 5 times since 1971.'), en); // (OL13)
   assert.ok(en.includes('6 months, 18 months, 4 years, 9 years and 26 years'), en);
 });
 
@@ -214,4 +214,27 @@ test('Arabic percentages keep the sign to the right of the number, everywhere', 
   assert.ok(!t('en', 'belowRecord', 34).includes(LRI));
   // the daily news line comes from data, not from these strings, and gets the same treatment
   assert.equal(isolatePct('ارتفع الذهب 1.2% ثم −0.4%'), `ارتفع الذهب ${LRI}1.2%${PDI} ثم ${LRI}−0.4%${PDI}`);
+});
+
+test('the change line names a weekday only within the week, else the date (TD5)', () => {
+  const now = Date.parse('2026-11-26T10:00:00Z'); // Thursday
+  assert.equal(closeDay('en', '2026-11-25', true, now), 'yesterday');
+  assert.equal(closeDay('en', '2026-11-23', false, now), 'on Monday');
+  assert.equal(closeDay('en', '2026-11-19', false, now), 'on 19 November');
+  assert.equal(closeDay('ar', '2026-11-19', false, now), 'يوم 19 نوفمبر');
+});
+
+test('the news line shows only when the file holds text, so a bad file cannot stop the app (TD4)', () => {
+  const LRI = String.fromCharCode(0x2066), PDI = String.fromCharCode(0x2069);
+  assert.equal(newsText({ ar: ['ارتفع'], en: 'Up' }, 'ar'), null);
+  assert.equal(newsText({ ar: '   ', en: 'Up' }, 'ar'), null);
+  assert.equal(newsText(null, 'en'), null);
+  assert.equal(newsText({ ar: 'ارتفع 1.2%', en: 'Up 1.2%' }, 'en'), 'Up 1.2%');
+  assert.equal(newsText({ ar: 'ارتفع 1.2%', en: 'Up 1.2%' }, 'ar'), `ارتفع ${LRI}1.2%${PDI}`);
+});
+
+test('period rows describe what happened, not a rule (OL8)', () => {
+  assert.equal(t('en', 'periodRow', 6, -36), 'Half the time it ended 6% higher or more. At worst 36% lower.');
+  assert.equal(t('en', 'periodRow', -3, -40), 'Half the time it ended 3% lower or more. At worst 40% lower.');
+  assert.ok(t('ar', 'periodRow', 6, -36).startsWith('في نصف المرات انتهى أعلى بـ'));
 });

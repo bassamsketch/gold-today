@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { recordHigh, pastFalls, higherOdds, moveSince, yearRange, closeYearsAgo, bestPrice, historyWindow, recordX } from '../app/js/insights.js';
+import { recordHigh, pastFalls, higherOdds, moveSince, yearRange, closeYearsAgo, bestPrice, historyWindow, recordX, fallUnderway } from '../app/js/insights.js';
 
 test('the worst 10 years name the month they started, not the peak', () => {
   assert.equal(higherOdds(history.monthly, 10).worstMonth, '1980-07');
@@ -83,10 +83,12 @@ test('higherOdds counts how often the price was higher, the usual and the worst 
   assert.equal(higherOdds(months('1971-01', [1, 2, 3]), 5), null);
 });
 
-test('moveSince compares with the last close on or before that many days ago, in Muscat', () => {
-  const daily = [{ d: '2026-11-17', c: 3800 }, { d: '2026-11-18', c: 3725.18 }, { d: '2026-11-25', c: 3574 }];
+test('moveSince compares with the last close made on or before that moment (OL1)', () => {
+  const daily = [{ d: '2026-11-17', c: 3800 }, { d: '2026-11-18', c: 3725.18 }, { d: '2026-11-19', c: 3624.63 }, { d: '2026-11-25', c: 3574 }];
+  // 7 days before 26 Nov 16:00 UTC is 19 Nov 16:00 UTC, before that day's close (recorded at 21:00 UTC)
+  assert.ok(Math.abs(moveSince(daily, 3574, new Date('2026-11-26T16:00:00Z'), 7) - (3574 / 3725.18 - 1)) < 1e-12);
+  assert.ok(Math.abs(moveSince(daily, 3574, new Date('2026-11-26T21:30:00Z'), 7) - (3574 / 3624.63 - 1)) < 1e-12);
   const now = new Date('2026-11-25T12:00:00Z');
-  assert.ok(Math.abs(moveSince(daily, 3574, now, 7) - (3574 / 3725.18 - 1)) < 1e-12);
   assert.equal(moveSince(daily, 3574, now, 30), null);
   assert.equal(moveSince(daily, null, now, 7), null);
 });
@@ -102,4 +104,20 @@ test('closeYearsAgo finds the same month some years back', () => {
   assert.deepEqual(closeYearsAgo(m, 5), { d: '2021-11', c: 1060 });
   assert.deepEqual(closeYearsAgo(m, 10), { d: '2016-11', c: 1000 });
   assert.equal(closeYearsAgo(m, 11), null);
+});
+
+test('the 12-month range counts the price of today, so today is never outside it (MG2)', () => {
+  const daily = [{ d: '2026-01-28', c: 5418.55 }, { d: '2026-11-20', c: 3538.19 }];
+  const now = new Date('2026-11-26T10:00:00Z');
+  assert.deepEqual(yearRange(daily, now, 3400).lo, { d: '2026-11-26', c: 3400 });
+  assert.deepEqual(yearRange(daily, now, 5600).hi, { d: '2026-11-26', c: 5600 });
+  assert.deepEqual(yearRange(daily, now, 4000), yearRange(daily, now));
+});
+
+test('a fall of 20% or more stays under way until the record is regained (OL2)', () => {
+  const h = { daily: [{ d: '2026-01-28', c: 5418.55 }, { d: '2026-11-20', c: 3538.19 }], monthly: [{ d: '2026-01', c: 5000 }] };
+  assert.equal(fallUnderway(h, 4400, recordHigh(h, 4400)), true); // 19% below now, 35% below on 20 Nov
+  const shallow = { daily: [{ d: '2026-01-28', c: 5418.55 }, { d: '2026-11-20', c: 4700 }], monthly: [] };
+  assert.equal(fallUnderway(shallow, 4600, recordHigh(shallow, 4600)), false);
+  assert.equal(fallUnderway(h, 5500, recordHigh(h, 5500)), false); // a new record
 });

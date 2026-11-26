@@ -36,5 +36,5 @@ test('places and why line are complete', () => {
     for (const l of p.links) assert.ok(l.ar && l.en && l.query, `${p.en} link`);
   }
   const why = read('why.json');
-  for (const k of ['date', 'ar', 'en', 'source', 'url']) assert.ok(why[k], `why ${k}`);
+  for (const k of ['date', 'ar', 'en', 'source', 'url']) assert.ok(typeof why[k] === 'string' && why[k].trim(), `why ${k} must be text`);
 });

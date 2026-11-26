@@ -1,7 +1,7 @@
-import { sellEstimate, pieceGain, totalGain, validatePiece } from '../gold.js';
+import { sellEstimate, pieceGain, totalGain, validatePiece, okPaid, okBoughtYm } from '../gold.js';
 import { parseNumber } from '../calc.js';
 import { formatNum } from '../price.js';
-import { monthYear, monthNames, dayMonth } from '../i18n.js';
+import { monthYear, monthNames, dayMonthYear, lastPriceText } from '../i18n.js';
 import { yearRange, closeYearsAgo } from '../insights.js';
 import { countUp } from '../ui/countup.js';
 import { syncKarats, setKaratText } from '../ui/karats.js';
@@ -10,7 +10,8 @@ import { shareTextOnly } from '../ui/share.js';
 
 const $ = (id) => document.getElementById(id);
 const MAX_PIECES = 20;
-const grams = (g) => formatNum(g, Number.isInteger(g) ? 0 : 1);
+// a weight as it was typed, up to three decimals (MG8)
+const grams = (g) => formatNum(g, (String(Math.round(g * 1000) / 1000).split('.')[1] || '').length);
 const installed = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 
 /** My gold tab: total sell estimate, pieces with bought-price gains, add/edit sheet (design 6, D8). */
@@ -25,7 +26,12 @@ export function mount(app) {
     cancel: $('piece-cancel'), removeRow: $('piece-remove-row'), remove: $('piece-remove'), confirm: $('piece-confirm'),
     removeYes: $('piece-remove-yes'), removeNo: $('piece-remove-no'),
     before: $('gold-before'), beforeHi: $('before-hi'), beforeLo: $('before-lo'), before5: $('before-5'), before10: $('before-10'),
+    stale: $('gold-stale'), fx: $('gold-fx'), whenErr: $('piece-when-err'),
   };
+  // the price every tab shows: the saved live price, or the last close when that is newer (MG1)
+  const liveUsd = () => app.best()?.usd ?? null;
+  // whether an amount shows as zero in the display currency, so a tiny gain or loss reads "no change" (MG12)
+  const showsZero = (v) => Number(app.money.fmt(app.money.conv(Math.abs(v)), 'total').replace(/,/g, '')) === 0;
   const sep = () => (app.state.lang === 'ar' ? '، ' : ', ');
   const rows = new Map(); // piece id -> its list item, updated in place (QA15)
   let editingId = null;
@@ -35,7 +41,9 @@ export function mount(app) {
     const g = pieceGain(p, usd);
     if (!g) return '';
     // the price paid is typed in rials; what is shown follows the display currency (design 9)
-    const args = [app.money.conv(p.boughtPrice), monthYear(app.state.lang, p.boughtYm), app.money.conv(Math.abs(g.amount)), formatNum(Math.abs(g.pct) * 100, 0), app.money.code];
+    const when = monthYear(app.state.lang, p.boughtYm);
+    if (showsZero(g.amount)) return app.t('gainSame', app.money.conv(p.boughtPrice), when, app.money.code);
+    const args = [app.money.conv(p.boughtPrice), when, app.money.conv(Math.abs(g.amount)), formatNum(Math.abs(g.pct) * 100, 0), app.money.code];
     return g.amount >= 0 ? app.t('gainUp', ...args) : app.t('gainDown', ...args);
   }
 
@@ -53,22 +61,26 @@ export function mount(app) {
     edit.dataset.edit = p.id;
     edit.textContent = app.t('edit');
     edit.setAttribute('aria-label', app.t('editNamed', name));
-    setKaratText(li.querySelector('.piece-meta'), `${grams(p.grams)} ${app.t('grams')}${sep()}${app.t('karatN', p.karat)}`, app.t('karatN', p.karat));
-    const e = sellEstimate([p], app.price.usd);
+    setKaratText(li.querySelector('.piece-meta'), `${app.t('gramsOf', grams(p.grams), p.grams)}${sep()}${app.t('karatN', p.karat)}`, app.t('karatN', p.karat));
+    const e = sellEstimate([p], liveUsd());
     const value = li.querySelector('.piece-value');
     value.hidden = !e;
     value.textContent = e ? app.t('worthToday', app.money.conv(e.mid), app.money.code) : '';
     const gain = li.querySelector('.piece-gain');
-    gain.textContent = gainText(p, app.price.usd);
+    gain.textContent = gainText(p, liveUsd());
     gain.hidden = !gain.textContent;
     return li;
   }
 
   function render() {
     const { pieces } = app.state;
-    const usd = app.price.usd;
+    const usd = liveUsd();
     const has = Number.isFinite(usd);
     const n = pieces.length;
+    const b = app.best();
+    el.stale.hidden = !(n && has && b?.old); // a price over 15 minutes old names its time, as the other tabs do
+    if (!el.stale.hidden) el.stale.textContent = lastPriceText(app.state.lang, b.at);
+    el.fx.hidden = !(n && has && ['EUR', 'LBP'].includes(app.money.code)); // past rials at today's rate (MG4)
     el.empty.hidden = n > 0;
     el.list.hidden = n === 0;
     el.total.hidden = n === 0 || !has;
@@ -81,13 +93,13 @@ export function mount(app) {
       const e = sellEstimate(pieces, usd);
       const code = app.money.code;
       countUp(el.mid, app.money.conv(e.mid), app.money.decimals('total'));
-      el.unit.textContent = app.t('curUnit', code);
+      el.unit.textContent = app.t('curWord', app.money.conv(e.mid), code); // agrees with its number (MG10)
       el.range.textContent = app.t('range', app.money.conv(e.low), app.money.conv(e.high), code);
       const g = totalGain(pieces, usd);
       el.gain.hidden = !g;
       el.covers.hidden = !g || g.counted === g.of;
       if (g) {
-        el.gain.textContent = g.amount >= 0
+        el.gain.textContent = showsZero(g.amount) ? app.t('totalSame') : g.amount >= 0
           ? app.t('totalUp', app.money.conv(g.amount), formatNum(g.pct * 100, 0), code)
           : app.t('totalDown', app.money.conv(-g.amount), formatNum(-g.pct * 100, 0), code);
         el.covers.textContent = app.t('covers', g.counted, g.of);
@@ -107,8 +119,9 @@ export function mount(app) {
     const h = app.data.history;
     const rows = [];
     if (show && h) {
-      const lang = app.state.lang, yr = yearRange(h.daily, new Date());
-      if (yr) rows.push([el.beforeHi, yr.hi.c, dayMonth(lang, yr.hi.d)], [el.beforeLo, yr.lo.c, dayMonth(lang, yr.lo.d)]);
+      // today's price counts in the 12-month range (MG2); the dates carry their year (MG11)
+      const lang = app.state.lang, yr = yearRange(h.daily, new Date(), liveUsd());
+      if (yr) rows.push([el.beforeHi, yr.hi.c, dayMonthYear(lang, yr.hi.d)], [el.beforeLo, yr.lo.c, dayMonthYear(lang, yr.lo.d)]);
       for (const [row, n] of [[el.before5, 5], [el.before10, 10]]) {
         const c = closeYearsAgo(h.monthly, n);
         if (c) {
@@ -163,6 +176,7 @@ export function mount(app) {
     el.confirm.hidden = true;
     setError(el.grams, el.gramsErr, false);
     setError(el.paid, el.paidErr, false);
+    setError(el.month, el.whenErr, false);
     const done = openSheet(el.sheet);
     requestAnimationFrame(() => syncKarats(el.karats, sheetKarat, 'pk'));
     const result = await done;
@@ -173,8 +187,10 @@ export function mount(app) {
   function savePiece() {
     const paidRaw = el.paid.value.trim();
     const paid = paidRaw ? parseNumber(paidRaw) : null;
-    const badPaid = Boolean(paidRaw) && !(Number.isFinite(paid) && paid > 0); // never drop a price silently (QA16)
+    const badPaid = Boolean(paidRaw) && !okPaid(paid); // never drop a price silently (QA16); 1 to 1,000,000 (MG7)
     const ym = el.year.value ? (el.month.value ? `${el.year.value}-${el.month.value}` : el.year.value) : null;
+    // a month needs its year, and the date cannot be after this month (MG9)
+    const badWhen = (Boolean(el.month.value) && !el.year.value) || !okBoughtYm(ym);
     const piece = validatePiece({
       id: editingId ?? undefined,
       name: el.name.value.trim(),
@@ -185,8 +201,10 @@ export function mount(app) {
     });
     setError(el.grams, el.gramsErr, !piece);
     setError(el.paid, el.paidErr, badPaid);
+    setError(el.month, el.whenErr, badWhen);
     if (!piece) return el.grams.focus();
     if (badPaid) return el.paid.focus();
+    if (badWhen) return (el.month.value && !el.year.value ? el.year : el.month).focus();
     const list = app.state.pieces;
     const i = list.findIndex((p) => p.id === piece.id);
     if (i >= 0) list[i] = piece;
@@ -200,7 +218,7 @@ export function mount(app) {
   function listText() {
     const lang = app.state.lang;
     const lines = app.state.pieces.map((p) => {
-      const parts = [`${grams(p.grams)} ${app.t('grams')}`, app.t('karatN', p.karat)];
+      const parts = [app.t('gramsOf', grams(p.grams), p.grams), app.t('karatN', p.karat)];
       if (p.boughtPrice != null) parts.push(app.t('listPaid', p.boughtPrice, monthYear(lang, p.boughtYm)));
       return `• ${p.name || app.t('unnamed')}: ${parts.join(sep())}`;
     });

@@ -3,7 +3,7 @@ import { KARATS, TOLA_G } from '../config.js';
 import { liveStatus } from '../time.js';
 import { yearShareBelow, tierOf, hintOf, newsVisible, compareClose } from '../history.js';
 import { startLive } from '../live.js';
-import { agoText, dayMonth, lastPriceText, closeDay, isolatePct } from '../i18n.js';
+import { agoText, dayMonth, lastPriceText, closeDay, newsText } from '../i18n.js';
 import { odometer } from '../ui/odometer.js';
 import { syncKarats, setKaratText } from '../ui/karats.js';
 
@@ -20,10 +20,14 @@ export function mount(app) {
     year: $('year'), mood: $('mood'), dot: $('year-dot'), hint: $('hint'), rows: $('board-rows'), world: $('world'), hero: $('hero'),
     boardUnit: $('board-unit'),
   };
-  const usd = () => app.price.usd;
-  const has = () => Number.isFinite(app.price.usd);
+  // the same price as every other tab: the saved live price, or the last close when that is newer (TD3)
+  const best = () => app.best();
+  const usd = () => best()?.usd ?? null;
+  const has = () => Number.isFinite(usd());
+  const fromFeed = () => { const b = best(); return Boolean(b) && b.usd === app.price.usd && b.at === app.price.updatedAt; };
+  const shownAt = () => { const at = best()?.at; return Number.isFinite(at) ? at : null; };
   const status = () => liveStatus({
-    price: usd(), updatedAt: app.price.updatedAt, fetchedAt: app.price.fetchedAt ?? null, now: Date.now(), startedAt: app.startedAt,
+    price: usd(), updatedAt: shownAt(), fetchedAt: fromFeed() ? app.price.fetchedAt ?? null : null, now: Date.now(), startedAt: app.startedAt,
   });
 
   el.rows.innerHTML = KARATS.map((k) => `<tr data-row="${k}" tabindex="0"><td>${k}</td><td data-c="1"></td><td data-c="10"></td><td data-c="t"></td></tr>`).join('');
@@ -31,7 +35,9 @@ export function mount(app) {
   // The caption names the karat (QA4) and stops saying "now" when the price is not live (QA3).
   function renderCaption(s) {
     const k = app.state.karat;
-    setKaratText(el.cap, app.t(['live', 'recent', 'none'].includes(s) ? 'perGramNow' : 'lastGram', k), app.t('karatN', k));
+    // "now" while live or loading, "last price" for a delayed or weekend price, neither when there is none (TD11)
+    const key = s === 'none' ? 'perGram' : ['live', 'recent', 'loading'].includes(s) ? 'perGramNow' : 'lastGram';
+    setKaratText(el.cap, app.t(key, k), app.t('karatN', k));
     el.skel.hidden = has() || s !== 'loading';
     el.missing.hidden = has() || s === 'loading';
     if (!has()) el.missing.textContent = app.t('none');
@@ -60,10 +66,10 @@ export function mount(app) {
       text = app.t('live');
       ago = agoText(lang, secsSince(app.price.fetchedAt));
     } else if (s === 'recent') {
-      ago = agoText(lang, secsSince(app.price.fetchedAt ?? app.price.updatedAt));
+      ago = agoText(lang, secsSince(fromFeed() ? app.price.fetchedAt ?? app.price.updatedAt : shownAt()));
     } else if (s === 'delayed') {
       text = app.t('delayed');
-      ago = lastPriceText(lang, app.price.updatedAt);
+      ago = lastPriceText(lang, shownAt());
     } else if (s === 'closed' || s === 'loading') {
       text = app.t(s);
     }
@@ -74,7 +80,9 @@ export function mount(app) {
 
   function renderChange() {
     const daily = app.data.history?.daily;
-    const ref = has() && daily ? compareClose(daily, app.price.updatedAt ?? Date.now(), Date.now()) : null;
+    // a feed price is compared from its own time; the last close shown in its place stands for its own day
+    const at = !has() || !daily?.length ? null : fromFeed() ? shownAt() ?? Date.now() : Date.parse(`${daily.at(-1).d}T12:00:00Z`);
+    const ref = at != null ? compareClose(daily, at, Date.now()) : null;
     el.change.hidden = !ref;
     if (!ref) return;
     const k = app.state.karat;
@@ -88,13 +96,14 @@ export function mount(app) {
 
   function renderWhy() {
     const w = app.data.why;
-    const show = Boolean(w) && newsVisible(w.date, new Date()); // one trading day, then it goes (QA22)
+    const lang = app.state.lang;
+    const text = newsText(w, lang); // null for a malformed file, which hides the card instead of stopping the app
+    const show = text != null && newsVisible(w.date, new Date()); // one trading day, then it goes (QA22)
     el.why.hidden = !show;
     if (!show) return;
-    const lang = app.state.lang;
     el.whyTitle.textContent = app.t('whyTitle', dayMonth(lang, w.date));
-    el.whyText.textContent = lang === 'ar' ? isolatePct(w.ar) : w.en; // "1.2%", never "%1.2"
-    el.whySrcName.textContent = w.source;
+    el.whyText.textContent = text;
+    el.whySrcName.textContent = typeof w.source === 'string' ? w.source : '';
     if (typeof w.url === 'string' && w.url.startsWith('https://')) el.whySrc.href = w.url;
     else el.whySrc.removeAttribute('href');
   }

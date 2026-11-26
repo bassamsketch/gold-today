@@ -4,6 +4,7 @@ import { syncKarats } from './ui/karats.js';
 import { closeOpenSheet } from './ui/sheet.js';
 import { effective, fromRials, fmt, decimalsOf } from './money.js';
 import { gramPrice } from './price.js';
+import { bestPrice } from './insights.js';
 
 const storage = (() => {
   try {
@@ -27,8 +28,14 @@ export const app = {
     if (!listeners.has(evt)) listeners.set(evt, []);
     listeners.get(evt).push(fn);
   },
+  /** The price every tab shows: the saved live price, or the last daily close when that is newer (TD3, MG1). */
+  best() {
+    return bestPrice(app.price, app.data.history?.daily, Date.now());
+  },
   emit(evt, payload) {
-    (listeners.get(evt) || []).forEach((fn) => fn(payload));
+    for (const fn of listeners.get(evt) || []) {
+      try { fn(payload); } catch (err) { console.error(evt, err); } // one tab's error must not stop the others (TD4)
+    }
   },
   t: (key, ...args) => t(state.lang, key, ...args),
   persist() {
@@ -126,6 +133,7 @@ const VIEWS = ['./views/today.js', './views/mygold.js', './views/future.js', './
 // The data and every module load at once (QA35); one broken tab must not stop the others.
 async function start() {
   history.replaceState({ view: 'today' }, '');
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; // every tab opens at its top (TD7)
   applyLang();
   const data = loadData();
   const mods = await Promise.all(VIEWS.map((path) => import(path).catch((err) => {
@@ -140,6 +148,7 @@ async function start() {
     }
   });
   await data;
+  app.dataReady = true; // the data files have answered, or failed: a tab may now say what is missing
   app.emit('data');
   if (document.fonts) document.fonts.ready.then(() => app.emit('layout'));
 }

@@ -18,6 +18,16 @@ export function recordHigh(history, liveUsd) {
   return rec;
 }
 
+/**
+ * Whether a fall of 20% or more from the record is still under way: the lowest price since the record reached it,
+ * and the record has not been regained. Today's price alone can be back within 20% while the fall goes on (OL2).
+ */
+export function fallUnderway(history, liveUsd, rec, threshold = 0.2) {
+  if (!history || !rec || rec.live || !Number.isFinite(liveUsd) || liveUsd >= rec.usd) return false;
+  const after = ((rec.day ? history.daily : history.monthly) || []).filter((x) => x.d > rec.d).map((x) => x.c);
+  return 1 - Math.min(liveUsd, ...after) / rec.usd >= threshold;
+}
+
 /** Every completed fall of `threshold` or more under the running peak since 1971: the peak's year, how deep, months to regain it. */
 export function pastFalls(monthly, threshold = 0.2) {
   const m = since1971(monthly);
@@ -88,23 +98,34 @@ export function recordX(firstYm, rec) {
   return x < 0 ? null : x;
 }
 
-/** Change of `priceUsd` against the last close on or before the Muscat date `days` before `now`; null without one. */
+/**
+ * Change of `priceUsd` against the last close made on or before the moment `days` before `now` (spec 7.1).
+ * Closes are recorded at 21:00 UTC on their date, so a close dated that day may come after the moment (OL1).
+ */
 export function moveSince(daily, priceUsd, now, days) {
   if (!Number.isFinite(priceUsd) || !daily?.length) return null;
-  const target = muscatDate(+now - days * DAY);
+  const cut = +now - days * DAY;
   for (let i = daily.length - 1; i >= 0; i--) {
-    if (daily[i].d <= target) return priceUsd / daily[i].c - 1;
+    if (Date.parse(`${daily[i].d}T21:00:00Z`) <= cut) return priceUsd / daily[i].c - 1;
   }
   return null;
 }
 
-/** The lowest and highest close in the 365 days up to `now` (Muscat dates); null without data. */
-export function yearRange(daily, now) {
+/**
+ * The lowest and highest close in the 365 days up to `now` (Muscat dates); null without data. A price `usd` for
+ * today counts as a day of its own, so today is never outside the range (MG2).
+ */
+export function yearRange(daily, now, usd) {
   const cutoff = muscatDate(+now - 365 * DAY);
   const year = (daily || []).filter((x) => x.d >= cutoff);
   if (!year.length) return null;
   const pick = (better) => year.reduce((a, b) => (better(b.c, a.c) ? b : a));
-  const lo = pick((x, y) => x < y), hi = pick((x, y) => x > y);
+  let lo = pick((x, y) => x < y), hi = pick((x, y) => x > y);
+  if (Number.isFinite(usd)) {
+    const today = { d: muscatDate(+now), c: usd };
+    if (usd < lo.c) lo = today;
+    if (usd > hi.c) hi = today;
+  }
   return { lo: { d: lo.d, c: lo.c }, hi: { d: hi.d, c: hi.c } };
 }
 

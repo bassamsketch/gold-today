@@ -2,6 +2,22 @@
 
 Date: 2026-11-25. Branch: main. Tests: 68 passing (npm test). Code 41 KB compressed (limit 150 KB), fonts 225 KB (limit 350 KB).
 
+## Full QA and fixes (2026-11-26)
+Tests: 123 passing. Offline cache v9. Report with every finding, the Buy & sell rating and recommendations U1-U8: docs/qa-2026-11-26.md.
+- **Same price everywhere:** Today, My gold and the shared image now use the newer of the saved live price and the last close, as Outlook, Buy & sell and the currency sheet already did (`app.best()`).
+- **New York hours:** the market day ends at 17:00 New York time (22:00 UTC in winter), so the weekend status and change line are right all year. A weekend price is called Friday's only if it is from Friday's close. Closes are still recorded at 21:07 UTC.
+- **Figures:** the past week and month compare with the close made on or before that moment, a current fall stays counted until the record is regained, a 24 karat piece counts as a bar (about 1% under its gold value) in My gold as in the price check, the 12-month range includes today, and the offer verdict follows its printed figure.
+- **Buy & sell:** the rate route no longer replaces a typed price, the example empties as soon as a box is tapped, "950,500" is refused rather than guessed, and the messages say what is accepted. The low-offer advice is now a fact.
+- **Robustness:** a malformed news file hides the card instead of stopping the app (a regression from the percentage fix), one tab's error no longer stops the others, and the Outlook shows one message when the history file is missing.
+- **Checks:** a scripted browser run covering normal use, a broken news file, a Saturday with an old price, a missing history file, the add sheet at 360 x 740 and a language switch, with no console errors. Screens were checked by eye at 360 and 390 px, the header at 360, 375 and 390 in both languages, and no tab scrolls sideways.
+
+## Fix: Arabic percentages and a Clear button (2026-11-26)
+Tests: 112 passing. Offline cache v8.
+- **Percentages:** in Arabic, "34%" showed as "%34". After Arabic letters, the Unicode bidi rules treat the digits as Arabic numbers, so the percent sign no longer joins them and drifts to their left. Every Arabic string passes through t(), which now wraps each percentage in a left-to-right isolate (U+2066 to U+2069). The daily news line gets the same treatment. A test fails if any Arabic string leaves a percentage bare. Checked in the browser on all four tabs (33 percentages, none bare), in the shared image, and in English (unchanged).
+- **Clear:** in "Is this a normal price?" and "Is this a normal offer?", "Show an example" becomes "Clear" (مسح) as soon as any box holds a number. Clear empties the boxes and returns to the family's own karat and today's rate. The rate-and-making route stays open if it was open. Checked: the example, typed numbers, numbers deleted by hand, the rate route, Arabic and English.
+- Found and fixed during the check: the first version recomputed the example's price from the rate (849.996 instead of 950.000).
+- docs/arabic-review.md is regenerated (238 strings). The generator now has a sample for the shared image's per-gram unit.
+
 ## Release 2: display currency (2026-11-26)
 Plan: docs/superpowers/plans/2026-11-26-release-2-currency.md. Tests: 107 passing. Offline cache v7.
 - **Currency button** beside the language link (ريال / OMR and so on) opens a sheet of five currencies with today's gram price in each. Choosing one changes every displayed price: Today's price, change line and board, My gold, the Outlook's figures and the shared image. Typed amounts and the shop tools stay in rials; the price check adds one line in the chosen currency. Today shows "Prices in UAE dirhams. Back to rials" while another currency is on.

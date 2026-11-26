@@ -25,6 +25,7 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | editNamed | تعديل أساور | Edit Bangles |
 | todayTitle | سعر الذهب اليوم في عُمان | Gold price today in Oman |
 | perGramNow | سعر جرام الذهب عيار 22 الآن | Price per gram of 22 karat gold, now |
+| perGram | سعر جرام الذهب عيار 22 | Price per gram of 22 karat gold |
 | lastGram | آخر سعر لجرام الذهب عيار 22 | Last price per gram of 22 karat gold |
 | loading | جارٍ جلب السعر | Getting the price |
 | live | مباشر | Live |
@@ -52,7 +53,13 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | boardTitle | لوحة الأسعار | Price board |
 | boardUnit | بالريال العماني | In Omani rials |
 | col1g | 1 جرام | 1 gram |
-| col10g | 10 جرام | 10 grams |
+| col10g | 10 جرامات | 10 grams |
+| listSep | ،  | ,  |
+| gramsOf | 50 جراماً | 50 grams |
+| gainSame | سعر الشراء 300 ريال (مارس 2019)، دون تغيير حتى الآن | Paid 300 rials in March 2019, no change so far |
+| totalSame | دون تغيير منذ الشراء | No change since bought |
+| pastAtToday | المبالغ السابقة، مثل سعر الشراء، محسوبة بسعر صرف اليوم. | Past amounts, such as the price paid, use today's exchange rate. |
+| badWhen | يُرجى اختيار السنة مع الشهر، على ألا يكون بعد الشهر الحالي. | Please choose the year with the month, no later than this month. |
 | colTola | 1 تولة | 1 tola |
 | boardNote | المحلات تبيع المشغولات بسعر أعلى من هذا، لأن أجرة المصنعية وضريبة القيمة المضافة 5% تضافان إليه. | Shops sell jewellery for more than this, because the making charge and 5% VAT are added. |
 | shareToday | مشاركة أسعار اليوم | Share today's prices |
@@ -86,7 +93,7 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | payLessNote | المحلات تدفع عادة أقل قليلاً من قيمة الذهب، والسعر النهائي يحدده المحل. أجرة المصنعية والضريبة لا تُستردّان عادة عند البيع. | Shops usually pay a little under the gold value, and each sets its final price. Making charges and VAT are normally not paid back. |
 | estimateTag | تقدير | estimate |
 | badWeight | يُرجى كتابة وزن بين 0.1 و5,000 جرام. | Please enter a weight between 0.1 and 5,000 grams. |
-| badPrice | تعذّرت قراءة السعر. يُكتب بالأرقام فقط، مثل 350. | Couldn't read the price. Use numbers only, for example 350. |
+| badPrice | تعذّرت قراءة السعر. يُكتب بالأرقام من 1 إلى 1,000,000 ريال، مثل 350.500. | Couldn't read the price. Use numbers from 1 to 1,000,000 rials, for example 350.500. |
 | removeAsk | حذف هذه القطعة؟ لا يمكن التراجع. | Remove this piece? This can't be undone. |
 | removeYes | نعم، احذف | Yes, remove |
 | removeNo | لا | No |
@@ -114,7 +121,7 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | boardIn | بملايين الليرات اللبنانية | In millions of Lebanese pounds |
 | curAria | عملة العرض: درهم إماراتي | undefined: display currency, UAE dirham |
 | curTitle | العملة | Currency |
-| curCap | سعر جرام عيار 22 اليوم بكل عملة | Today's price per gram of 22 karat in each |
+| curCap | سعر جرام عيار 22 اليوم بكل عملة | Today's price per gram of 22 karat in each currency |
 | curShopping | الشراء والبيع والحاسبات بالريال العماني دائماً. | Buying, selling and the calculators always use Omani rials. |
 | curRatesA | الريال والدرهم مربوطان بالدولار. سعر اليورو والليرة بتاريخ 26 نوفمبر 2026 من | The rial and dirham are fixed to the dollar. Euro and pound rates of 26 November 2026, from |
 | curRatesB | ، والأرقام السابقة بسعر صرف اليوم. | . Past figures use today's rate. |
@@ -127,15 +134,18 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | q1 | هل السعر اليوم مرتفع أم منخفض؟ | Is the price high or low today? |
 | belowRecord | أقل بـ 34% من أعلى سعر وصل إليه | 34% below its highest ever |
 | atRecord | عند أعلى سعر وصل إليه | At its highest ever |
+| nearRecord | قريب جداً من أعلى سعر وصل إليه | Very close to its highest ever |
+| noHistory | تعذّر تحميل أسعار السنوات الماضية الآن. تظهر هنا عند الاتصال بالإنترنت. | Past prices could not be loaded just now. They show here once the app is online. |
 | pastWeek | آخر أسبوع: أقل بـ 4% | Past week: down 4% |
 | pastMonth | آخر شهر: أقل بـ 11% | Past month: down 11% |
 | chartRecord | أعلى سعر | Highest |
 | recordRow | أعلى سعر | Highest ever |
-| fallsLine | قبل الهبوط الحالي، هبط الذهب منذ 1971 بـ 20% أو أكثر 5 مرات، وعاد إلى أعلى سعره بعد 6 أشهر و18 شهراً و4 سنوات و9 سنوات و26 سنة. أطول انتظار جاء بعد أعمق هبوط، في 1980. | Before this fall, gold fell 20% or more 5 times since 1971. It got back to its highest after 6 months, 18 months, 4 years, 9 years and 26 years. The longest wait followed the deepest fall, in 1980. |
+| fallsLine | قبل الهبوط الحالي، هبط الذهب منذ 1971 بـ 20% أو أكثر 5 مرات، وعاد إلى أعلى سعره بعد 6 أشهر و18 شهراً و4 سنوات و9 سنوات و26 سنة. أطول انتظار جاء بعد أعمق هبوط، في 1980. | Before this fall, gold had fallen 20% or more 5 times since 1971. It got back to its highest after 6 months, 18 months, 4 years, 9 years and 26 years. The longest wait followed the deepest fall, in 1980. |
 | fallsCap | كل هبوط بـ 20% أو أكثر منذ 1971: | Every fall of 20% or more since 1971: |
 | fallDepth | هبط 21% | down 21% |
 | fallBack | عاد بعد 6 أشهر | back after 6 months |
 | showDetails | عرض التفاصيل | Show details |
+| hideDetails | إخفاء التفاصيل | Hide details |
 | q2 | هل سيرتفع السعر؟ | Will it go up? |
 | noOneKnows | لا أحد يعرف. | No one knows. |
 | q2Sub | هذا ما حدث من قبل، وما تتوقعه البنوك: | Here is what happened before, and what banks expect: |
@@ -150,9 +160,11 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | periodsCap | كل المدد منذ 1971: | Every period since 1971: |
 | periodLabel | 5 سنوات | 5 years |
 | outOf10 | 7 من 10 | 7 in 10 |
-| periodRow | في العادة أعلى بـ 35%، وفي أسوأ حالة أقل بـ 55% | Usually 35% higher. At worst 55% lower. |
+| periodRow | في نصف المرات انتهى أعلى بـ 35% أو أكثر، وأسوأ نتيجة كانت أقل بـ 55% | Half the time it ended 35% higher or more. At worst 55% lower. |
 | overlapNote | الفترات متداخلة، وتبدأ البيانات في 1971 حين صار سعر الذهب حراً بعد أن كان ثابتاً. | The periods overlap, and the data starts in 1971, when gold's price stopped being fixed. |
 | banksCap | البنوك، كما نقلتها وسائل الإعلام: | The banks, as reported in the media: |
+| banksCapOf | توقعات البنوك (نهاية 2027)، ريال للجرام، كما نقلتها وسائل الإعلام: | Bank forecasts (end of 2027), in rials per gram, as reported in the media: |
+| missCap | وفي استطلاع رابطة سوق لندن للسبائك السنوي: | In the London Bullion Market Association's yearly survey: |
 | beforeTitle | قيمة ذهبي من قبل | What my gold was worth before |
 | yearHigh | الأعلى في آخر 12 شهراً | Highest in the last 12 months |
 | yearLow | الأدنى في آخر 12 شهراً | Lowest in the last 12 months |
@@ -169,9 +181,9 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | pieceOpt | مشغولات | Jewellery |
 | barOpt | سبيكة أو عملة | Bar or coin |
 | pcPrice | السعر الكامل الذي يطلبه المحل، مع الضريبة، بالريال | The full price the shop asks, with VAT, in rials |
-| pcAlt | أعطى المحل سعر الجرام والمصنعية بدلاً من ذلك؟ | The shop gave a rate per gram and a making charge instead? |
+| pcAlt | هل أعطى المحل سعر الجرام والمصنعية فقط؟ | Did the shop give only a rate per gram and a making charge? |
 | pcAltNote | يُحسب السعر من سعر الجرام والمصنعية وضريبة 5%. | The price is worked out from the rate, the making charge and 5% VAT. |
-| badShopPrice | يُرجى كتابة السعر بالأرقام، حتى 1,000,000 ريال. | Please enter the price in numbers, up to 1,000,000 rials. |
+| badShopPrice | يُرجى كتابة السعر بالأرقام، أكبر من صفر وحتى 1,000,000 ريال، مثل 950.500. | Please enter the price in numbers, above zero and up to 1,000,000 rials, for example 950.500. |
 | pcGold | ثمن الذهب في القطعة اليوم | The gold in this piece today |
 | pcExtra | يطلب المحل فوق ثمن الذهب | The shop asks on top |
 | pcWhy | أي 17% فوق ثمن الذهب، مقابل المصنعية والضريبة وربح المحل. | That is 17% on top of the gold, for the making, the VAT and the shop's profit. |
@@ -208,18 +220,19 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | shopRate | سعر الجرام في المحل | Shop's rate per gram |
 | shopRateHint | هذا سعر السوق اليوم، ويمكن تغييره ليطابق لوحة المحل | This is today's market rate. Change it to match the shop's board. |
 | badMaking | يُرجى كتابة الأجرة بالأرقام، صفر أو أكثر. | Please enter the making charge in numbers, zero or more. |
-| badRate | يُرجى كتابة سعر الجرام بالأرقام. | Please enter the rate per gram in numbers. |
+| badRate | يُرجى كتابة سعر الجرام بالأرقام، أكبر من صفر، مثل 40.500. | Please enter the rate per gram in numbers, above zero, for example 40.500. |
 | offerTitle | هل هذا العرض معتاد؟ | Is this a normal offer? |
 | vat24 | السبائك والعملات الخالصة معفاة عادة من الضريبة. | Pure gold bars and coins are usually VAT-free. |
 | pcPrompt | تظهر النتيجة بعد كتابة الوزن والسعر | Enter the weight and the price to see the result |
 | offerAmount | المبلغ الذي عرضه المحل بالريال | The shop's offer, in rials |
-| offerValue | قيمة الذهب اليوم 393.213 ريال | Today's gold value: 393.213 rials |
-| offerPrompt | يظهر التقييم بعد كتابة الوزن والمبلغ | Enter the weight and the offer to see how it compares |
-| badOffer | يُرجى كتابة المبلغ بالأرقام. | Please enter the offer in numbers. |
+| offerValue | قيمة الذهب اليوم نحو 809 ريالات | Today's gold value: about 809 rials |
+| staleUse | آخر سعر: الخميس 4:57 م. الأرقام هنا محسوبة به. | Last price: Thursday 4:57 pm. These figures use it. |
+| offerPrompt | تظهر النتيجة بعد كتابة الوزن والمبلغ | Enter the weight and the offer to see the result |
+| badOffer | يُرجى كتابة المبلغ بالأرقام، أكبر من صفر وحتى 1,000,000 ريال، مثل 780.000. | Please enter the offer in numbers, above zero and up to 1,000,000 rials, for example 780.000. |
 | verdictAbove | العرض أعلى من قيمة الذهب اليوم. | The offer is above today's gold value. |
 | verdictClose | العرض قريب جداً من قيمة الذهب. | The offer is very close to the gold value. |
 | verdictUsual | عرض معتاد: المحلات تدفع عادة أقل من قيمة الذهب بـ 2 إلى 6%. | A usual offer: shops normally pay 2 to 6% under the gold value. |
-| verdictLow | العرض أقل من المعتاد. يُستحسن سؤال محل آخر قبل البيع. | Lower than usual. Worth asking another shop before selling. |
+| verdictLow | العرض أقل من المعتاد. المعتاد أن يدفع المحل أقل من قيمة الذهب بـ 2 إلى 6%. | Lower than usual. Shops usually pay 2 to 6% under the gold value. |
 | gapBelow | أقل من قيمة الذهب بـ 4.1% | 4.1% below the gold value |
 | gapAbove | أعلى من قيمة الذهب بـ 1.2% | 1.2% above the gold value |
 | placesTitle | أماكن البيع والشراء في مسقط | Where to buy and sell in Muscat |
@@ -232,7 +245,7 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | stampWhere | يوجد الختم عادة على المشبك أو داخل السوار أو الخاتم. | The stamp is usually on the clasp or inside a bangle or ring. |
 | tipsTitle | نصائح | Tips |
 | tip1 | الاحتفاظ بالفاتورة يساعد على سعر أفضل عند البيع. | Keeping the receipt helps you get a better price when selling. |
-| tip2 | ختم العيار يُثبت عيار الذهب. | The karat stamp proves the gold's karat. |
+| tip2 | ختم العيار يبيّن عيار الذهب. | The karat stamp shows the gold's karat. |
 | tip3 | المقارنة بين محلين قبل البيع قد ترفع العرض. | Comparing two shops before selling can raise the offer. |
 | tip4 | كتابة أي مبلغ يخصمه المحل على الفاتورة تمنع المفاجآت. | Having any deduction written on the receipt avoids surprises. |
 | installTitle | إضافة التطبيق إلى الشاشة الرئيسية | Add it to your home screen |

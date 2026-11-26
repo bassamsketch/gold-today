@@ -1,5 +1,5 @@
 import { buildForecast, surveyComparison } from '../forecast.js';
-import { recordHigh, pastFalls, higherOdds, moveSince, bestPrice, historyWindow, recordX } from '../insights.js';
+import { recordHigh, pastFalls, higherOdds, moveSince, bestPrice, historyWindow, recordX, fallUnderway } from '../insights.js';
 import { yearShareBelow, tierOf } from '../history.js';
 import { dayMonthYear, monthYear, lastPriceText } from '../i18n.js';
 import { drawHistory } from '../ui/chart.js';
@@ -45,13 +45,22 @@ export function mount(app) {
     fallsLine: $('falls-line'), fallsRows: $('falls-rows'), odds2: $('odds2'), worstLine: $('worst-line'), worstText: $('worst-text'),
     banksLine: $('banks-line'), oddsAll: $('odds-all'), missLine: $('miss-line'), bankList: $('bank-list'),
     updated: $('f-updated'), data: $('f-data'), open: $('open-sources'), sheet: $('sources-sheet'), list: $('src-list'), close: $('sources-close'),
+    noData: $('f-nodata'), banksCap: $('banks-cap'), qs: document.querySelectorAll('[data-view=future] .q'),
   };
+  // an open fold says "Hide details" (OL13); data-t keeps the right words through a language switch
+  document.querySelectorAll('[data-view=future] details.more-info').forEach((d) => d.addEventListener('toggle', () => {
+    const s = d.querySelector('summary');
+    s.dataset.t = d.open ? 'hideDetails' : 'showDetails';
+    s.textContent = app.t(s.dataset.t);
+  }));
 
   function renderHighLow(h, bp, g, animate, todayUnit, recordUnit) {
     const lang = app.state.lang, live = bp.usd, at = new Date(bp.at);
     const rec = recordHigh(h, live);
-    const atTop = rec.live || live >= rec.usd * 0.99;
-    el.answer.textContent = atTop ? app.t('atRecord') : app.t('belowRecord', (1 - live / rec.usd) * 100);
+    // "at its highest" only at or above the record; within 1% under it says "very close", beside the record row (OL4)
+    const atTop = rec.live || live >= rec.usd;
+    const near = !atTop && live >= rec.usd * 0.99;
+    el.answer.textContent = atTop ? app.t('atRecord') : near ? app.t('nearRecord') : app.t('belowRecord', (1 - live / rec.usd) * 100);
     // an old saved price says when it is from, and the moves count back from that time (design 6.1)
     el.stale.hidden = !bp.old;
     if (bp.old) el.stale.textContent = lastPriceText(lang, bp.at);
@@ -85,8 +94,7 @@ export function mount(app) {
 
     // every completed fall, and whether one is under way now (the same record as the answer, design 7.1)
     const falls = pastFalls(h.monthly);
-    const depthNow = rec.live ? 0 : 1 - live / rec.usd;
-    const current = depthNow >= 0.2;
+    const current = fallUnderway(h, live, rec); // until the record is regained, not only while today is 20% under (OL2)
     const longest = falls.reduce((a, b) => (!a || b.months > a.months ? b : a), null);
     const deepest = falls.reduce((a, b) => (!a || b.depth > a.depth ? b : a), null);
     el.fallsLine.hidden = !falls.length;
@@ -123,15 +131,17 @@ export function mount(app) {
     const misses = (lb.winners || []).map((w) => app.t('winnerMiss', w.year, (Math.abs(w.actual - w.forecast) / w.actual) * 100, w.forecast < w.actual));
     const sv = surveyComparison(lb, h.daily);
     if (sv) misses.push(app.t('surveyMiss', sv.year, (Math.abs(sv.avg - sv.actual) / sv.actual) * 100, sv.avg > sv.actual));
+    // the misses come from the LBMA's yearly survey, not from the banks listed above them (OL11)
     el.missLine.hidden = !misses.length;
-    el.missLine.textContent = misses.join(' ');
+    el.missLine.textContent = misses.length ? `${app.t('missCap')} ${misses.join(' ')}` : '';
 
+    // each figure is a forecast per gram in the display currency for the shared horizon, named in the caption; no
+    // percentage beside it, which read as a promised gain (OL7)
     const lang = app.state.lang;
+    el.banksCap.textContent = fc?.targets?.length ? app.t('banksCapOf', app.t('targetBy', horizonOf(fc)), app.t('curPerGramFull', app.money.code)) : app.t('banksCap');
     el.bankList.replaceChildren(...[...(fc?.targets || [])].sort((a, b) => a.usd - b.usd).map((x) => {
       const li = make('li');
-      const p = Math.round((x.usd / live - 1) * 100);
-      const pct = make('span', 'bp', `${p >= 0 ? '+' : '−'}${Math.abs(p)}%`);
-      li.append(make('span', null, lang === 'ar' ? x.institutionAr || x.institution : x.institution), make('span', 'num bv', f(x.usd)), pct);
+      li.append(make('span', null, lang === 'ar' ? x.institutionAr || x.institution : x.institution), make('span', 'num bv', f(x.usd)));
       return li;
     }));
     el.open.hidden = !fc?.targets?.length;
@@ -140,6 +150,10 @@ export function mount(app) {
   function render(animate) {
     const h = app.data.history, fc = app.data.forecasts;
     const bp = h ? bestPrice(app.price, h.daily, Date.now()) : null;
+    // without the history file there is nothing to draw: one plain message instead of empty parts (OL6)
+    el.noData.hidden = !(app.dataReady && !bp);
+    el.qs.forEach((s) => { s.hidden = !bp; });
+    el.sub.hidden = el.karats.hidden = !bp;
     if (!bp) return;
     const live = bp.usd;
     const k = app.state.karat, lang = app.state.lang, code = app.money.code;
@@ -157,7 +171,7 @@ export function mount(app) {
 
   function renderSources(fc) {
     const lang = app.state.lang, k = app.state.karat;
-    el.list.replaceChildren(...(fc.targets || []).map((x) => {
+    el.list.replaceChildren(...[...(fc.targets || [])].sort((a, b) => a.usd - b.usd).map((x) => { // the fold's order (OL12)
       const li = make('li');
       const name = make('b', null, lang === 'ar' ? x.institutionAr || x.institution : x.institution);
       // the target for the chosen karat in rials per gram, then the dollar figure it comes from (QA25)

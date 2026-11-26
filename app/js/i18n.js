@@ -80,6 +80,7 @@ const ar = {
 
   todayTitle: 'سعر الذهب اليوم في عُمان',
   perGramNow: (k) => `سعر جرام الذهب عيار ${k} الآن`,
+  perGram: (k) => `سعر جرام الذهب عيار ${k}`,
   lastGram: (k) => `آخر سعر لجرام الذهب عيار ${k}`,
   loading: 'جارٍ جلب السعر',
   live: 'مباشر',
@@ -107,7 +108,13 @@ const ar = {
   boardTitle: 'لوحة الأسعار',
   boardUnit: 'بالريال العماني',
   col1g: '1 جرام',
-  col10g: '10 جرام',
+  col10g: '10 جرامات',
+  listSep: '، ',
+  gramsOf: (shown, n) => `${shown} ${Number.isInteger(n) ? nounAr(n, 'جرامات', 'جراماً', 'جرام') : 'جرام'}`,
+  gainSame: (bp, when, code) => `سعر الشراء ${moneyAr(bp, code)}${when ? ` (${when})` : ''}، دون تغيير حتى الآن`,
+  totalSame: 'دون تغيير منذ الشراء',
+  pastAtToday: 'المبالغ السابقة، مثل سعر الشراء، محسوبة بسعر صرف اليوم.',
+  badWhen: 'يُرجى اختيار السنة مع الشهر، على ألا يكون بعد الشهر الحالي.',
   colTola: '1 تولة',
   boardNote: 'المحلات تبيع المشغولات بسعر أعلى من هذا، لأن أجرة المصنعية وضريبة القيمة المضافة 5% تضافان إليه.',
   shareToday: 'مشاركة أسعار اليوم',
@@ -142,7 +149,7 @@ const ar = {
   payLessNote: 'المحلات تدفع عادة أقل قليلاً من قيمة الذهب، والسعر النهائي يحدده المحل. أجرة المصنعية والضريبة لا تُستردّان عادة عند البيع.',
   estimateTag: 'تقدير',
   badWeight: 'يُرجى كتابة وزن بين 0.1 و5,000 جرام.',
-  badPrice: 'تعذّرت قراءة السعر. يُكتب بالأرقام فقط، مثل 350.',
+  badPrice: 'تعذّرت قراءة السعر. يُكتب بالأرقام من 1 إلى 1,000,000 ريال، مثل 350.500.',
   removeAsk: 'حذف هذه القطعة؟ لا يمكن التراجع.',
   removeYes: 'نعم، احذف',
   removeNo: 'لا',
@@ -150,7 +157,7 @@ const ar = {
   storageHow: 'كيف؟',
   shareList: 'مشاركة قائمتي',
   listTitle: 'قائمة ذهبي',
-  listPaid: (v, when) => `سعر الشراء ${rialsAr(v)}${when ? ` (${when})` : ''}`,
+  listPaid: (v, when) => `سعر الشراء ${Number.isInteger(v) ? rialsAr(v) : `${formatNum(v, 3)} ريال`}${when ? ` (${when})` : ''}`,
 
   outlook: 'توقعات سعر الذهب',
   todayRow: 'اليوم',
@@ -187,6 +194,8 @@ const ar = {
   q1: 'هل السعر اليوم مرتفع أم منخفض؟',
   belowRecord: (p) => `أقل بـ ${up(p)}% من أعلى سعر وصل إليه`,
   atRecord: 'عند أعلى سعر وصل إليه',
+  nearRecord: 'قريب جداً من أعلى سعر وصل إليه',
+  noHistory: 'تعذّر تحميل أسعار السنوات الماضية الآن. تظهر هنا عند الاتصال بالإنترنت.',
   pastWeek: (p) => `آخر أسبوع: ${Math.round(p) === 0 ? 'دون تغيير' : `${p < 0 ? 'أقل' : 'أعلى'} بـ ${up(p)}%`}`,
   pastMonth: (p) => `آخر شهر: ${Math.round(p) === 0 ? 'دون تغيير' : `${p < 0 ? 'أقل' : 'أعلى'} بـ ${up(p)}%`}`,
   chartRecord: 'أعلى سعر',
@@ -196,6 +205,7 @@ const ar = {
   fallDepth: (p) => `هبط ${up(p)}%`,
   fallBack: (months) => `عاد بعد ${durationText('ar', months)}`,
   showDetails: 'عرض التفاصيل',
+  hideDetails: 'إخفاء التفاصيل',
   q2: 'هل سيرتفع السعر؟',
   noOneKnows: 'لا أحد يعرف.',
   q2Sub: 'هذا ما حدث من قبل، وما تتوقعه البنوك:',
@@ -210,9 +220,11 @@ const ar = {
   periodsCap: 'كل المدد منذ 1971:',
   periodLabel: (n) => (n === 1 ? 'سنة' : `${n} ${nounAr(n, 'سنوات', 'سنة', 'سنة')}`),
   outOf10: (k) => `${k} من 10`,
-  periodRow: (typical, worst) => `في العادة ${typical >= 0 ? 'أعلى' : 'أقل'} بـ ${up(typical)}%، وفي أسوأ حالة ${worst < 0 ? 'أقل' : 'أعلى'} بـ ${up(worst)}%`,
+  periodRow: (typical, worst) => `في نصف المرات انتهى ${typical >= 0 ? 'أعلى' : 'أقل'} بـ ${up(typical)}% أو أكثر، وأسوأ نتيجة كانت ${worst < 0 ? 'أقل' : 'أعلى'} بـ ${up(worst)}%`,
   overlapNote: 'الفترات متداخلة، وتبدأ البيانات في 1971 حين صار سعر الذهب حراً بعد أن كان ثابتاً.',
   banksCap: 'البنوك، كما نقلتها وسائل الإعلام:',
+  banksCapOf: (horizon, unit) => `توقعات البنوك (${horizon})، ${unit}، كما نقلتها وسائل الإعلام:`,
+  missCap: 'وفي استطلاع رابطة سوق لندن للسبائك السنوي:',
 
   // My gold before (design 8)
   beforeTitle: 'قيمة ذهبي من قبل',
@@ -233,9 +245,9 @@ const ar = {
   pieceOpt: 'مشغولات',
   barOpt: 'سبيكة أو عملة',
   pcPrice: 'السعر الكامل الذي يطلبه المحل، مع الضريبة، بالريال',
-  pcAlt: 'أعطى المحل سعر الجرام والمصنعية بدلاً من ذلك؟',
+  pcAlt: 'هل أعطى المحل سعر الجرام والمصنعية فقط؟',
   pcAltNote: 'يُحسب السعر من سعر الجرام والمصنعية وضريبة 5%.',
-  badShopPrice: 'يُرجى كتابة السعر بالأرقام، حتى 1,000,000 ريال.',
+  badShopPrice: 'يُرجى كتابة السعر بالأرقام، أكبر من صفر وحتى 1,000,000 ريال، مثل 950.500.',
   pcGold: 'ثمن الذهب في القطعة اليوم',
   pcExtra: 'يطلب المحل فوق ثمن الذهب',
   pcWhy: (p) => `أي ${up(p)}% فوق ثمن الذهب، مقابل المصنعية والضريبة وربح المحل.`,
@@ -260,7 +272,7 @@ const ar = {
   jbTitle: 'مشغولات أم سبيكة؟',
   jbIntro: (code = 'OMR') => `لكل 100 ${code === 'LBP' ? 'ليرة' : CUR_AR[code][2]} تُدفع، يعيد المحل في اليوم نفسه نحو:`,
   jbBar: 'سبيكة صغيرة عيار 24:',
-  jbPiece: (mk, plain) => `قطعة ${plain ? 'بسيطة' : 'مشغولة'}، مصنعية ${mk} ${nounAr(mk, 'ريالات', 'ريالاً', 'ريال')} للجرام:`,
+  jbPiece: (mk, plain) => `قطعة ${plain ? 'بسيطة' : 'بتصميم دقيق'}، مصنعية ${mk} ${nounAr(mk, 'ريالات', 'ريالاً', 'ريال')} للجرام:`,
   jbTo: 'إلى',
   jbDiff: 'الفرق هو المصنعية والضريبة، ولا يعيدهما المحل عند البيع. لذلك تحتاج المشغولات ارتفاعاً أكبر في سعر الذهب قبل أن تعيد ما دُفع.',
   jbOnlyMoney: 'هذا يحسب المال الذي يعود فقط، ولا يحسب لبس القطعة أو إهداءها.',
@@ -273,18 +285,19 @@ const ar = {
   shopRate: 'سعر الجرام في المحل',
   shopRateHint: 'هذا سعر السوق اليوم، ويمكن تغييره ليطابق لوحة المحل',
   badMaking: 'يُرجى كتابة الأجرة بالأرقام، صفر أو أكثر.',
-  badRate: 'يُرجى كتابة سعر الجرام بالأرقام.',
+  badRate: 'يُرجى كتابة سعر الجرام بالأرقام، أكبر من صفر، مثل 40.500.',
   offerTitle: 'هل هذا العرض معتاد؟',
   vat24: 'السبائك والعملات الخالصة معفاة عادة من الضريبة.',
   pcPrompt: 'تظهر النتيجة بعد كتابة الوزن والسعر',
   offerAmount: 'المبلغ الذي عرضه المحل بالريال',
-  offerValue: (v) => `قيمة الذهب اليوم ${v} ريال`,
-  offerPrompt: 'يظهر التقييم بعد كتابة الوزن والمبلغ',
-  badOffer: 'يُرجى كتابة المبلغ بالأرقام.',
+  offerValue: (v) => `قيمة الذهب اليوم نحو ${rialsAr(v)}`,
+  staleUse: (last) => `${last}. الأرقام هنا محسوبة به.`,
+  offerPrompt: 'تظهر النتيجة بعد كتابة الوزن والمبلغ',
+  badOffer: 'يُرجى كتابة المبلغ بالأرقام، أكبر من صفر وحتى 1,000,000 ريال، مثل 780.000.',
   verdictAbove: 'العرض أعلى من قيمة الذهب اليوم.',
   verdictClose: 'العرض قريب جداً من قيمة الذهب.',
   verdictUsual: 'عرض معتاد: المحلات تدفع عادة أقل من قيمة الذهب بـ 2 إلى 6%.',
-  verdictLow: 'العرض أقل من المعتاد. يُستحسن سؤال محل آخر قبل البيع.',
+  verdictLow: 'العرض أقل من المعتاد. المعتاد أن يدفع المحل أقل من قيمة الذهب بـ 2 إلى 6%.',
   gapBelow: (p) => `أقل من قيمة الذهب بـ ${p}%`,
   gapAbove: (p) => `أعلى من قيمة الذهب بـ ${p}%`,
   placesTitle: 'أماكن البيع والشراء في مسقط',
@@ -297,7 +310,7 @@ const ar = {
   stampWhere: 'يوجد الختم عادة على المشبك أو داخل السوار أو الخاتم.',
   tipsTitle: 'نصائح',
   tip1: 'الاحتفاظ بالفاتورة يساعد على سعر أفضل عند البيع.',
-  tip2: 'ختم العيار يُثبت عيار الذهب.',
+  tip2: 'ختم العيار يبيّن عيار الذهب.',
   tip3: 'المقارنة بين محلين قبل البيع قد ترفع العرض.',
   tip4: 'كتابة أي مبلغ يخصمه المحل على الفاتورة تمنع المفاجآت.',
 
@@ -334,6 +347,7 @@ const en = {
 
   todayTitle: 'Gold price today in Oman',
   perGramNow: (k) => `Price per gram of ${k} karat gold, now`,
+  perGram: (k) => `Price per gram of ${k} karat gold`,
   lastGram: (k) => `Last price per gram of ${k} karat gold`,
   loading: 'Getting the price',
   live: 'Live',
@@ -362,6 +376,12 @@ const en = {
   boardUnit: 'In Omani rials',
   col1g: '1 gram',
   col10g: '10 grams',
+  listSep: ', ',
+  gramsOf: (shown, n) => `${shown} ${n === 1 ? 'gram' : 'grams'}`,
+  gainSame: (bp, when, code) => `Paid ${moneyEn(bp, code)}${when ? ` in ${when}` : ''}, no change so far`,
+  totalSame: 'No change since bought',
+  pastAtToday: "Past amounts, such as the price paid, use today's exchange rate.",
+  badWhen: 'Please choose the year with the month, no later than this month.',
   colTola: '1 tola',
   boardNote: 'Shops sell jewellery for more than this, because the making charge and 5% VAT are added.',
   shareToday: "Share today's prices",
@@ -396,7 +416,7 @@ const en = {
   payLessNote: 'Shops usually pay a little under the gold value, and each sets its final price. Making charges and VAT are normally not paid back.',
   estimateTag: 'estimate',
   badWeight: 'Please enter a weight between 0.1 and 5,000 grams.',
-  badPrice: "Couldn't read the price. Use numbers only, for example 350.",
+  badPrice: "Couldn't read the price. Use numbers from 1 to 1,000,000 rials, for example 350.500.",
   removeAsk: "Remove this piece? This can't be undone.",
   removeYes: 'Yes, remove',
   removeNo: 'No',
@@ -404,7 +424,7 @@ const en = {
   storageHow: 'How?',
   shareList: 'Share my list',
   listTitle: 'My gold list',
-  listPaid: (v, when) => `paid ${rialsEn(v)}${when ? ` in ${when}` : ''}`,
+  listPaid: (v, when) => `paid ${Number.isInteger(v) ? rialsEn(v) : `${formatNum(v, 3)} rials`}${when ? ` in ${when}` : ''}`,
 
   outlook: 'Gold price outlook',
   todayRow: 'Today',
@@ -426,7 +446,7 @@ const en = {
   boardIn: (code) => ({ OMR: 'In Omani rials', AED: 'In UAE dirhams', USD: 'In US dollars', EUR: 'In euros', LBP: 'In millions of Lebanese pounds' })[code],
   curAria: (name, short) => `${short}: display currency, ${name}`,
   curTitle: 'Currency',
-  curCap: (k) => `Today's price per gram of ${k} karat in each`,
+  curCap: (k) => `Today's price per gram of ${k} karat in each currency`,
   curShopping: 'Buying, selling and the calculators always use Omani rials.',
   curRatesA: (d) => `The rial and dirham are fixed to the dollar. Euro and pound rates of ${d}, from`,
   curRatesB: ". Past figures use today's rate.",
@@ -441,15 +461,18 @@ const en = {
   q1: 'Is the price high or low today?',
   belowRecord: (p) => `${up(p)}% below its highest ever`,
   atRecord: 'At its highest ever',
+  nearRecord: 'Very close to its highest ever',
+  noHistory: 'Past prices could not be loaded just now. They show here once the app is online.',
   pastWeek: (p) => `Past week: ${Math.round(p) === 0 ? 'no change' : `${p < 0 ? 'down' : 'up'} ${up(p)}%`}`,
   pastMonth: (p) => `Past month: ${Math.round(p) === 0 ? 'no change' : `${p < 0 ? 'down' : 'up'} ${up(p)}%`}`,
   chartRecord: 'Highest',
   recordRow: 'Highest ever',
-  fallsLine: (months, current, longestYear) => `${current ? 'Before this fall, gold' : 'Gold'} fell 20% or more ${months.length === 1 ? 'once' : `${months.length} times`} since 1971. It got back to its highest after ${listEn(sortedDurations('en', months))}.${longestYear ? ` The longest wait followed the deepest fall, in ${longestYear}.` : ''}`,
+  fallsLine: (months, current, longestYear) => `${current ? 'Before this fall, gold had' : 'Gold has'} fallen 20% or more ${months.length === 1 ? 'once' : `${months.length} times`} since 1971. It got back to its highest after ${listEn(sortedDurations('en', months))}.${longestYear ? ` The longest wait followed the deepest fall, in ${longestYear}.` : ''}`,
   fallsCap: 'Every fall of 20% or more since 1971:',
   fallDepth: (p) => `down ${up(p)}%`,
   fallBack: (months) => `back after ${durationText('en', months)}`,
   showDetails: 'Show details',
+  hideDetails: 'Hide details',
   q2: 'Will it go up?',
   noOneKnows: 'No one knows.',
   q2Sub: 'Here is what happened before, and what banks expect:',
@@ -464,9 +487,11 @@ const en = {
   periodsCap: 'Every period since 1971:',
   periodLabel: (n) => `${n} ${n === 1 ? 'year' : 'years'}`,
   outOf10: (k) => `${k} in 10`,
-  periodRow: (typical, worst) => `Usually ${up(typical)}% ${typical >= 0 ? 'higher' : 'lower'}. At worst ${up(worst)}% ${worst < 0 ? 'lower' : 'higher'}.`,
+  periodRow: (typical, worst) => `Half the time it ended ${up(typical)}% ${typical >= 0 ? 'higher' : 'lower'} or more. At worst ${up(worst)}% ${worst < 0 ? 'lower' : 'higher'}.`,
   overlapNote: "The periods overlap, and the data starts in 1971, when gold's price stopped being fixed.",
   banksCap: 'The banks, as reported in the media:',
+  banksCapOf: (horizon, unit) => `Bank forecasts (${horizon}), in ${unit}, as reported in the media:`,
+  missCap: "In the London Bullion Market Association's yearly survey:",
 
   // My gold before (design 8)
   beforeTitle: 'What my gold was worth before',
@@ -487,9 +512,9 @@ const en = {
   pieceOpt: 'Jewellery',
   barOpt: 'Bar or coin',
   pcPrice: 'The full price the shop asks, with VAT, in rials',
-  pcAlt: 'The shop gave a rate per gram and a making charge instead?',
+  pcAlt: 'Did the shop give only a rate per gram and a making charge?',
   pcAltNote: 'The price is worked out from the rate, the making charge and 5% VAT.',
-  badShopPrice: 'Please enter the price in numbers, up to 1,000,000 rials.',
+  badShopPrice: 'Please enter the price in numbers, above zero and up to 1,000,000 rials, for example 950.500.',
   pcGold: 'The gold in this piece today',
   pcExtra: 'The shop asks on top',
   pcWhy: (p) => `That is ${up(p)}% on top of the gold, for the making, the VAT and the shop's profit.`,
@@ -527,18 +552,19 @@ const en = {
   shopRate: "Shop's rate per gram",
   shopRateHint: "This is today's market rate. Change it to match the shop's board.",
   badMaking: 'Please enter the making charge in numbers, zero or more.',
-  badRate: 'Please enter the rate per gram in numbers.',
+  badRate: 'Please enter the rate per gram in numbers, above zero, for example 40.500.',
   offerTitle: 'Is this a normal offer?',
   vat24: 'Pure gold bars and coins are usually VAT-free.',
   pcPrompt: 'Enter the weight and the price to see the result',
   offerAmount: "The shop's offer, in rials",
-  offerValue: (v) => `Today's gold value: ${v} rials`,
-  offerPrompt: 'Enter the weight and the offer to see how it compares',
-  badOffer: 'Please enter the offer in numbers.',
+  offerValue: (v) => `Today's gold value: about ${rialsEn(v)}`,
+  staleUse: (last) => `${last}. These figures use it.`,
+  offerPrompt: 'Enter the weight and the offer to see the result',
+  badOffer: 'Please enter the offer in numbers, above zero and up to 1,000,000 rials, for example 780.000.',
   verdictAbove: "The offer is above today's gold value.",
   verdictClose: 'The offer is very close to the gold value.',
   verdictUsual: 'A usual offer: shops normally pay 2 to 6% under the gold value.',
-  verdictLow: 'Lower than usual. Worth asking another shop before selling.',
+  verdictLow: 'Lower than usual. Shops usually pay 2 to 6% under the gold value.',
   gapBelow: (p) => `${p}% below the gold value`,
   gapAbove: (p) => `${p}% above the gold value`,
   placesTitle: 'Where to buy and sell in Muscat',
@@ -551,7 +577,7 @@ const en = {
   stampWhere: 'The stamp is usually on the clasp or inside a bangle or ring.',
   tipsTitle: 'Tips',
   tip1: 'Keeping the receipt helps you get a better price when selling.',
-  tip2: "The karat stamp proves the gold's karat.",
+  tip2: "The karat stamp shows the gold's karat.",
   tip3: 'Comparing two shops before selling can raise the offer.',
   tip4: 'Having any deduction written on the receipt avoids surprises.',
 
@@ -572,6 +598,13 @@ export const STRINGS = { ar, en };
 // so the sign drifts to their left. A left-to-right isolate around each percentage keeps "34%" (owner, 2026-11-26).
 const LRI = String.fromCharCode(0x2066), PDI = String.fromCharCode(0x2069);
 export const isolatePct = (s) => s.replace(/[+−-]?[0-9][0-9.,]*%/g, (m) => `${LRI}${m}${PDI}`);
+
+/** The daily news line (app/data/why.json) in the chosen language, or null when the file holds no usable text (TD4). */
+export function newsText(w, lang) {
+  const s = w?.[lang === 'ar' ? 'ar' : 'en'];
+  if (typeof s !== 'string' || !s.trim()) return null;
+  return lang === 'ar' ? isolatePct(s) : s;
+}
 
 export function t(lang, key, ...args) {
   const v = (STRINGS[lang] || en)[key] ?? en[key];
@@ -649,7 +682,9 @@ export function dayMonth(lang, ymd) {
 }
 
 /** "أمس" / "yesterday", or the weekday of a close: "يوم الجمعة" / "on Friday". */
-export function closeDay(lang, ymd, yesterday) {
+export function closeDay(lang, ymd, yesterday, now = Date.now()) {
   if (yesterday) return t(lang, 'yesterday');
+  // a weekday name means this week; an older close is named by its date (TD5)
+  if (now - Date.parse(`${ymd}T12:00:00Z`) >= 6 * 864e5) return t(lang, 'onDay', dayMonth(lang, ymd));
   return t(lang, 'onDay', (WEEKDAYS[lang] || WEEKDAYS.en)[new Date(`${ymd}T12:00:00Z`).getUTCDay()]);
 }

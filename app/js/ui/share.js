@@ -103,10 +103,11 @@ export function shareText(lang, usd, date, url, code = 'OMR', rates = null) {
 
 /** Share today's prices: image + text where supported, else text, else WhatsApp. */
 export async function shareToday(app) {
-  const usd = app.price.usd;
+  const b = app.best(); // the price Today shows (TD3)
+  const usd = b?.usd;
   if (!Number.isFinite(usd)) return 'cancelled';
   // stamp the price's own time, so a weekend or delayed price is not shown as current (QA23)
-  const lang = app.state.lang, date = new Date(app.price.updatedAt ?? Date.now()), url = location.origin + location.pathname;
+  const lang = app.state.lang, date = new Date(Number.isFinite(b.at) ? b.at : Date.now()), url = location.origin + location.pathname;
   const code = app.money.code, rates = app.data.rates;
   const text = shareText(lang, usd, date, url, code, rates);
   try {
@@ -148,7 +149,8 @@ export function mount(app) {
   const buttons = ['share', 'share-today'].map((id) => document.getElementById(id)).filter(Boolean);
   buttons.forEach((b) => b.addEventListener('click', () => shareToday(app)));
   // nothing to share until a price is known (QA23)
-  const sync = () => buttons.forEach((b) => { b.hidden = !Number.isFinite(app.price.usd); });
+  const sync = () => buttons.forEach((b) => { b.hidden = !Number.isFinite(app.best()?.usd); });
   app.on('price', sync);
+  app.on('data', sync); // the last close can stand in for a missing live price
   sync();
 }

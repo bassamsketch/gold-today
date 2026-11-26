@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { validatePiece, sellEstimate, pieceGain, totalGain } from '../app/js/gold.js';
+import { validatePiece, sellEstimate, pieceGain, totalGain, okPaid, okBoughtYm } from '../app/js/gold.js';
+import { gramPrice } from '../app/js/price.js';
 
 const piece = (o) => ({ id: 'a', name: '', grams: 100, karat: 21, boughtPrice: null, boughtYm: null, ...o });
 
@@ -46,4 +47,24 @@ test('a purchase date may be a year alone', () => {
   assert.equal(validatePiece({ grams: 10, karat: 21, boughtYm: '2019' }).boughtYm, '2019');
   assert.equal(validatePiece({ grams: 10, karat: 21, boughtYm: '2019-03' }).boughtYm, '2019-03');
   assert.equal(validatePiece({ grams: 10, karat: 21, boughtYm: '2019-13' }).boughtYm, null);
+});
+
+test('24 karat counts as a bar or coin: shops pay about 1% under, as in the price check (MG3)', () => {
+  const usd = 3574, value = (k) => 10 * gramPrice(usd, k);
+  const bar = sellEstimate([piece({ grams: 10, karat: 24 })], usd);
+  assert.ok(Math.abs(bar.mid - value(24) * 0.99) < 1e-9);
+  assert.ok(bar.low < bar.mid && bar.mid < bar.high);
+  const ring = sellEstimate([piece({ grams: 10, karat: 22 })], usd);
+  assert.ok(Math.abs(ring.mid - value(22) * 0.96) < 1e-9);
+});
+
+test('a price paid must be 1 to 1,000,000 rials, and a month bought not after this month (MG7, MG9)', () => {
+  assert.equal(okPaid(0.001), false);
+  assert.equal(okPaid(999999999999), false);
+  assert.equal(okPaid(350.5), true);
+  const now = new Date('2026-11-26T10:00:00Z');
+  assert.equal(okBoughtYm(null, now), true);
+  assert.equal(okBoughtYm('2026', now), true);
+  assert.equal(okBoughtYm('2026-11', now), true);
+  assert.equal(okBoughtYm('2026-12', now), false);
 });

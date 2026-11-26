@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { parseNumber, pieceCost, offerCheck, priceCheck, jewelleryVsBar } from '../app/js/calc.js';
+import { gramPrice } from '../app/js/price.js';
 
 const near = (a, b, tol = 0.05) => Math.abs(a - b) <= tol;
 const pct = (x) => Math.round(x * 100);
@@ -74,7 +75,7 @@ test('jewelleryVsBar gives what a shop pays back per 100 paid', () => {
 test('parseNumber reads Arabic digits and both decimal styles', () => {
   assert.equal(parseNumber('٣٫٥'), 3.5);
   assert.equal(parseNumber('3,5'), 3.5);
-  assert.equal(parseNumber('1,200'), 1200);
+  assert.equal(parseNumber('1,200,000'), 1200000);
   assert.equal(parseNumber('1,200.5'), 1200.5);
   assert.equal(parseNumber('۱۲'), 12);
   assert.equal(parseNumber(' 12 '), 12);
@@ -108,4 +109,30 @@ test('extreme inputs return null instead of NaN', () => {
   assert.equal(offerCheck({ grams: 10, karat: 22, offer: 0 }, 3470), null);
   assert.equal(offerCheck({ grams: null, karat: 22, offer: 100 }, 3470), null);
   assert.ok(pieceCost({ grams: 5000, karat: 24, rate: null, making: 100, mode: 'percent' }, 3470).total > 0);
+});
+
+test('a comma with three digits after it is ambiguous (thousands or baisa), so it is not guessed (BS5)', () => {
+  assert.equal(parseNumber('950,500'), null);
+  assert.equal(parseNumber('1,200'), null);
+  assert.equal(parseNumber('950،500'), null); // the Arabic comma
+  assert.equal(parseNumber('٣،٥'), 3.5);
+  assert.equal(parseNumber('950,5'), 950.5);
+  assert.equal(parseNumber('١٬٢٠٠'), 1200); // the Arabic thousands separator is never a decimal point
+  assert.equal(parseNumber('1,200.500'), 1200.5);
+});
+
+test('the offer verdict is judged on the figure the page prints, one decimal (BS3)', () => {
+  const value = 20 * gramPrice(3574, 22);
+  const at = (gap) => offerCheck({ grams: 20, karat: 22, offer: value * (1 - gap) }, 3574);
+  assert.equal(at(0.06049).verdict, 'usual'); // prints 6.0%, inside "2 to 6%"
+  assert.equal(at(0.06049).gapPct, 6);
+  assert.equal(at(0.0606).verdict, 'low');
+  assert.equal(at(-0.0004).verdict, 'close'); // prints 0.0%, not "above"
+  assert.equal(Object.is(at(-0.0004).gapPct, -0), false);
+});
+
+test('weights start at 0.1 gram and offers stop at 1,000,000 rials, as the messages say (BS7)', () => {
+  assert.equal(offerCheck({ grams: 0.05, karat: 22, offer: 10 }, 3574), null);
+  assert.equal(offerCheck({ grams: 10, karat: 22, offer: 99999999999 }, 3574), null);
+  assert.equal(priceCheck({ grams: 0.05, karat: 22, price: 10 }, 3574), null);
 });

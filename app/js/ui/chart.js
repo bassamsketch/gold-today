@@ -40,10 +40,12 @@ export function drawHistory(svg, { past, today, record, words, values }, animate
     rec[2].textContent = values.record;
   }
 
-  const ty = Y(today);
+  // today's label goes on the side the line does not come from, so a rising line never crosses it (OL5)
+  const ty = Y(today), fromBelow = Y(series[series.length - 2] ?? today) > ty;
+  const above = fromBelow && ty > 46;
   put(q('.f-now'), { cx: XT, cy: ty });
-  put(q('.f-now-w'), { x: XT - 4, y: ty + 22 });
-  put(q('.f-now-v'), { x: XT - 4, y: ty + 37 });
+  put(q('.f-now-w'), { x: XT - 4, y: above ? ty - 28 : ty + 22 });
+  put(q('.f-now-v'), { x: XT - 4, y: above ? ty - 11 : ty + 38 });
   q('.f-now-w').textContent = words.today;
   q('.f-now-v').textContent = values.today;
   const start = q('.f-l0');

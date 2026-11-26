@@ -44,6 +44,8 @@ test('the change line compares with the close before the price, and says when th
   const daily = [{ d: '2026-11-26', c: 3500 }, { d: '2026-11-27', c: 3450 }, { d: '2026-11-30', c: 3470 }];
   // Saturday: Friday's last price against Thursday's close, which was not yesterday
   assert.deepEqual(compareClose(daily, Date.parse('2026-11-27T20:59:00Z'), muscat('2026-11-28T10:00:00Z')), { d: '2026-11-26', c: 3500, yesterday: false });
+  // winter: Friday trades until 22:00 UTC, so its last price at 21:59 is still Friday's, against Thursday (TD2)
+  assert.deepEqual(compareClose(daily, Date.parse('2026-11-27T21:59:00Z'), muscat('2026-11-29T10:00:00Z')), { d: '2026-11-26', c: 3500, yesterday: false });
   // Monday: the live price against Friday's close
   assert.deepEqual(compareClose(daily.slice(0, 2), muscat('2026-11-30T10:00:00Z'), muscat('2026-11-30T10:00:00Z')), { d: '2026-11-27', c: 3450, yesterday: false });
   // Tuesday: against Monday's close, yesterday
