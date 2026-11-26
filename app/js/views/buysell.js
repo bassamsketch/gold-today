@@ -7,10 +7,8 @@ import { syncKarats, setKaratText } from '../ui/karats.js';
 const $ = (id) => document.getElementById(id);
 const PIN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>';
 const VERDICT = { above: 'verdictAbove', close: 'verdictClose', usual: 'verdictUsual', low: 'verdictLow' };
-const SCALE = 0.35; // the price-check track runs from no extra to 35% over the gold value
 const okGrams = (g) => Number.isFinite(g) && g >= 0.1 && g <= 5000; // as the weight message says (BS7)
 const blank = (input) => input.value.trim() === '';
-const pctOf = (x) => `${Math.max(0, Math.min(100, (x / SCALE) * 100)).toFixed(1)}%`;
 
 /** The example button clears instead once any box holds a number (owner, 2026-11-26). Returns its text key. */
 export const tryKey = (...values) => (values.some((v) => v.trim() !== '') ? 'clearFields' : 'showExample');
@@ -26,12 +24,12 @@ export function mount(app) {
     altNote: $('pc-alt-note'), altVat24: $('pc-alt-vat24'), stale: $('pc-stale'),
     rate: $('cost-rate'), rateHint: $('cost-rate-hint'), rateErr: $('cost-rate-err'), mode: $('cost-mode'), making: $('cost-making'), makingErr: $('cost-making-err'),
     result: $('pc-result'), gold: $('pc-gold'), goldU: $('pc-gold-u'), over: $('pc-over'), extra: $('pc-extra'), extraU: $('pc-extra-u'),
-    why: $('pc-why'), usual: $('pc-usual'), dot: $('pc-dot'), verdict: $('pc-verdict'), range: $('pc-range'), basis: $('pc-basis'),
-    under: $('pc-under'), back: $('pc-back'), backU: $('pc-back-u'), per100: $('pc-per100'), target: $('pc-target'),
+    why: $('pc-why'), verdict: $('pc-verdict'), range: $('pc-range'), basis: $('pc-basis'), more: $('pc-more'),
+    back: $('pc-back'), backU: $('pc-back-u'), per100: $('pc-per100'),
     pcPrompt: $('pc-prompt'), pcNoPrice: $('pc-noprice'),
     ocExample: $('oc-example'), offerGrams: $('offer-grams'), offerGramsErr: $('offer-grams-err'), offerKarats: $('offer-karats'),
     offerAmount: $('offer-amount'), offerAmountErr: $('offer-amount-err'), offerResult: $('offer-result'), verdictO: $('offer-verdict'),
-    gap: $('offer-gap'), value: $('offer-value'), offerPrompt: $('offer-prompt'), offerNoPrice: $('offer-noprice'), offerStale: $('offer-stale'),
+    offerMoney: $('offer-money'), offerPrompt: $('offer-prompt'), offerNoPrice: $('offer-noprice'), offerStale: $('offer-stale'),
     jbRows: $('jb-rows'), jbIntro: $('jb-intro'), conv: $('pc-conv'), places: $('places'),
   };
   let pcK = app.state.karat;
@@ -109,18 +107,15 @@ export function mount(app) {
     el.pcPrompt.hidden = ready || gramsBad || priceBad;
     el.pcNoPrice.hidden = !(ready && usd == null);
     if (!r) return;
-    money(el.gold, el.goldU, r.gold);
+    // the answer first, then the gold, the shop's extra and what a shop pays back; the reasons fold away (U1)
     const under = r.position === 'under';
-    el.over.hidden = under;
-    el.under.hidden = !under;
+    const word = { within: 'Within', below: 'Below', above: 'Above' }[r.position];
+    el.verdict.textContent = under ? app.t('pcUnder') : app.t(r.bar ? `pcBar${word}` : `pc${word}`);
+    money(el.gold, el.goldU, r.gold);
+    el.over.hidden = el.more.hidden = under;
     if (!under) {
       money(el.extra, el.extraU, r.extra);
       el.why.textContent = app.t(r.bar ? 'pcWhyBar' : 'pcWhy', r.extraPct * 100);
-      el.usual.style.insetInlineStart = pctOf(r.band[0]);
-      el.usual.style.width = `calc(${pctOf(r.band[1])} - ${pctOf(r.band[0])})`;
-      el.dot.style.insetInlineStart = pctOf(r.extraPct);
-      const word = { within: 'Within', below: 'Below', above: 'Above' }[r.position];
-      el.verdict.textContent = app.t(r.bar ? `pcBar${word}` : `pc${word}`);
       el.range.textContent = app.t('pcRange', r.band[0] * 100, r.band[1] * 100);
       el.basis.textContent = app.t(r.bar ? 'pcBarBasis' : 'pcBasis');
     }
@@ -137,8 +132,6 @@ export function mount(app) {
     const bp = price();
     el.stale.hidden = !bp?.old; // right under the gold figure it qualifies (BS12)
     if (bp?.old) el.stale.textContent = app.t('staleUse', lastPriceText(app.state.lang, bp.at));
-    el.target.hidden = !r.target;
-    if (r.target) setKaratText(el.target, app.t('pcTarget', p, formatNum(r.target, 1), pcK, formatNum(r.rate, 1)), app.t('karatN', pcK));
   }
 
   function renderOffer() {
@@ -157,8 +150,7 @@ export function mount(app) {
     el.offerNoPrice.hidden = !(ready && usd == null);
     if (!res) return;
     el.verdictO.textContent = app.t(VERDICT[res.verdict]);
-    el.gap.textContent = res.verdict === 'above' ? app.t('gapAbove', formatNum(-res.gapPct, 1)) : app.t('gapBelow', formatNum(res.gapPct, 1));
-    el.value.textContent = app.t('offerValue', res.value); // whole rials, as the price check shows them (BR4)
+    el.offerMoney.textContent = app.t('offerMoney', res.value, res.diff, res.dir); // in rials, not a percent (U3)
     const bp = price();
     el.offerStale.hidden = !bp?.old; // as the price check says it (BR3)
     if (bp?.old) el.offerStale.textContent = app.t('staleUse', lastPriceText(app.state.lang, bp.at));
@@ -246,8 +238,16 @@ export function mount(app) {
     radio(el.pcType, 'type', pcType);
   }
 
+  // the fold says "Show details" while closed and "Hide details" while open
+  el.more.addEventListener('toggle', () => {
+    const s = el.more.querySelector('summary');
+    s.dataset.t = el.more.open ? 'hideDetails' : 'showDetails';
+    s.textContent = app.t(s.dataset.t);
+  });
+
   // Clear: back to how the section opened, with empty boxes, the family's own karat and today's rate
   function clearPc() {
+    el.more.open = false;
     el.pcGrams.value = el.pcPrice.value = el.making.value = '';
     rateEdited = typed = routeDrives = pcExampleOn = false;
     pcK = app.state.karat;

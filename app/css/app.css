@@ -267,7 +267,6 @@
 /* ---------- Buy & sell ---------- */
 .calc { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--hair); }
 .calc:first-of-type { border-top: 0; padding-top: 0; }
-.eyebrow { font-size: 15px; font-weight: 700; color: var(--car-d); margin-bottom: 2px; }
 .field { display: block; margin-top: 18px; }
 .field > label, .field > .label { display: block; font-size: 16px; font-weight: 700; margin-bottom: 8px; }
 .hint-text { font-size: 16px; color: var(--muted); margin-top: 6px; line-height: 1.55; }
@@ -307,14 +306,11 @@
 .pc-main > span { font-weight: 700; }
 .pc-main b { font-size: 26px; }
 .pc-why { font-size: 16px; color: var(--muted); line-height: 1.6; }
-.pc-track { position: relative; height: 8px; margin: 22px 4px 8px; border-radius: 4px; background: var(--hair); }
-.pc-track .usual { position: absolute; top: 0; bottom: 0; border-radius: 4px; background: rgba(98, 29, 27, 0.28); background: oklch(0.34 0.1 26 / 0.28); }
-.pc-track .dot { position: absolute; top: 50%; width: 16px; height: 16px; margin-top: -8px; margin-inline-start: -8px; border-radius: 50%; background: var(--car); box-shadow: 0 0 0 4px var(--surface); }
-.pc-ends { font-size: 14px; color: var(--muted); }
-.pc-verdict { font-size: 16px; font-weight: 700; line-height: 1.6; margin-top: 8px; }
+/* the answer comes first, in ink, then the amounts; the reasons fold away (U1) */
+.pc-lead { font-size: 19px; font-weight: 700; line-height: 1.5; color: var(--ink); margin-bottom: 10px; }
+.pc-more { margin-top: 4px; }
+.pc-more > p { margin-top: 6px; }
 .pc-range { font-size: 16px; margin-top: 2px; }
-.pc-sep { border: 0; border-top: 1px solid var(--hair); margin: 14px 0 8px; }
-.pc-target { font-size: 16px; line-height: 1.65; margin-top: 6px; }
 .b3 { margin-top: 12px; }
 .b3-row { padding: 10px 0 12px; border-top: 1px solid var(--hair); }
 .b3-top { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; font-size: 16px; }

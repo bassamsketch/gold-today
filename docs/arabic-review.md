@@ -172,8 +172,7 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | beforeNote | القطع نفسها بأسعار تلك الأيام. | The same pieces at those days' prices. |
 | rialWord | ريالات | rials |
 | curWord | دراهم | dirhams |
-| pcWhen | عند المحل، قبل الدفع | At the shop, before paying |
-| pcTitle | هل هذا السعر معتاد؟ | Is this a normal price? |
+| pcTitle | قبل الشراء: هل السعر معتاد؟ | Before buying: is this a normal price? |
 | pcIntro | يبيّن كم من السعر ثمن الذهب نفسه، وكم يدفع المحل لو بيعت القطعة اليوم. | Shows how much of the price is the gold itself, and what a shop would pay if the piece were sold today. |
 | showExample | عرض مثال | Show an example |
 | clearFields | مسح | Clear |
@@ -188,7 +187,6 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | pcExtra | يطلب المحل فوق ثمن الذهب | The shop asks on top |
 | pcWhy | أي 17% فوق ثمن الذهب، مقابل المصنعية والضريبة وربح المحل. | That is 17% on top of the gold, for the making, the VAT and the shop's profit. |
 | pcWhyBar | أي 6% فوق ثمن الذهب. | That is 6% on top of the gold. |
-| noExtra | بلا زيادة | No extra |
 | pcWithin | ضمن المعتاد للقطع البسيطة في مسقط. | Within the usual range for plain pieces in Muscat. |
 | pcBelow | أقل من المعتاد للقطع البسيطة. | Less than usual for plain pieces. |
 | pcAbove | أكثر من المعتاد للقطع البسيطة. التصاميم الدقيقة والماركات تكلّف أكثر عادةً. | More than usual for plain pieces. Detailed designs and brands usually cost more. |
@@ -201,11 +199,8 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | pcUnder | السعر أقل من ثمن الذهب اليوم. يُستحسن التأكد من الوزن والعيار. | The price is below today's gold value. The weight and karat are worth checking. |
 | pcBack | لو بيعت اليوم، يدفع المحل نحو | If sold back today, a shop would pay about |
 | pcPer100 | أي نحو 82 من كل 100 ريال دُفعت. | That is about 82 of every 100 rials paid. |
-| pcTarget | ليعود مبلغ 950 ريالاً كاملاً عند البيع، يلزم أن يصل سعر جرام عيار 22 إلى نحو 49.5 ريال (اليوم 40.5). | To get the 950 rials back when selling, gold would have to reach about 49.5 rials a gram for 22 karat (today 40.5). |
-| ocWhen | عند بيع الذهب لمحل | When selling to a shop |
 | ocIntro | يقارن المبلغ الذي يعرضه المحل بثمن الذهب اليوم. | Compares the shop's offer with today's gold value. |
-| jbWhen | عند التفكير في الادخار | When thinking of saving |
-| jbTitle | مشغولات أم سبيكة؟ | Jewellery or a bar? |
+| jbTitle | للادخار: مشغولات أم سبيكة؟ | For saving: jewellery or a bar? |
 | jbIntro | لكل 100 درهم تُدفع، يعيد المحل في اليوم نفسه نحو: | For every 100 dirhams paid, a shop would pay back about this much the same day: |
 | jbBar | سبيكة صغيرة عيار 24: | A small 24 karat bar: |
 | jbPiece | قطعة بسيطة، مصنعية 3 ريالات للجرام: | A plain piece, making 3 rials a gram: |
@@ -221,11 +216,11 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | shopRateHint | هذا سعر السوق اليوم، ويمكن تغييره ليطابق لوحة المحل | This is today's market rate. Change it to match the shop's board. |
 | badMaking | يُرجى كتابة الأجرة بالأرقام، صفر أو أكثر. | Please enter the making charge in numbers, zero or more. |
 | badRate | يُرجى كتابة سعر الجرام بالأرقام، أكبر من صفر، مثل 40.500. | Please enter the rate per gram in numbers, above zero, for example 40.500. |
-| offerTitle | هل هذا العرض معتاد؟ | Is this a normal offer? |
+| offerTitle | قبل البيع: هل العرض معتاد؟ | Before selling: is this a normal offer? |
 | vat24 | السبائك والعملات الخالصة معفاة عادة من الضريبة. | Pure gold bars and coins are usually VAT-free. |
 | pcPrompt | تظهر النتيجة بعد كتابة الوزن والسعر | Enter the weight and the price to see the result |
 | offerAmount | المبلغ الذي عرضه المحل بالريال | The shop's offer, in rials |
-| offerValue | قيمة الذهب اليوم نحو 809 ريالات | Today's gold value: about 809 rials |
+| offerMoney | قيمة الذهب اليوم نحو 809 ريالات، والعرض أقل منها بـ 29 ريالاً. | Today's gold value is about 809 rials, and the offer is 29 rials below it. |
 | staleUse | آخر سعر: الخميس 4:57 م. الأرقام هنا محسوبة به. | Last price: Thursday 4:57 pm. These figures use it. |
 | offerPrompt | تظهر النتيجة بعد كتابة الوزن والمبلغ | Enter the weight and the offer to see the result |
 | badOffer | يُرجى كتابة المبلغ بالأرقام، أكبر من صفر وحتى 1,000,000 ريال، مثل 780.000. | Please enter the offer in numbers, above zero and up to 1,000,000 rials, for example 780.000. |
@@ -233,8 +228,6 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | verdictClose | العرض قريب جداً من قيمة الذهب. | The offer is very close to the gold value. |
 | verdictUsual | عرض معتاد: المحلات تدفع عادة أقل من قيمة الذهب بـ 2 إلى 6%. | A usual offer: shops normally pay 2 to 6% under the gold value. |
 | verdictLow | العرض أقل من المعتاد. المعتاد أن يدفع المحل أقل من قيمة الذهب بـ 2 إلى 6%. | Lower than usual. Shops usually pay 2 to 6% under the gold value. |
-| gapBelow | أقل من قيمة الذهب بـ 4.1% | 4.1% below the gold value |
-| gapAbove | أعلى من قيمة الذهب بـ 1.2% | 1.2% above the gold value |
 | placesTitle | أماكن البيع والشراء في مسقط | Where to buy and sell in Muscat |
 | mapOf | خريطة ملابار للذهب والألماس، روي | Map of Malabar Gold & Diamonds, Ruwi |
 | guideTitle | دليل العيارات والأختام | Karat and hallmark guide |

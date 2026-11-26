@@ -54,7 +54,6 @@ test('the falls line lists every recovery and says when a fall is under way', ()
 });
 
 test('price check amounts agree with their numbers in Arabic', () => {
-  assert.ok(t('ar', 'pcTarget', 950, '49.5', 22, '40.5').includes('950 ريالاً'));
   assert.equal(t('ar', 'rialWord', 810), 'ريالات');
   assert.equal(t('ar', 'rialWord', 140), 'ريالاً');
   assert.equal(t('ar', 'rialWord', 100), 'ريال');
@@ -237,4 +236,21 @@ test('period rows describe what happened, not a rule (OL8)', () => {
   assert.equal(t('en', 'periodRow', 6, -36), 'Half the time it ended 6% higher or more. At worst 36% lower.');
   assert.equal(t('en', 'periodRow', -3, -40), 'Half the time it ended 3% lower or more. At worst 40% lower.');
   assert.ok(t('ar', 'periodRow', 6, -36).startsWith('في نصف المرات انتهى أعلى بـ'));
+});
+
+test('each check names its moment in the title, and the offer result is said in rials (U2, U3, U4)', () => {
+  assert.equal(t('ar', 'pcTitle'), 'قبل الشراء: هل السعر معتاد؟');
+  assert.equal(t('ar', 'offerTitle'), 'قبل البيع: هل العرض معتاد؟');
+  assert.equal(t('ar', 'jbTitle'), 'للادخار: مشغولات أم سبيكة؟');
+  assert.equal(t('en', 'pcTitle'), 'Before buying: is this a normal price?');
+  assert.equal(t('ar', 'offerMoney', 809.136, 29.3, 'below'), 'قيمة الذهب اليوم نحو 809 ريالات، والعرض أقل منها بـ 29 ريالاً.');
+  assert.equal(t('ar', 'offerMoney', 809.136, 4, 'above'), 'قيمة الذهب اليوم نحو 809 ريالات، والعرض أعلى منها بـ 4 ريالات.');
+  assert.equal(t('ar', 'offerMoney', 809.136, 0.2, 'same'), 'قيمة الذهب اليوم نحو 809 ريالات، والعرض يساويها تقريباً.');
+  assert.equal(t('en', 'offerMoney', 809.136, 29.3, 'below'), "Today's gold value is about 809 rials, and the offer is 29 rials below it.");
+  assert.equal(t('en', 'offerMoney', 809.136, 0.2, 'same'), "Today's gold value is about 809 rials, and the offer is about the same.");
+  // the percent line, the bar's label, the break-even line and the red lines above the titles are gone
+  for (const gone of ['gapBelow', 'gapAbove', 'offerValue', 'noExtra', 'pcTarget', 'pcWhen', 'ocWhen', 'jbWhen']) {
+    assert.equal(STRINGS.ar[gone], undefined, gone);
+    assert.equal(STRINGS.en[gone], undefined, gone);
+  }
 });

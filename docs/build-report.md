@@ -2,6 +2,14 @@
 
 Date: 2026-11-25. Branch: main. Tests: 68 passing (npm test). Code 41 KB compressed (limit 150 KB), fonts 225 KB (limit 350 KB).
 
+## Buy & sell: the answer first (U1-U4, 2026-11-26)
+The owner chose four of the eight recommendations in docs/qa-2026-11-26.md. Tests: 125 passing. Offline cache v10.
+- **U1:** the price check's card opens with its answer in bold ("ضمن المعتاد للقطع البسيطة في مسقط."), then three amounts: the gold in the piece, the shop's extra, and what a shop pays back. The percentage, the usual range, the basis and "82 of every 100" fold under "Show details", which reads "Hide details" when open. The bar with the dot is gone.
+- **U2:** the titles name the moment: "قبل الشراء: هل السعر معتاد؟", "قبل البيع: هل العرض معتاد؟" and, for uniformity, "للادخار: مشغولات أم سبيكة؟". The red lines above them are gone.
+- **U3:** the offer check says its result in rials: "قيمة الذهب اليوم نحو 809 ريالات، والعرض أقل منها بـ 29 ريالاً."
+- **U4:** the break-even line ("ليعود مبلغ 950 ريالاً كاملاً...") is gone.
+- **Checks:** browser at 360 and 390 px in Arabic and English: the example, the fold open and closed, Clear closing it, a price under the gold value, a 24 karat bar, offers below, above and about equal to the gold value, no sideways overflow and no console errors. The Arabic review is regenerated (244 strings).
+
 ## Full QA and fixes (2026-11-26)
 Tests: 123 passing. Offline cache v9. Report with every finding, the Buy & sell rating and recommendations U1-U8: docs/qa-2026-11-26.md.
 - **Same price everywhere:** Today, My gold and the shared image now use the newer of the saved live price and the last close, as Outlook, Buy & sell and the currency sheet already did (`app.best()`).

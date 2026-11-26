@@ -136,3 +136,12 @@ test('weights start at 0.1 gram and offers stop at 1,000,000 rials, as the messa
   assert.equal(offerCheck({ grams: 10, karat: 22, offer: 99999999999 }, 3574), null);
   assert.equal(priceCheck({ grams: 0.05, karat: 22, price: 10 }, 3574), null);
 });
+
+test('the offer check gives the difference in rials and its direction (U3)', () => {
+  const value = 20 * gramPrice(3574, 22);
+  const at = (offer) => offerCheck({ grams: 20, karat: 22, offer }, 3574);
+  assert.equal(at(value - 29.3).dir, 'below');
+  assert.ok(Math.abs(at(value - 29.3).diff - 29.3) < 1e-9);
+  assert.equal(at(value + 4).dir, 'above');
+  assert.equal(at(value - 0.2).dir, 'same'); // under half a rial shows as no difference
+});

@@ -73,5 +73,8 @@ export function offerCheck({ grams, karat, offer }, usdPerOz) {
   // judged on the gap as the page prints it, one decimal, so the verdict never contradicts its own figure (BS3)
   const gapPct = Math.round(((value - offer) / value) * 1000) / 10 + 0; // + 0 turns -0 into 0
   const verdict = gapPct < 0 ? 'above' : gapPct <= DEDUCTION.low * 100 ? 'close' : gapPct <= DEDUCTION.high * 100 ? 'usual' : 'low';
-  return { value, gapPct, verdict };
+  // the result is said in rials (U3): how far the offer is from the gold value, and on which side
+  const diff = Math.abs(value - offer);
+  const dir = Math.round(diff) === 0 ? 'same' : offer < value ? 'below' : 'above';
+  return { value, gapPct, verdict, diff, dir };
 }
