@@ -10,6 +10,7 @@ const PRECACHE = [
   'data/forecasts.json',
   'data/history.json',
   'data/places.json',
+  'data/rates.json',
   'data/why.json',
   'fonts/Almarai-normal-400-arabic.woff2',
   'fonts/Almarai-normal-400-latin.woff2',
