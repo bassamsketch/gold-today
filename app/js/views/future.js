@@ -46,6 +46,7 @@ export function mount(app) {
     banksLine: $('banks-line'), oddsAll: $('odds-all'), missLine: $('miss-line'), bankList: $('bank-list'),
     updated: $('f-updated'), data: $('f-data'), open: $('open-sources'), sheet: $('sources-sheet'), list: $('src-list'), close: $('sources-close'),
     noData: $('f-nodata'), banksCap: $('banks-cap'), qs: document.querySelectorAll('[data-view=future] .q'),
+    moves: $('moves'), weekV: $('move-week-v'), monthV: $('move-month-v'),
   };
   // an open fold says "Hide details" (OL13); data-t keeps the right words through a language switch
   document.querySelectorAll('[data-view=future] details.more-info').forEach((d) => d.addEventListener('toggle', () => {
@@ -67,8 +68,9 @@ export function mount(app) {
     const wk = moveSince(h.daily, live, at, 7), mo = moveSince(h.daily, live, at, 30);
     el.week.hidden = wk == null;
     el.month.hidden = mo == null;
-    if (wk != null) el.week.textContent = app.t('pastWeek', wk * 100);
-    if (mo != null) el.month.textContent = app.t('pastMonth', mo * 100);
+    el.moves.hidden = wk == null && mo == null; // no empty strip at the foot of the answer box
+    if (wk != null) el.weekV.textContent = app.t('moveBy', wk * 100);
+    if (mo != null) el.monthV.textContent = app.t('moveBy', mo * 100);
     const share = yearShareBelow(h.daily, live, at);
     el.mood.hidden = share == null;
     if (share != null) el.mood.textContent = app.t(`mood${tierOf(share)}`);

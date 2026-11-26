@@ -82,7 +82,7 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | grams | جرام | grams |
 | boughtPrice | سعر الشراء بالريال | Price paid, in rials |
 | boughtWhen | شهر وسنة الشراء | Month and year bought |
-| monthLabel | الشهر | Month |
+| monthLabel | آخر شهر | Past month |
 | yearLabel | السنة | Year |
 | worthToday | تُباع اليوم بنحو 449 ريالاً | Would sell for about 449 rials today |
 | gainUp | سعر الشراء 300 ريال (مارس 2019)، الربح حتى الآن 41 ريالاً (14%) | Paid 300 rials in March 2019, now up 41 rials (14%) |
@@ -136,8 +136,8 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | atRecord | عند أعلى سعر وصل إليه | At its highest ever |
 | nearRecord | قريب جداً من أعلى سعر وصل إليه | Very close to its highest ever |
 | noHistory | تعذّر تحميل أسعار السنوات الماضية الآن. تظهر هنا عند الاتصال بالإنترنت. | Past prices could not be loaded just now. They show here once the app is online. |
-| pastWeek | آخر أسبوع: أقل بـ 4% | Past week: down 4% |
-| pastMonth | آخر شهر: أقل بـ 11% | Past month: down 11% |
+| weekLabel | آخر أسبوع | Past week |
+| moveBy | أقل بـ 4% | down 4% |
 | chartRecord | أعلى سعر | Highest |
 | recordRow | أعلى سعر | Highest ever |
 | fallsLine | قبل الهبوط الحالي، هبط الذهب منذ 1971 بـ 20% أو أكثر 5 مرات، وعاد إلى أعلى سعره بعد 6 أشهر و18 شهراً و4 سنوات و9 سنوات و26 سنة. أطول انتظار جاء بعد أعمق هبوط، في 1980. | Before this fall, gold had fallen 20% or more 5 times since 1971. It got back to its highest after 6 months, 18 months, 4 years, 9 years and 26 years. The longest wait followed the deepest fall, in 1980. |
@@ -201,13 +201,13 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | pcPer100 | أي نحو 82 من كل 100 ريال دُفعت. | That is about 82 of every 100 rials paid. |
 | ocIntro | يقارن المبلغ الذي يعرضه المحل بثمن الذهب اليوم. | Compares the shop's offer with today's gold value. |
 | jbTitle | للادخار: مشغولات أم سبيكة؟ | For saving: jewellery or a bar? |
-| jbIntro | لكل 100 درهم تُدفع، يعيد المحل في اليوم نفسه نحو: | For every 100 dirhams paid, a shop would pay back about this much the same day: |
-| jbBar | سبيكة صغيرة عيار 24: | A small 24 karat bar: |
-| jbPiece | قطعة بسيطة، مصنعية 3 ريالات للجرام: | A plain piece, making 3 rials a gram: |
-| jbTo | إلى | to |
-| jbDiff | الفرق هو المصنعية والضريبة، ولا يعيدهما المحل عند البيع. لذلك تحتاج المشغولات ارتفاعاً أكبر في سعر الذهب قبل أن تعيد ما دُفع. | The difference is the making charge and VAT, which shops do not pay back. So jewellery needs a bigger rise in the gold price before it returns what was paid. |
+| jbIntro | إذا بقي سعر الذهب كما هو، يعود عند البيع من كل 1,000 ريال تُدفع اليوم نحو: | If the gold price stays the same, selling gives back about this much of every 1,000 rials paid today: |
+| jbBarRow | سبيكة صغيرة عيار 24 | A small 24 karat bar |
+| jbJewelRow | مشغولات عيار 22 | 22 karat jewellery |
+| jbRange | 900 إلى 940 ريالاً | 900 to 940 rials |
+| jbDiff | الفرق هو المصنعية والضريبة، ولا يعيدهما المحل عند البيع. | The difference is the making charge and VAT, which shops do not pay back. |
 | jbOnlyMoney | هذا يحسب المال الذي يعود فقط، ولا يحسب لبس القطعة أو إهداءها. | This counts only the money that comes back, not wearing or giving the piece. |
-| jbFine | تقديرات للمشغولات عيار 22: ضريبة 5% على السعر كله كما ينص القانون، ويدفع المحل عند بيعها أقل من ثمن ذهبها بنحو 4%. السبيكة الصغيرة أغلى من ثمن ذهبها بنحو 5%، ويدفع المحل أقل بنحو 1%. يفرض القانون ضريبة بنسبة صفر على الذهب الاستثماري (نقاوة 99% فأكثر)، لكن لائحته تقصرها على أول بيع بعد الاستخراج، لذلك تظهر السبيكة بالضريبة وبدونها. نسب السبائك من أسعار تجار خارج عُمان. | Estimates for 22 karat jewellery: 5% VAT on the whole price, as the law sets, and shops pay about 4% under its gold value. A small bar costs about 5% over its gold value, and shops pay about 1% under. The law sets a zero VAT rate for investment gold (99% pure or more), but its regulations limit that to the first sale after extraction, so the bar is shown with and without VAT. The bar figures come from dealer prices outside Oman. |
+| jbFine | تقديرات للمشغولات عيار 22 بأجرة مصنعية من 3 إلى 6 ريالات للجرام، وضريبة 5% على السعر كله كما ينص القانون، ويدفع المحل عند بيعها أقل من ثمن ذهبها بنحو 4%. السبيكة الصغيرة أغلى من ثمن ذهبها بنحو 5%، ويدفع المحل أقل بنحو 1%. يفرض القانون ضريبة بنسبة صفر على الذهب الاستثماري (نقاوة 99% فأكثر)، لكن لائحته تقصرها على أول بيع بعد الاستخراج، لذلك تظهر السبيكة بالضريبة وبدونها. نسب السبائك من أسعار تجار خارج عُمان. | Estimates for 22 karat jewellery with making charges of 3 to 6 rials a gram, 5% VAT on the whole price as the law sets, and shops paying about 4% under its gold value. A small bar costs about 5% over its gold value, and shops pay about 1% under. The law sets a zero VAT rate for investment gold (99% pure or more), but its regulations limit that to the first sale after extraction, so the bar is shown with and without VAT. The bar figures come from dealer prices outside Oman. |
 | buySellTitle | بيع وشراء | Buy & sell |
 | making | أجرة المصنعية | Making charge |
 | perGramMode | ريال للجرام | rials per gram |

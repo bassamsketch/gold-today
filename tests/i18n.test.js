@@ -199,7 +199,7 @@ test('the currency button names its visible code, and shared pound prices say Le
 test('Arabic percentages keep the sign to the right of the number, everywhere', () => {
   const LRI = String.fromCharCode(0x2066), PDI = String.fromCharCode(0x2069); // left-to-right isolate
   assert.ok(t('ar', 'belowRecord', 34).includes(`${LRI}34%${PDI}`), JSON.stringify(t('ar', 'belowRecord', 34)));
-  assert.ok(t('ar', 'pastMonth', -12).includes(`${LRI}12%${PDI}`));
+  assert.ok(t('ar', 'moveBy', -12).includes(`${LRI}12%${PDI}`));
   assert.ok(t('ar', 'boardNote').includes(`${LRI}5%${PDI}`));
   assert.ok(t('ar', 'pcRange', 13, 21).includes(`${LRI}13%${PDI}`) && t('ar', 'pcRange', 13, 21).includes(`${LRI}21%${PDI}`));
   assert.ok(t('ar', 'g22').includes(`${LRI}91.6%${PDI}`));
@@ -253,4 +253,18 @@ test('each check names its moment in the title, and the offer result is said in 
     assert.equal(STRINGS.ar[gone], undefined, gone);
     assert.equal(STRINGS.en[gone], undefined, gone);
   }
+});
+
+test('the outlook moves sit in their own box as label and value, and saving reads in rials (owner, 2026-11-26)', () => {
+  const iso = new RegExp(`[${String.fromCharCode(0x2066, 0x2069)}]`, 'g'), plain = (s) => s.replace(iso, '');
+  assert.equal(t('ar', 'weekLabel'), 'آخر أسبوع');
+  assert.equal(t('ar', 'monthLabel'), 'آخر شهر');
+  assert.equal(plain(t('ar', 'moveBy', -4.2)), 'أقل بـ 4%');
+  assert.equal(plain(t('ar', 'moveBy', 0.3)), 'دون تغيير');
+  assert.equal(t('en', 'moveBy', 11.4), 'up 11%');
+  assert.equal(t('ar', 'jbRange', 900, 940), '900 إلى 940 ريالاً');
+  assert.equal(t('ar', 'jbRange', 800, 850), '800 إلى 850 ريالاً');
+  assert.equal(t('en', 'jbRange', 900, 940), '900 to 940 rials');
+  assert.ok(t('ar', 'jbIntro').includes('1,000 ريال'), t('ar', 'jbIntro'));
+  for (const gone of ['pastWeek', 'pastMonth', 'jbBar', 'jbPiece', 'jbTo']) assert.equal(STRINGS.ar[gone], undefined, gone);
 });

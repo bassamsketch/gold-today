@@ -219,10 +219,16 @@
 .q { margin-top: 26px; }
 .q + .q { padding-top: 24px; border-top: 1px solid var(--hair); }
 .answer { font-family: var(--display-ar); font-weight: 700; font-size: 27px; line-height: 1.45; margin-top: 6px; text-wrap: balance; }
+/* the answer and its week and month moves in one oxblood box, like the news card on Today (owner, 2026-11-26) */
+.answer-box { margin-top: 10px; padding: 16px 18px; border-radius: var(--radius); background: radial-gradient(130% 120% at 0% 0%, var(--deep-hi), var(--deep) 55%, var(--deep-lo)); box-shadow: inset 0 0 0 1px var(--gold-line); color: var(--on-deep); }
+[dir='rtl'] .answer-box { background: radial-gradient(130% 120% at 100% 0%, var(--deep-hi), var(--deep) 55%, var(--deep-lo)); }
+.answer-box .answer { margin-top: 0; }
+.moves { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gold-line); }
+.moves p { display: flex; flex-direction: column; gap: 2px; }
+.moves span { font-size: 15px; color: var(--gold); }
+.moves b { font-size: 18px; font-weight: 700; white-space: nowrap; }
 :lang(en) .answer { font-family: var(--serif); font-weight: 600; font-size: 26px; line-height: 1.3; }
 .q .sub { margin-top: 6px; }
-.moves { display: flex; flex-wrap: wrap; gap: 2px 18px; margin-top: 6px; font-size: 16px; font-weight: 700; }
-.moves span { white-space: nowrap; }
 .srow { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--hair); }
 .srow > span { font-size: 17px; }
 .srow > span small { display: block; font-size: 15px; color: var(--muted); }
@@ -294,6 +300,11 @@
 .band.slim { aspect-ratio: 3 / 1; }
 .intro { font-size: 16px; line-height: 1.6; margin-top: 6px; }
 .try { display: inline-flex; align-items: center; min-height: 48px; margin-top: 10px; padding: 0 16px; border-radius: var(--radius); box-shadow: inset 0 0 0 1.5px var(--hair); font-size: 16px; font-weight: 700; color: var(--car-d); }
+/* Clear stands beside the example once a box holds a number (owner, 2026-11-26) */
+.try-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.try-row .try { margin-top: 0; }
+.try-clear { gap: 6px; }
+.try-clear svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
 .step { display: inline-grid; place-items: center; width: 26px; height: 26px; margin-inline-end: 8px; border-radius: 50%; background: var(--car-soft); color: var(--car-d); font-family: var(--serif); font-size: 15px; font-weight: 600; vertical-align: 1px; }
 .type-seg { margin-top: 10px; margin-bottom: 0; }
 .alt { margin-top: 4px; }
@@ -311,14 +322,7 @@
 .pc-more { margin-top: 4px; }
 .pc-more > p { margin-top: 6px; }
 .pc-range { font-size: 16px; margin-top: 2px; }
-.b3 { margin-top: 12px; }
-.b3-row { padding: 10px 0 12px; border-top: 1px solid var(--hair); }
-.b3-top { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; font-size: 16px; }
-.b3-top b { font-family: var(--serif); font-weight: 600; font-size: 22px; white-space: nowrap; }
-.b3-top b small { font-family: var(--text); font-weight: 400; font-size: 15px; color: var(--muted); }
-.b3-bar { display: block; position: relative; height: 12px; border-radius: 6px; background: var(--hair); overflow: hidden; }
-.b3-bar i { position: absolute; top: 0; bottom: 0; inset-inline-start: 0; border-radius: 6px; background: var(--car); }
-.b3-bar i.ext { border-radius: 0; background: rgba(98, 29, 27, 0.35); background: oklch(0.34 0.1 26 / 0.35); }
+.jb-card { margin-top: 12px; }
 .verdict { font-size: 18px; font-weight: 700; margin-top: 16px; line-height: 1.5; }
 .verdict-sub { font-size: 16px; color: var(--muted); margin-top: 4px; }
 .places { list-style: none; margin-top: 8px; }

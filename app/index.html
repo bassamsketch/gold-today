@@ -139,8 +139,14 @@
 
         <section class="q" aria-labelledby="q1-title">
           <h2 class="sec-title" id="q1-title" data-t="q1"></h2>
-          <p class="answer" id="q1-answer"></p>
-          <p class="moves"><span id="move-week"></span><span id="move-month"></span></p>
+          <!-- the answer and the week and month moves in one box, where the eye lands first (owner, 2026-11-26) -->
+          <div class="answer-box">
+            <p class="answer" id="q1-answer"></p>
+            <div class="moves" id="moves">
+              <p id="move-week"><span data-t="weekLabel"></span><b id="move-week-v"></b></p>
+              <p id="move-month"><span data-t="monthLabel"></span><b id="move-month-v"></b></p>
+            </div>
+          </div>
           <p class="sub" id="q1-stale" hidden></p>
           <p class="sub" id="q1-mood"></p>
           <div class="chart-wrap" dir="ltr">
@@ -195,7 +201,10 @@
         <section class="calc" id="pc" aria-labelledby="pc-title">
           <h2 class="sec-title" id="pc-title" data-t="pcTitle"></h2>
           <p class="intro" data-t="pcIntro"></p>
-          <button class="try" type="button" id="pc-example" data-t="showExample"></button>
+          <div class="try-row">
+            <button class="try" type="button" id="pc-example" data-t="showExample"></button>
+            <button class="try try-clear" type="button" id="pc-clear" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg><span data-t="clearFields"></span></button>
+          </div>
           <div class="field">
             <label for="pc-grams"><span class="step" aria-hidden="true">1</span><span data-t="weightG"></span></label>
             <input class="input" id="pc-grams" inputmode="decimal" autocomplete="off" enterkeyhint="next" aria-describedby="pc-grams-err">
@@ -251,7 +260,10 @@
         <section class="calc" id="offer" aria-labelledby="offer-title">
           <h2 class="sec-title" id="offer-title" data-t="offerTitle"></h2>
           <p class="intro" data-t="ocIntro"></p>
-          <button class="try" type="button" id="oc-example" data-t="showExample"></button>
+          <div class="try-row">
+            <button class="try" type="button" id="oc-example" data-t="showExample"></button>
+            <button class="try try-clear" type="button" id="oc-clear" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg><span data-t="clearFields"></span></button>
+          </div>
           <div class="field">
             <label for="offer-grams"><span class="step" aria-hidden="true">1</span><span data-t="weightG"></span></label>
             <input class="input" id="offer-grams" inputmode="decimal" autocomplete="off" enterkeyhint="next" aria-describedby="offer-grams-err">
@@ -277,11 +289,18 @@
 
         <section class="calc" id="jb" aria-labelledby="jb-title">
           <h2 class="sec-title" id="jb-title" data-t="jbTitle"></h2>
-          <p class="intro" id="jb-intro"></p>
-          <div class="b3" id="jb-rows"></div>
+          <!-- two plain amounts in rials and the reason; the assumptions fold away (owner, 2026-11-26) -->
+          <p class="intro" data-t="jbIntro"></p>
+          <div class="pc jb-card">
+            <div class="pc-row"><span data-t="jbBarRow"></span><b id="jb-bar"></b></div>
+            <div class="pc-row"><span data-t="jbJewelRow"></span><b id="jb-jewel"></b></div>
+          </div>
           <p class="plain-line" data-t="jbDiff"></p>
-          <p class="caution" data-t="jbOnlyMoney"></p>
-          <p class="note" data-t="jbFine"></p>
+          <details class="more-info">
+            <summary data-t="showDetails"></summary>
+            <p class="note" data-t="jbFine"></p>
+            <p class="note" data-t="jbOnlyMoney"></p>
+          </details>
         </section>
 
         <section class="calc">

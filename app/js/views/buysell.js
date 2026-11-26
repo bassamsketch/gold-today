@@ -2,7 +2,7 @@ import { pieceCost, offerCheck, priceCheck, jewelleryVsBar, parseNumber } from '
 import { gramPrice, formatNum } from '../price.js';
 import { MAX_PRICE, VAT } from '../config.js';
 import { lastPriceText } from '../i18n.js';
-import { syncKarats, setKaratText } from '../ui/karats.js';
+import { syncKarats } from '../ui/karats.js';
 
 const $ = (id) => document.getElementById(id);
 const PIN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>';
@@ -10,8 +10,8 @@ const VERDICT = { above: 'verdictAbove', close: 'verdictClose', usual: 'verdictU
 const okGrams = (g) => Number.isFinite(g) && g >= 0.1 && g <= 5000; // as the weight message says (BS7)
 const blank = (input) => input.value.trim() === '';
 
-/** The example button clears instead once any box holds a number (owner, 2026-11-26). Returns its text key. */
-export const tryKey = (...values) => (values.some((v) => v.trim() !== '') ? 'clearFields' : 'showExample');
+/** Whether any box holds a number: a Clear button then shows beside the example (owner, 2026-11-26). */
+export const hasNumbers = (...values) => values.some((v) => v.trim() !== '');
 
 /**
  * Buy & sell tab (design 6): the price check (B1), the offer check (B2), jewellery or a bar (B3), places, the karat
@@ -30,7 +30,8 @@ export function mount(app) {
     ocExample: $('oc-example'), offerGrams: $('offer-grams'), offerGramsErr: $('offer-grams-err'), offerKarats: $('offer-karats'),
     offerAmount: $('offer-amount'), offerAmountErr: $('offer-amount-err'), offerResult: $('offer-result'), verdictO: $('offer-verdict'),
     offerMoney: $('offer-money'), offerPrompt: $('offer-prompt'), offerNoPrice: $('offer-noprice'), offerStale: $('offer-stale'),
-    jbRows: $('jb-rows'), jbIntro: $('jb-intro'), conv: $('pc-conv'), places: $('places'),
+    jb: $('jb'), jbBar: $('jb-bar'), jbJewel: $('jb-jewel'), conv: $('pc-conv'), places: $('places'),
+    pcClear: $('pc-clear'), ocClear: $('oc-clear'),
   };
   let pcK = app.state.karat;
   let pcType = 'bar'; // karat 24 is a bar or coin unless switched (design 6.1)
@@ -51,15 +52,10 @@ export function mount(app) {
     node.textContent = formatNum(v, 0);
     unit.textContent = app.t('rialWord', v);
   };
-  // the typed numbers decide whether each example button shows "Show an example" or "Clear"
-  const pcKey = () => tryKey(el.pcGrams.value, el.pcPrice.value, // the route's boxes count only while it is open (BR2)
+  // a Clear button stands beside each example once any box holds a number; the example button never changes
+  const pcFilled = () => hasNumbers(el.pcGrams.value, el.pcPrice.value, // the route's boxes count only while it is open (BR2)
     el.alt.hidden ? '' : el.making.value, !el.alt.hidden && rateEdited ? el.rate.value : '');
-  const ocKey = () => tryKey(el.offerGrams.value, el.offerAmount.value);
-  const syncTry = (btn, key) => {
-    if (btn.dataset.t === key) return;
-    btn.dataset.t = key; // the language switch rewrites every data-t text, so this keeps the right one
-    btn.textContent = app.t(key);
-  };
+  const ocFilled = () => hasNumbers(el.offerGrams.value, el.offerAmount.value);
 
   function setRate() {
     if (rateEdited || live() == null) return;
@@ -99,7 +95,7 @@ export function mount(app) {
     const priceBad = !blank(el.pcPrice) && !(Number.isFinite(p) && p > 0 && p <= MAX_PRICE);
     setErr(el.pcGrams, el.pcGramsErr, gramsBad);
     setErr(el.pcPrice, el.pcPriceErr, priceBad);
-    syncTry(el.pcExample, pcKey());
+    el.pcClear.hidden = !pcFilled();
     el.pcType.hidden = pcK !== 24;
     const ready = okGrams(g) && Number.isFinite(p) && p > 0 && p <= MAX_PRICE;
     const r = ready && usd != null ? priceCheck({ grams: g, karat: pcK, price: p, bar: pcType === 'bar' }, usd) : null;
@@ -142,7 +138,7 @@ export function mount(app) {
     const offerBad = !blank(el.offerAmount) && !(Number.isFinite(o) && o > 0 && o <= MAX_PRICE);
     setErr(el.offerGrams, el.offerGramsErr, gramsBad);
     setErr(el.offerAmount, el.offerAmountErr, offerBad);
-    syncTry(el.ocExample, ocKey());
+    el.ocClear.hidden = !ocFilled();
     const ready = okGrams(g) && Number.isFinite(o) && o > 0 && o <= MAX_PRICE;
     const res = ready && usd != null ? offerCheck({ grams: g, karat: offerK, offer: o }, usd) : null;
     el.offerResult.hidden = !res;
@@ -156,48 +152,14 @@ export function mount(app) {
     if (bp?.old) el.offerStale.textContent = app.t('staleUse', lastPriceText(app.state.lang, bp.at));
   }
 
-  // jewellery or a bar: what a shop pays back the same day for every 100 paid (design 6.3)
+  // for saving: of every 1,000 rials paid today, what comes back on selling if the gold price stays the same.
+  // Two plain amounts in rials, a bar with and without VAT and jewellery with making of 6 down to 3 rials a gram.
   function renderJb() {
     const jb = jewelleryVsBar(live());
-    el.jbRows.closest('section').hidden = !jb;
+    el.jb.hidden = !jb;
     if (!jb) return;
-    el.jbIntro.textContent = app.t('jbIntro', app.money.code);
-    const row = (text, phrase, lo, hi) => {
-      const div = document.createElement('div');
-      div.className = 'b3-row';
-      const top = document.createElement('p');
-      top.className = 'b3-top';
-      const label = document.createElement('span');
-      if (phrase) setKaratText(label, text, phrase);
-      else label.textContent = text;
-      const b = document.createElement('b');
-      b.textContent = String(lo);
-      if (hi != null && hi !== lo) {
-        const to = document.createElement('small');
-        to.textContent = ` ${app.t('jbTo')} `;
-        b.append(to, String(hi));
-      }
-      top.append(label, b);
-      const bar = document.createElement('span');
-      bar.className = 'b3-bar';
-      const fill = document.createElement('i');
-      fill.style.width = `${lo}%`;
-      bar.append(fill);
-      if (hi != null && hi !== lo) {
-        const ext = document.createElement('i');
-        ext.className = 'ext';
-        ext.style.insetInlineStart = `${lo}%`;
-        ext.style.width = `${hi - lo}%`;
-        bar.append(ext);
-      }
-      div.append(top, bar);
-      return div;
-    };
-    el.jbRows.replaceChildren(
-      row(app.t('jbBar'), app.t('karatN', 24), jb.bar[0], jb.bar[1]),
-      row(app.t('jbPiece', 3, true), null, jb.plain),
-      row(app.t('jbPiece', 6, false), null, jb.detailed),
-    );
+    el.jbBar.textContent = app.t('jbRange', jb.bar[0] * 10, jb.bar[1] * 10);
+    el.jbJewel.textContent = app.t('jbRange', jb.detailed * 10, jb.plain * 10);
   }
 
   function renderPlaces() {
@@ -238,12 +200,12 @@ export function mount(app) {
     radio(el.pcType, 'type', pcType);
   }
 
-  // the fold says "Show details" while closed and "Hide details" while open
-  el.more.addEventListener('toggle', () => {
-    const s = el.more.querySelector('summary');
-    s.dataset.t = el.more.open ? 'hideDetails' : 'showDetails';
+  // each fold says "Show details" while closed and "Hide details" while open
+  document.querySelectorAll('[data-view=buysell] details.more-info').forEach((d) => d.addEventListener('toggle', () => {
+    const s = d.querySelector('summary');
+    s.dataset.t = d.open ? 'hideDetails' : 'showDetails';
     s.textContent = app.t(s.dataset.t);
-  });
+  }));
 
   // Clear: back to how the section opened, with empty boxes, the family's own karat and today's rate
   function clearPc() {
@@ -304,7 +266,7 @@ export function mount(app) {
     if (open) setRate();
     else routeDrives = false; // opening or closing the route changes no price (BS1)
     priceFromRate();
-    syncTry(el.pcExample, pcKey());
+    el.pcClear.hidden = !pcFilled();
   });
   el.pcKarats.addEventListener('click', (e) => {
     const b = e.target.closest('[data-ck]');
@@ -333,7 +295,11 @@ export function mount(app) {
     priceFromRate();
     renderPrice();
   });
-  el.pcExample.addEventListener('click', () => (pcKey() === 'clearFields' ? clearPc() : showPcExample()));
+  el.pcExample.addEventListener('click', showPcExample);
+  el.pcClear.addEventListener('click', () => {
+    clearPc();
+    el.pcExample.focus(); // Clear hides itself once the boxes are empty, so focus stays in the row
+  });
 
   function clearOc() {
     el.offerGrams.value = el.offerAmount.value = '';
@@ -356,8 +322,11 @@ export function mount(app) {
     syncSelectors();
     renderOffer();
   });
+  el.ocClear.addEventListener('click', () => {
+    clearOc();
+    el.ocExample.focus();
+  });
   el.ocExample.addEventListener('click', () => {
-    if (ocKey() === 'clearFields') return clearOc();
     el.offerGrams.value = '20';
     el.offerAmount.value = '780.000';
     offerK = 22;

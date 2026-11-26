@@ -2,6 +2,13 @@
 
 Date: 2026-11-25. Branch: main. Tests: 68 passing (npm test). Code 41 KB compressed (limit 150 KB), fonts 225 KB (limit 350 KB).
 
+## Owner's review of the new screens (2026-11-26)
+Tests: 126 passing. Offline cache v11.
+- **Clear:** a separate "✕ مسح" button now stands beside "عرض مثال" whenever any box holds a number (the example's or typed), in both checks. The example button no longer changes its label. Clear empties the boxes, returns to the family's karat and leaves focus on the example button.
+- **Outlook:** the answer ("أقل بـ 34% من أعلى سعر وصل إليه") and the past week and month sit together in an oxblood box like Today's news card. The week and month are two columns, each a gold label over a value ("آخر أسبوع" / "أقل بـ 4%").
+- **For saving:** rebuilt as two plain amounts in rials: "If the gold price stays the same, selling gives back about this much of every 1,000 rials paid today: a small 24 karat bar 900 to 940 rials, 22 karat jewellery 800 to 850 rials", then one reason line. The assumptions and the note on wearing fold under "Show details". The bars, the per-100 framing and the always-open fine print are gone.
+- **Checks:** browser at 360 and 390 px in Arabic and English: the box, Clear in both checks (it appears, empties the boxes and hides), and the saving card. No sideways overflow and no console errors.
+
 ## Buy & sell: the answer first (U1-U4, 2026-11-26)
 The owner chose four of the eight recommendations in docs/qa-2026-11-26.md. Tests: 125 passing. Offline cache v10.
 - **U1:** the price check's card opens with its answer in bold ("ضمن المعتاد للقطع البسيطة في مسقط."), then three amounts: the gold in the piece, the shop's extra, and what a shop pays back. The percentage, the usual range, the basis and "82 of every 100" fold under "Show details", which reads "Hide details" when open. The bar with the dot is gone.
