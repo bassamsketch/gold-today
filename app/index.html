@@ -117,38 +117,56 @@
       </div>
     </section>
 
-    <!-- ================= Future ================= -->
+    <!-- ================= Outlook ================= -->
     <section class="view" data-view="future">
       <div class="pad future-head">
         <h1 class="h" data-t="outlook"></h1>
         <p class="cap" id="outlook-sub"></p>
         <div class="karats small future-karats" id="future-karats" role="radiogroup" data-aria="karat"><i class="kline"></i><button type="button" role="radio" data-fk="24">24</button><button type="button" role="radio" data-fk="22">22</button><button type="button" role="radio" data-fk="21">21</button><button type="button" role="radio" data-fk="18">18</button></div>
-        <div class="chart-wrap" dir="ltr">
-          <svg class="fchart" id="fchart" viewBox="0 0 340 210" aria-hidden="true">
-            <defs><clipPath id="fchart-clip"><rect class="f-clip" x="0" y="0" width="340" height="210"/></clipPath></defs>
-            <g clip-path="url(#fchart-clip)"><path class="f-band"/><path class="f-past"/><line class="f-bank-range"/><circle class="f-bank" r="4.5"/><text class="f-tag f-bank-w"></text><text class="f-val f-bank-v"></text></g>
-            <line class="f-today"/><circle class="f-now" r="5"/>
-            <text class="f-tag f-now-w"></text><text class="f-val f-now-v"></text>
-            <text class="f-axis f-l0"></text><text class="f-axis f-l2" text-anchor="end"></text>
-          </svg>
-        </div>
-        <div class="frows">
-          <div class="frow today-row"><span data-t="todayRow"></span><b><span class="num" id="f-today"></span> <small data-t="rialPerGram"></small></b></div>
-          <div class="frow bank-row"><span class="frow-label"><span data-t="bankRow"></span><small id="f1-for"></small></span><b><span class="num" id="f1"></span> <small data-t="rialPerGram"></small></b></div>
-          <p class="row-note"><span id="f1-note"></span> <button class="link-btn" type="button" id="open-sources" data-t="sources"></button></p>
-          <section class="hist" id="hist">
-            <h2 class="hist-title" data-t="histTitle"></h2>
-            <div class="hrow"><span data-t="in5"></span><b id="f5"></b></div>
-            <div class="hrow"><span data-t="in10"></span><b id="f10"></b></div>
-            <p class="row-note" data-t="histNote"></p>
-          </section>
-        </div>
-        <section class="report">
-          <h2 class="sec-title" data-t="reportTitle"></h2>
-          <p id="win0"></p>
-          <p id="win1"></p>
-          <p id="survey"></p>
-          <p class="sub" data-t="reportClose"></p>
+
+        <section class="q" aria-labelledby="q1-title">
+          <h2 class="sec-title" id="q1-title" data-t="q1"></h2>
+          <p class="answer" id="q1-answer"></p>
+          <p class="moves"><span id="move-week"></span><span id="move-month"></span></p>
+          <p class="sub" id="q1-mood"></p>
+          <div class="chart-wrap" dir="ltr">
+            <svg class="fchart" id="fchart" viewBox="0 0 340 214" aria-hidden="true">
+              <defs><clipPath id="fchart-clip"><rect class="f-clip" x="0" y="0" width="340" height="214"/></clipPath></defs>
+              <g clip-path="url(#fchart-clip)"><path class="f-past"/><circle class="f-rec" r="4.6"/><text class="f-tag f-rec-w" text-anchor="end"></text><text class="f-val f-rec-v" text-anchor="end"></text></g>
+              <circle class="f-now" r="5"/>
+              <text class="f-tag f-now-w" text-anchor="end"></text><text class="f-val f-now-v" text-anchor="end"></text>
+              <text class="f-axis f-l0"></text>
+            </svg>
+          </div>
+          <div class="srow"><span data-t="todayRow"></span><b><span class="num" id="f-today"></span> <small data-t="rialPerGram"></small></b></div>
+          <div class="srow rec" id="rec-row"><span><span data-t="recordRow"></span><small id="rec-date"></small></span><b><span class="num" id="f-record"></span> <small data-t="rialPerGram"></small></b></div>
+          <p class="caution" id="falls-line"></p>
+          <details class="more-info">
+            <summary data-t="showDetails"></summary>
+            <p class="fold-cap" data-t="fallsCap"></p>
+            <table class="falls"><tbody id="falls-rows"></tbody></table>
+          </details>
+        </section>
+
+        <section class="q" aria-labelledby="q2-title">
+          <h2 class="sec-title" id="q2-title" data-t="q2"></h2>
+          <p class="answer" data-t="noOneKnows"></p>
+          <p class="sub" data-t="q2Sub"></p>
+          <div class="odds2" id="odds2"></div>
+          <p class="sub" data-t="oddsSince"></p>
+          <p class="caution" id="worst-line"><b data-t="worstLead"></b> <span id="worst-text"></span></p>
+          <p class="plain-line" id="banks-line"></p>
+          <details class="more-info">
+            <summary data-t="showDetails"></summary>
+            <p class="fold-cap" data-t="periodsCap"></p>
+            <div class="odds" id="odds-all"></div>
+            <p class="note" data-t="overlapNote"></p>
+            <p class="fold-cap" data-t="banksCap"></p>
+            <p class="note" id="miss-line"></p>
+            <ul class="banks" id="bank-list"></ul>
+            <p><button class="link-btn" type="button" id="open-sources" data-t="sources"></button></p>
+          </details>
+          <p class="note" data-t="inflationNote"></p>
         </section>
         <p class="fine" id="f-updated"></p>
         <p class="fine credit" id="f-data"></p>

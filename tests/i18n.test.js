@@ -97,10 +97,12 @@ test('the delayed message no longer says "slightly"', () => {
 });
 
 test('bank counts agree in Arabic', () => {
-  assert.ok(t('ar', 'y1Note', 1).includes('بنك واحد'));
-  assert.ok(t('ar', 'y1Note', 2).includes('بنكين'));
-  assert.ok(t('ar', 'y1Note', 4).includes('4 بنوك'));
-  assert.ok(t('ar', 'y1Note', 11).includes('11 بنكاً'));
+  const banks = (n) => t('ar', 'banksShort', n, '52.7', '59.5', '2027-12', '40.5');
+  assert.ok(banks(1).startsWith('يتوقع بنك واحد'), banks(1));
+  assert.ok(banks(2).startsWith('يتوقع بنكان'), banks(2));
+  assert.ok(banks(4).startsWith('تتوقع 4 بنوك'), banks(4));
+  assert.ok(banks(11).startsWith('تتوقع 11 بنكاً'), banks(11));
+  assert.ok(banks(4).includes('بنهاية 2027'), banks(4));
 });
 
 test('year wording says the past 12 months, not this year', () => {
