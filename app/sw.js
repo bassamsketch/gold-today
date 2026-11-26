@@ -34,6 +34,7 @@ const PRECACHE = [
   'js/install.js',
   'js/live.js',
   'js/main.js',
+  'js/money.js',
   'js/price.js',
   'js/store.js',
   'js/time.js',
