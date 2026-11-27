@@ -306,8 +306,11 @@ const ar = {
 
   installTitle: 'إضافة التطبيق إلى الشاشة الرئيسية',
   installIos: 'في سفاري: زر المشاركة، ثم «إضافة إلى الشاشة الرئيسية».',
-  installAndroid: 'في كروم: زر القائمة (النقاط الثلاث أعلى الشاشة)، ثم «تثبيت التطبيق».',
-  gotIt: 'حسناً',
+  installAndroid: 'في كروم: النقاط الثلاث ⋮ بجانب شريط العنوان، ثم الخيار الذي فيه كلمة «تثبيت» أو «الشاشة الرئيسية».',
+  installNow: 'تثبيت التطبيق',
+  installNext: 'بعد الضغط على الزر أدناه تظهر نافذة صغيرة، والضغط فيها على «تثبيت» يُكمل الإضافة.',
+  installedTitle: 'تم تثبيت التطبيق',
+  installedText: 'أيقونة «ذهب اليوم» الآن على الشاشة الرئيسية أو بين التطبيقات.',
 
   shareTitle: 'أسعار الذهب في مسقط',
   shareNote: 'هذا سعر الذهب الخام. المشغولات أغلى بسبب المصنعية وضريبة 5%.',
@@ -560,8 +563,11 @@ const en = {
 
   installTitle: 'Add it to your home screen',
   installIos: 'In Safari: tap Share, then "Add to Home Screen".',
-  installAndroid: 'In Chrome: the menu button (three dots at the top), then "Install app".',
-  gotIt: 'Got it',
+  installAndroid: 'In Chrome: tap the three dots ⋮ beside the address bar, then the option with "Install" or "Home screen" in its name.',
+  installNow: 'Install the app',
+  installNext: 'After you tap the button below, a small window opens. Tap "Install" there to finish.',
+  installedTitle: 'The app is installed',
+  installedText: 'Look for the ذهب اليوم icon on your home screen or in your app list.',
 
   shareTitle: 'Gold prices in Muscat',
   shareNote: 'Raw gold price. Jewellery costs more (making charge and 5% VAT).',

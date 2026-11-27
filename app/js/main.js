@@ -17,7 +17,7 @@ const storage = (() => {
 const state = load(storage);
 const listeners = new Map();
 
-/** Shared app object handed to every view's mount(app). Events: lang, karat, currency, price, data, view, pieces, layout. */
+/** Shared app object handed to every view's mount(app). Events: lang, karat, currency, price, data, view, pieces, layout, installoffer. */
 export const app = {
   state,
   data: { history: null, forecasts: null, why: null, places: null, rates: null },
@@ -66,7 +66,16 @@ export const app = {
     decimals(kind) { return decimalsOf(app.money.code, kind); },
   },
   setView,
+  installOffer: null, // the browser's own install box, kept for the install tip's button
 };
+
+// The browser's install box (Chrome, Samsung Internet and Edge) can be offered before the tabs load, so it is
+// caught here for the install tip (install.js). Holding it back keeps one offer on screen, in the app's language.
+addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  app.installOffer = e;
+  app.emit('installoffer');
+});
 
 function applyLang() {
   const root = document.documentElement;

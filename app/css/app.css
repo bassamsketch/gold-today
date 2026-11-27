@@ -398,8 +398,10 @@
 }
 .install b { font-size: 17px; }
 .install p { font-size: 16px; line-height: 1.6; margin-top: 4px; }
-.install button { margin-top: 12px; min-height: 48px; padding: 0 22px; border-radius: var(--radius); background: var(--deep); color: #fff; font-weight: 700; }
-.install button:active { background: var(--deep-lo); }
+.install-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.install-go { flex: 1 1 auto; min-height: 52px; padding: 0 20px; border-radius: var(--radius); background: var(--deep); color: #fff; font-size: 17px; font-weight: 700; }
+.install-go:active { background: var(--deep-lo); }
+.install-close { min-height: 48px; padding: 0 18px; border-radius: var(--radius); font-size: 16px; font-weight: 700; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--hair); }
 
 /* ---------- tab bar ---------- */
 .tabbar {

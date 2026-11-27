@@ -25,6 +25,26 @@ test('the worst 10 years name the month they began', () => {
   assert.equal(t('en', 'worstText', 'July 1980', -44), 'buying in July 1980 meant a price 44% lower 10 years later.');
 });
 
+test('the Android steps fit the renamed Chrome menu and a bar at the top or the bottom', () => {
+  for (const lang of ['ar', 'en']) assert.ok(t(lang, 'installAndroid').includes('⋮'));
+  assert.ok(t('ar', 'installAndroid').includes('«تثبيت»'));
+  assert.ok(!t('ar', 'installAndroid').includes('أعلى الشاشة'));
+  assert.ok(t('en', 'installAndroid').includes('"Install"'));
+  assert.ok(!t('en', 'installAndroid').includes('at the top'));
+});
+
+test('the install button says what it does, and the next line names the second tap', () => {
+  assert.equal(t('ar', 'installNow'), 'تثبيت التطبيق');
+  assert.equal(t('en', 'installNow'), 'Install the app');
+  assert.ok(t('ar', 'installNext').includes('«تثبيت»'));
+  assert.ok(t('en', 'installNext').includes('"Install"'));
+  assert.ok(t('ar', 'installNext').includes('الزر أدناه')); // the line sits above the button
+  assert.ok(t('en', 'installNext').includes('button below'));
+  assert.ok(!t('ar', 'installNext').includes('مرة أخرى')); // "again" could attach to the window
+  assert.ok(t('ar', 'installedText').includes('«ذهب اليوم»'));
+  assert.ok(t('en', 'installedText').includes('ذهب اليوم'));
+});
+
 test('"not a forecast" sits with the history, not with the banks', () => {
   assert.ok(t('ar', 'oddsSince').includes('ليس توقعاً'));
   assert.ok(t('en', 'oddsSince').includes('Not a forecast'));

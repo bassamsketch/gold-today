@@ -2,6 +2,15 @@
 
 Date: 2026-11-25. Branch: main. Tests: 68 passing (npm test). Code 41 KB compressed (limit 150 KB), fonts 225 KB (limit 350 KB).
 
+## A one-tap Install button (2026-11-27)
+Tests: 138 passing. Offline cache v16. The owner could not find Chrome's install option. Chrome 150 for Android (rolled out from July 2026) renamed "Add to Home screen" to "Install and create shortcut" and moved it lower in the menu. The app's tip still said "Install app" and "three dots at the top". The install tip now carries a button, "تثبيت التطبيق", that opens the browser's own install box (Chrome, Samsung Internet and Edge). One line above it names the second tap: "بعد الضغط على الزر أدناه تظهر نافذة صغيرة، والضغط فيها على «تثبيت» يُكمل الإضافة."
+- **When it opens:** on Android, only once the browser makes its offer. Chrome waits for a first tap and about 30 seconds on a first visit, so the first thing shown is the button, never the menu hunt. iPhones keep the Safari steps after 3 seconds. Computers show the tip only from My gold's "How?". People who closed the old menu-steps tip see the button once (a new flag, tips.installApp).
+- **The offer:** main.js catches the browser's offer, because in testing it came 0.3 s after load, before the tip's code had loaded. It holds the offer back, so the browser's own banner does not appear beside the tip.
+- **After the tap:** if accepted, the tip closes for good. If cancelled, the menu steps take the button's place. Once the app is installed, a note says "أيقونة «ذهب اليوم» الآن على الشاشة الرئيسية أو بين التطبيقات."
+- **Wording:** the menu steps now read "في كروم: النقاط الثلاث ⋮ بجانب شريط العنوان، ثم الخيار الذي فيه كلمة «تثبيت» أو «الشاشة الرئيسية»." The dismiss button is an outlined "إغلاق" everywhere, so it cannot be read as "OK, install". The filled burgundy button is the only action.
+- **Independent review:** no critical findings. Fixed: if the browser reports "installed" before "accepted", the installed note now stays on screen. A redrawn tip no longer pulls focus. The tip waits while a box is being typed in or a sheet is open. The Arabic second-tap line no longer ends with an ambiguous "مرة أخرى". Kept as they are: the title and the button wording (both accurate), and the outlined Close (the same pattern as the app's other quiet buttons).
+- **Checks:** 39 scripted checks in headless Edge at 360, 390 and 430 px in Arabic and English, including the browser's real offer. Not checked: the real install box on an Android phone.
+
 ## A classier Buy & sell photo (2026-11-27)
 Offline cache v15. The owner found the crowded souq window "not classy". They compared five, then seven, candidates previewed in the band at phone size, then two full phone screens. They chose ornate 22 karat gold bangles on a dark, reflective surface, by Zayed Ahmed Zadu (@zayed_ahmed_zadu, Unsplash licence, photo wreS7kv_tLE). New file names (img/bangles-600.webp 600x400 at 52 KB, img/bangles-1200.webp 1200x800 at 159 KB, under the 160 KB budget) mean no cache can serve the old photo. The old shop-600/1200 files are removed. The band still shows the centre 3:1 strip, as previewed.
 

@@ -236,8 +236,11 @@ Every text the app shows, generated from the code by `node scripts/review-string
 | tip4 | كتابة أي مبلغ يخصمه المحل على الفاتورة تمنع المفاجآت. | Having any deduction written on the receipt avoids surprises. |
 | installTitle | إضافة التطبيق إلى الشاشة الرئيسية | Add it to your home screen |
 | installIos | في سفاري: زر المشاركة، ثم «إضافة إلى الشاشة الرئيسية». | In Safari: tap Share, then "Add to Home Screen". |
-| installAndroid | في كروم: زر القائمة (النقاط الثلاث أعلى الشاشة)، ثم «تثبيت التطبيق». | In Chrome: the menu button (three dots at the top), then "Install app". |
-| gotIt | حسناً | Got it |
+| installAndroid | في كروم: النقاط الثلاث ⋮ بجانب شريط العنوان، ثم الخيار الذي فيه كلمة «تثبيت» أو «الشاشة الرئيسية». | In Chrome: tap the three dots ⋮ beside the address bar, then the option with "Install" or "Home screen" in its name. |
+| installNow | تثبيت التطبيق | Install the app |
+| installNext | بعد الضغط على الزر أدناه تظهر نافذة صغيرة، والضغط فيها على «تثبيت» يُكمل الإضافة. | After you tap the button below, a small window opens. Tap "Install" there to finish. |
+| installedTitle | تم تثبيت التطبيق | The app is installed |
+| installedText | أيقونة «ذهب اليوم» الآن على الشاشة الرئيسية أو بين التطبيقات. | Look for the ذهب اليوم icon on your home screen or in your app list. |
 | shareTitle | أسعار الذهب في مسقط | Gold prices in Muscat |
 | shareNote | هذا سعر الذهب الخام. المشغولات أغلى بسبب المصنعية وضريبة 5%. | Raw gold price. Jewellery costs more (making charge and 5% VAT). |
 | shareFooter | من تطبيق ذهب اليوم | From the Gold Today app |
