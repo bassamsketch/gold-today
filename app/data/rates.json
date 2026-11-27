@@ -1,9 +1,9 @@
 {
-  "asOf": "2026-11-26",
+  "asOf": "2026-11-27",
   "source": "ExchangeRate-API",
   "url": "https://www.exchangerate-api.com",
   "perUsd": {
-    "EUR": 0.9121,
+    "EUR": 0.91131,
     "LBP": 89500
   }
 }
