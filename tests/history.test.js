@@ -46,8 +46,13 @@ test('the change line compares with the close before the price, and says when th
   assert.deepEqual(compareClose(daily, Date.parse('2026-11-27T20:59:00Z'), muscat('2026-11-28T10:00:00Z')), { d: '2026-11-26', c: 3500, yesterday: false });
   // winter: Friday trades until 22:00 UTC, so its last price at 21:59 is still Friday's, against Thursday (TD2)
   assert.deepEqual(compareClose(daily, Date.parse('2026-11-27T21:59:00Z'), muscat('2026-11-29T10:00:00Z')), { d: '2026-11-26', c: 3500, yesterday: false });
+  // the feed keeps moving its time on during the weekend (04:59 UTC on Saturday 28 Nov, price frozen at Friday's),
+  // so a weekend time still means Friday's last price, against Thursday, not against Friday's own close
+  assert.deepEqual(compareClose(daily.slice(0, 2), Date.parse('2026-11-28T04:59:21Z'), muscat('2026-11-28T10:00:00Z')), { d: '2026-11-26', c: 3500, yesterday: false });
+  assert.deepEqual(compareClose(daily.slice(0, 2), Date.parse('2026-11-29T22:30:00Z'), muscat('2026-11-29T22:30:00Z')), { d: '2026-11-26', c: 3500, yesterday: false }); // Sunday before the 23:00 reopening
   // Monday: the live price against Friday's close
   assert.deepEqual(compareClose(daily.slice(0, 2), muscat('2026-11-30T10:00:00Z'), muscat('2026-11-30T10:00:00Z')), { d: '2026-11-27', c: 3450, yesterday: false });
+  assert.deepEqual(compareClose(daily.slice(0, 2), Date.parse('2026-11-29T23:05:00Z'), Date.parse('2026-11-29T23:05:00Z')), { d: '2026-11-27', c: 3450, yesterday: false }); // Sunday after the reopening
   // Tuesday: against Monday's close, yesterday
   assert.deepEqual(compareClose(daily, muscat('2026-12-01T10:00:00Z'), muscat('2026-12-01T10:00:00Z')), { d: '2026-11-30', c: 3470, yesterday: true });
   assert.equal(compareClose([], Date.now(), Date.now()), null);

@@ -1,4 +1,4 @@
-import { sessionDate } from './time.js';
+import { sessionDate, isMarketClosed, closeHourUtc } from './time.js';
 
 const DAY = 864e5;
 const dayNum = (ymd) => Date.parse(`${ymd}T00:00:00Z`) / DAY;
@@ -52,11 +52,22 @@ export function newsVisible(ymd, now) {
 }
 
 /**
+ * A weekend time stands for Friday's last trading minute: the feed keeps moving its time on while the market is
+ * shut, with the price frozen at Friday's.
+ */
+function lastTradingMoment(t) {
+  if (!isMarketClosed(new Date(t))) return t;
+  const d = new Date(t);
+  const fri = ymdOf(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - ((d.getUTCDay() + 2) % 7)));
+  return Date.parse(`${fri}T00:00:00Z`) + closeHourUtc(fri) * HOUR - 60e3;
+}
+
+/**
  * The close a price is compared with: the last close before the price's own session, so the weekend
  * shows Friday's move. `yesterday` says whether that close was the day before today in Muscat.
  */
 export function compareClose(daily, priceAt, now) {
-  const lc = lastClose(daily, new Date(priceAt));
+  const lc = lastClose(daily, new Date(lastTradingMoment(priceAt)));
   if (!lc) return null;
   return { d: lc.d, c: lc.c, yesterday: lc.d === muscatDate(+now - DAY) };
 }
