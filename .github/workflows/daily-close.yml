@@ -2,15 +2,25 @@ name: Daily close
 
 on:
   schedule:
-    # gold's daily close is read in the hour after 21:00 UTC, Monday to Friday (design D7). GitHub starts busy
-    # top-of-the-hour runs late, once by six hours, so try twice off the hour; the script skips late runs.
+    # gold's daily close is the price at 21:00 UTC, Monday to Friday (design D7). A run in the hour after it reads
+    # the live feed. GitHub has started these runs about six hours late every day since 2026-11-26, so the script
+    # reads a late run's missing closes from Dukascopy's minute bars instead.
     - cron: '7 21 * * 1-5'
     - cron: '37 21 * * 1-5'
   workflow_dispatch:
+  # a change to the close script runs it at once, so it is proven on GitHub's own machines
+  push:
+    branches: [main]
+    paths: ['scripts/append-close.mjs']
 
 permissions:
   contents: write
   actions: write
+
+# a run started by a push must not overlap a scheduled one: both would rebase onto the same one-line JSON files
+concurrency:
+  group: daily-close
+  cancel-in-progress: false
 
 jobs:
   close:
@@ -20,7 +30,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: node scripts/append-close.mjs
+      - id: close
+        run: node scripts/append-close.mjs
       - run: node scripts/update-rates.mjs
         continue-on-error: true
       - name: Commit the new close and rates, and redeploy
@@ -37,3 +48,10 @@ jobs:
           git push
           # pushes made with the workflow token do not start other workflows, so start the deploy directly
           gh workflow run pages.yml --ref main
+      # the closes that could be read are committed above; a close more than two days overdue then fails the job,
+      # so GitHub e-mails the owner
+      - name: Fail when a close is overdue
+        if: steps.close.outputs.stuck != ''
+        run: |
+          echo "No close could be read for ${{ steps.close.outputs.stuck }}"
+          exit 1
